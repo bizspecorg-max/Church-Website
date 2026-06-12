@@ -29,7 +29,12 @@ create policy "Public can read published videos"
 insert into public.videos (title, category, youtube_url, description, sort_order) values
   ('Distance Is Not A Barrier — Just Have Faith', 'Prophetic Word', 'https://www.youtube.com/watch?v=rYJWRyg89wA', 'Wherever you are, distance is not a barrier — receive your healing and breakthrough by faith.', 1),
   ('Way Maker — Worship Encounter', 'Praise & Worship', 'https://www.youtube.com/watch?v=hWgJij1MSI4', 'Enter His presence with this powerful worship and let God move in your situation.', 2),
-  ('Way Maker (Live)', 'Live Worship', 'https://www.youtube.com/watch?v=QM8jQHE5AAk', 'A live worship experience — miracle worker, promise keeper, light in the darkness.', 3)
+  ('I Know Who I Am', 'Identity in Christ', 'https://www.youtube.com/watch?v=frtZ4XfoXxM', 'Discover your true identity as a child of God — chosen, redeemed and victorious.', 3),
+  ('Who Is On The Lord''s Side', 'Consecration', 'https://www.youtube.com/watch?v=aULdIMQn1AQ', 'A call to full surrender and consecration to the Lordship of Jesus Christ.', 4),
+  ('TobeChukwu — Praise God', 'Thanksgiving', 'https://www.youtube.com/watch?v=0N8jWaBQUuA', 'Lift your voice in thanksgiving — He is worthy of all our praise and adoration.', 5),
+  ('Way Maker (Live)', 'Live Worship', 'https://www.youtube.com/watch?v=QM8jQHE5AAk', 'A live worship experience — miracle worker, promise keeper, light in the darkness.', 6),
+  ('Worship & Praise Medley', 'Worship Night', 'https://www.youtube.com/watch?v=eNKjlNyOFjY', 'An atmosphere of worship — soak in His presence and be refreshed in spirit.', 7),
+  ('A Night of Praise Celebration', 'Praise', 'https://www.youtube.com/watch?v=J4vTs2py2ro', 'Celebrate the goodness of God with thanksgiving, praise and adoration.', 8)
 on conflict do nothing;
 
 -- ---------- CONTACTS (contact form submissions) ----------

@@ -77,10 +77,40 @@ window.MINISTRY_CONFIG = {
       blurb:   "Enter His presence with this powerful worship and let God move in your situation.",
     },
     {
+      title:   "I Know Who I Am",
+      date:    "Identity in Christ",
+      youtube: "https://www.youtube.com/watch?v=frtZ4XfoXxM",
+      blurb:   "Discover your true identity as a child of God — chosen, redeemed and victorious.",
+    },
+    {
+      title:   "Who Is On The Lord's Side",
+      date:    "Consecration",
+      youtube: "https://www.youtube.com/watch?v=aULdIMQn1AQ",
+      blurb:   "A call to full surrender and consecration to the Lordship of Jesus Christ.",
+    },
+    {
+      title:   "TobeChukwu — Praise God",
+      date:    "Thanksgiving",
+      youtube: "https://www.youtube.com/watch?v=0N8jWaBQUuA",
+      blurb:   "Lift your voice in thanksgiving — He is worthy of all our praise and adoration.",
+    },
+    {
       title:   "Way Maker (Live)",
       date:    "Live Worship",
       youtube: "https://www.youtube.com/watch?v=QM8jQHE5AAk",
       blurb:   "A live worship experience — miracle worker, promise keeper, light in the darkness.",
+    },
+    {
+      title:   "Worship & Praise Medley",
+      date:    "Worship Night",
+      youtube: "https://www.youtube.com/watch?v=eNKjlNyOFjY",
+      blurb:   "An atmosphere of worship — soak in His presence and be refreshed in spirit.",
+    },
+    {
+      title:   "A Night of Praise Celebration",
+      date:    "Praise",
+      youtube: "https://www.youtube.com/watch?v=J4vTs2py2ro",
+      blurb:   "Celebrate the goodness of God with thanksgiving, praise and adoration.",
     },
   ],
 
