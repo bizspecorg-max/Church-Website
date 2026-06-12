@@ -31,44 +31,67 @@ window.MINISTRY_CONFIG = {
      shown until you add it. */
   prophetPhoto: "https://res.cloudinary.com/dfmigbgri/image/upload/v1781248935/prophet-portrait_elkbhj.jpg",
 
+  /* ---------- Hero slider images ----------
+     The big banner rotates through these (use 4+). Visitors can
+     click the arrows/dots to move between them. Swap for your own
+     crusade / service / conference photos any time. */
+  heroSlides: [
+    "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&w=1920&q=80",
+    "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1920&q=80",
+    "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?auto=format&fit=crop&w=1920&q=80",
+    "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1920&q=80",
+    "https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=1920&q=80",
+  ],
+
   /* ---------- YouTube ----------
-     Channel link used by the hero "Watch Messages" button and
-     the "View all messages" link. */
-  youtubeChannel: "https://www.youtube.com/results?search_query=prophet+aa+emmanuel+ministries",
+     The Prophet's channel. Used by the hero "Watch Messages"
+     button, the "View all messages" link, and Watch Live. */
+  youtubeChannel: "https://www.youtube.com/@DISTANCEISNOTABARRIERTV",
+
+  /* ---------- Social links (top bar + footer) ---------- */
+  socials: {
+    facebook:  "https://web.facebook.com/",
+    twitter:   "https://twitter.com/",
+    youtube:   "https://www.youtube.com/@DISTANCEISNOTABARRIERTV",
+    instagram: "https://www.instagram.com/",
+  },
 
   /* ---------- Recent Messages / Sermons ----------
-     To update a message, just change its `youtube` link (and the
-     title/date). The thumbnail is pulled automatically from the
-     YouTube video — you don't need to add an image. Add or remove
-     items freely; the page rebuilds the cards from this list. */
+     To embed a real video, paste its link into `youtube`, e.g.
+     "https://www.youtube.com/watch?v=VIDEO_ID" (copy it from the
+     channel). The thumbnail is pulled from the video automatically.
+     While `youtube` is blank, the card links to the channel.
+     Add or remove items freely; the cards rebuild from this list. */
   sermons: [
     {
+      title:   "Distance Is Not A Barrier",
+      date:    "Latest Broadcast",
+      youtube: "",   // ← paste a video link from the channel
+      blurb:   "Receive your healing, deliverance and breakthrough — wherever you are, distance is not a barrier.",
+    },
+    {
       title:   "The Power of Faith",
-      date:    "May 18, 2026",
-      youtube: "https://www.youtube.com/watch?v=ScMzIvxBSi4",
+      date:    "Sunday Service",
+      youtube: "",
       blurb:   "Discover how unwavering faith unlocks the supernatural and moves the hand of God in your life.",
     },
     {
-      title:   "Walking in Purpose",
-      date:    "May 4, 2026",
-      youtube: "https://www.youtube.com/watch?v=ScMzIvxBSi4",
-      blurb:   "Understand God's unique design for your life and learn to walk boldly in your divine assignment.",
-    },
-    {
       title:   "Breaking Every Chain",
-      date:    "April 20, 2026",
-      youtube: "https://www.youtube.com/watch?v=ScMzIvxBSi4",
+      date:    "Deliverance Service",
+      youtube: "",
       blurb:   "A prophetic word of deliverance — receive freedom from every limitation through the name of Jesus.",
     },
   ],
 
   /* ---------- Watch Live / Video ----------
-     The "Watch Live" section embeds this video. Paste any YouTube
-     watch/live URL or an embed URL. Use the channel's /live link
-     for an always-current livestream. */
-  liveEmbedUrl: "https://www.youtube.com/embed?listType=search&list=prophet%20aa%20emmanuel%20ministries%20live",
-  liveTitle:    "Live Service & Broadcasts",
-  liveBlurb:    "Join our services and broadcasts live from anywhere in the world. Be blessed, healed, and lifted in the presence of God.",
+     Paste a specific YouTube video or live URL to EMBED it inline,
+     e.g. "https://www.youtube.com/watch?v=VIDEO_ID".
+     Leave liveEmbedUrl blank to show a click-to-watch poster that
+     opens the channel (recommended until you pick a video). */
+  liveEmbedUrl: "",
+  livePoster:   "https://images.unsplash.com/photo-1510590337019-5ef8d3d32116?auto=format&fit=crop&w=1280&q=80",
+  liveTitle:    "Watch Live & On-Demand",
+  liveBlurb:    "Join our services, crusades and broadcasts live from anywhere in the world. Be blessed, healed, and lifted in the presence of God.",
 
   /* ---------- Opening donation popup ----------
      A gentle giving invitation that greets visitors on arrival.

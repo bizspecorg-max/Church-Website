@@ -110,7 +110,20 @@
     const wa = "https://wa.me/" + c.whatsapp;
     setHref("#waBtn", wa);
     setHref("#waFooterLink", wa);
+    setHref("#navPrayer", wa);
   }
+  // Top utility bar
+  setText("#topAddress", c.address);
+  if (c.email) { setText("#topEmailText", c.email); setHref("#topEmail", "mailto:" + c.email); }
+  if (c.phone) setHref("#topPhone", "tel:" + c.phone.replace(/\s+/g, ""));
+
+  /* ---------- Social links (top bar + footer) ---------- */
+  const soc = CFG.socials || {};
+  [["#topFb", soc.facebook], ["#topTw", soc.twitter], ["#topYt", soc.youtube], ["#topIg", soc.instagram]]
+    .forEach(([sel, url]) => setHref(sel, url));
+  const footerSocials = $$("footer .social-icon"); // order: Facebook, Instagram, YouTube, X
+  const footerOrder = [soc.facebook, soc.instagram, soc.youtube, soc.twitter];
+  footerSocials.forEach((a, i) => { if (footerOrder[i]) a.href = footerOrder[i]; });
 
   /* ---------- Sticky header on scroll ---------- */
   const header = $("#header");
@@ -183,29 +196,6 @@
   window.addEventListener("scroll", onScrollTop, { passive: true });
   toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 
-  /* ---------- Donation amount cards ---------- */
-  const amountInput = $("#donorAmount");
-  $$(".amount-card").forEach((card) => {
-    card.addEventListener("click", () => {
-      $$(".amount-card").forEach((c) => c.classList.remove("active"));
-      card.classList.add("active");
-      const val = card.dataset.amount;
-      if (val === "custom") {
-        amountInput.value = "";
-        amountInput.focus();
-      } else {
-        amountInput.value = val;
-      }
-      amountInput.classList.remove("invalid");
-    });
-  });
-  // Typing a custom value clears the preset highlight unless it matches
-  amountInput?.addEventListener("input", () => {
-    $$(".amount-card").forEach((c) =>
-      c.classList.toggle("active", c.dataset.amount === amountInput.value)
-    );
-  });
-
   /* ---------- Toast helper ---------- */
   const toast = $("#toast");
   let toastTimer;
@@ -223,107 +213,122 @@
     return ok;
   };
 
-  /* ---------- Donation form → modal ---------- */
-  const donationForm = $("#donationForm");
-  const modal = $("#donationModal");
-  let donation = { name: "", email: "", phone: "", amount: 0 };
-  let donationLeadSent = false;
+  /* =========================================================
+     GIVING — one flow for every donate CTA.
+     Any [data-give] element opens the give modal (optionally with
+     a preset amount). The modal AND the in-page form both collect
+     details and trigger Paystack immediately (no extra screens).
+     ========================================================= */
+  const fmt = (n) => "₦" + Number(n).toLocaleString("en-US");
+  const giveModal = $("#giveModal");
+  const giveForm  = $("#giveForm");
+  const giveAmt   = $("#giveAmount");
 
-  // Email the donor's details (captured the moment they submit, before paying)
-  // and save to Supabase if it's configured.
-  const captureDonationLead = () => {
+  // Email the donor's details + save to Supabase (captured before payment).
+  const captureLead = (d) => {
     const payload = {
-      Name: donation.name,
-      Email: donation.email,
-      Phone: donation.phone,
-      Amount: "₦" + donation.amount.toLocaleString("en-US"),
-      amountValue: donation.amount,
+      Name: d.name, Email: d.email, Phone: d.phone,
+      Amount: fmt(d.amount), amountValue: d.amount,
       Status: "Details submitted (pre-payment)",
     };
-    sendLead("New Donation — ₦" + donation.amount.toLocaleString("en-US"), payload);
+    sendLead("New Donation — " + fmt(d.amount), payload);
     if (window.MinistryDB && MinistryDB.enabled) MinistryDB.saveDonation(payload);
-    donationLeadSent = true;
   };
 
-  const openModal = () => {
-    modal.classList.add("open");
+  const closeGive = () => { if (giveModal) giveModal.classList.remove("open"); document.body.style.overflow = ""; };
+  const openGive = (amount) => {
+    if (!giveModal) return;
+    giveModal.classList.add("open");
     document.body.style.overflow = "hidden";
-    $("#payNowBtn").focus();
+    if (amount) {
+      giveAmt.value = amount;
+      $$("#giveAmounts .amount-card").forEach((c) => c.classList.toggle("active", c.dataset.amount === String(amount)));
+    }
+    setTimeout(() => $("#giveName")?.focus(), 60);
   };
-  const closeModal = () => {
-    modal.classList.remove("open");
-    document.body.style.overflow = "";
-  };
-  $$("[data-close-modal]").forEach((el) => el.addEventListener("click", closeModal));
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
-  });
+  window.__openGive = openGive; // used by tiers / welcome popup
 
-  donationForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const fields = ["#donorName", "#donorEmail", "#donorPhone", "#donorAmount"].map((s) => $(s));
-    const allValid = fields.map(validateField).every(Boolean);
-    const amount = parseInt(amountInput.value, 10) || 0;
-    if (!allValid || amount < 100) {
-      if (amount < 100) amountInput.classList.add("invalid");
+  // Run the payment (lead capture → Paystack, or demo toast).
+  const processPayment = (d, formEl) => {
+    captureLead(d);
+    if (!PAYSTACK_PUBLIC_KEY) {
+      closeGive();
+      showToast("✅ Demo: " + fmt(d.amount) + " captured. Add a Paystack key in config.js to go live.");
+      formEl && formEl.reset();
+      return;
+    }
+    if (typeof PaystackPop === "undefined") { showToast("Payment library failed to load. Check your connection."); return; }
+    PaystackPop.setup({
+      key: PAYSTACK_PUBLIC_KEY, email: d.email, amount: d.amount * 100, currency: CURRENCY,
+      metadata: { custom_fields: [
+        { display_name: "Full Name", variable_name: "full_name", value: d.name },
+        { display_name: "Phone", variable_name: "phone", value: d.phone },
+      ] },
+      callback: (r) => { closeGive(); showToast("🎉 Thank you! Payment reference: " + r.reference); formEl && formEl.reset(); },
+      onClose: () => showToast("Payment window closed. You can try again anytime."),
+    }).openIframe();
+  };
+
+  // Validate a set of inputs, then pay.
+  const collectAndPay = (nameEl, emailEl, phoneEl, amtEl, formEl) => {
+    const ok = [nameEl, emailEl, phoneEl, amtEl].map(validateField).every(Boolean);
+    const amount = parseInt(amtEl.value, 10) || 0;
+    if (!ok || amount < 100) {
+      if (amount < 100) amtEl.classList.add("invalid");
       showToast("Please complete all fields with a valid amount (min ₦100).");
       return;
     }
-    donation = {
-      name: $("#donorName").value.trim(),
-      email: $("#donorEmail").value.trim(),
-      phone: $("#donorPhone").value.trim(),
-      amount,
-    };
-    donationLeadSent = false;
-    $("#sumName").textContent = donation.name;
-    $("#sumEmail").textContent = donation.email;
-    $("#sumPhone").textContent = donation.phone;
-    $("#sumAmount").textContent = "₦" + donation.amount.toLocaleString("en-US");
-    // If a Formspree endpoint is configured, email the lead silently right away.
-    if (FORM_ENDPOINT) captureDonationLead();
-    openModal();
+    processPayment({ name: nameEl.value.trim(), email: emailEl.value.trim(), phone: phoneEl.value.trim(), amount }, formEl);
+  };
+
+  // Amount chips behaviour, scoped to one container + its amount input.
+  const wireAmountChips = (container, amtEl) => {
+    if (!container || !amtEl) return;
+    $$(".amount-card", container).forEach((card) => {
+      card.addEventListener("click", () => {
+        $$(".amount-card", container).forEach((c) => c.classList.remove("active"));
+        card.classList.add("active");
+        const v = card.dataset.amount;
+        if (v === "custom") { amtEl.value = ""; amtEl.focus(); } else { amtEl.value = v; }
+        amtEl.classList.remove("invalid");
+      });
+    });
+    amtEl.addEventListener("input", () =>
+      $$(".amount-card", container).forEach((c) => c.classList.toggle("active", c.dataset.amount === amtEl.value))
+    );
+  };
+
+  // Give modal wiring
+  if (giveModal) {
+    wireAmountChips($("#giveAmounts"), giveAmt);
+    $$("[data-close-give]").forEach((el) => el.addEventListener("click", closeGive));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && giveModal.classList.contains("open")) closeGive(); });
+    giveForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      collectAndPay($("#giveName"), $("#giveEmail"), $("#givePhone"), giveAmt, giveForm);
+    });
+  }
+
+  // Every [data-give] CTA opens the modal (closing the welcome popup first).
+  $$("[data-give]").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const wm = $("#welcomeModal");
+      if (wm && !wm.classList.contains("hidden")) { wm.classList.add("hidden"); }
+      const a = el.dataset.amount && el.dataset.amount !== "custom" ? el.dataset.amount : 0;
+      openGive(a);
+    });
   });
 
-  /* ---------- Paystack payment ---------- */
-  $("#payNowBtn")?.addEventListener("click", () => {
-    // Make sure the donor's details reach the inbox even if they don't finish paying.
-    if (!donationLeadSent) captureDonationLead();
-    if (!PAYSTACK_PUBLIC_KEY) {
-      // Demo / placeholder mode — no key configured yet.
-      closeModal();
-      showToast("✅ Demo: ₦" + donation.amount.toLocaleString() + " donation captured. Add a Paystack key to go live.");
-      donationForm.reset();
-      $$(".amount-card").forEach((c) => c.classList.remove("active"));
-      return;
-    }
-    if (typeof PaystackPop === "undefined") {
-      showToast("Payment library failed to load. Please check your connection.");
-      return;
-    }
-    const handler = PaystackPop.setup({
-      key: PAYSTACK_PUBLIC_KEY,
-      email: donation.email,
-      amount: donation.amount * 100, // Paystack expects the smallest unit (kobo)
-      currency: CURRENCY,
-      metadata: {
-        custom_fields: [
-          { display_name: "Full Name", variable_name: "full_name", value: donation.name },
-          { display_name: "Phone", variable_name: "phone", value: donation.phone },
-        ],
-      },
-      callback: function (response) {
-        closeModal();
-        showToast("🎉 Thank you! Payment reference: " + response.reference);
-        donationForm.reset();
-        $$(".amount-card").forEach((c) => c.classList.remove("active"));
-      },
-      onClose: function () {
-        showToast("Payment window closed. You can try again anytime.");
-      },
+  // In-page donation form pays immediately too.
+  const donationForm = $("#donationForm");
+  if (donationForm) {
+    wireAmountChips($("#amountGrid"), $("#donorAmount"));
+    donationForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      collectAndPay($("#donorName"), $("#donorEmail"), $("#donorPhone"), $("#donorAmount"), donationForm);
     });
-    handler.openIframe();
-  });
+  }
 
   /* ---------- Contact form ---------- */
   const contactForm = $("#contactForm");
@@ -376,12 +381,7 @@
 
     $$(".tier-choose", wrap).forEach((btn) => {
       btn.addEventListener("click", () => {
-        if (amountInput) amountInput.value = btn.dataset.amount;
-        $$(".amount-card", $("#amountGrid")).forEach((c) =>
-          c.classList.toggle("active", c.dataset.amount === btn.dataset.amount)
-        );
-        document.getElementById("donate").scrollIntoView({ behavior: "smooth" });
-        setTimeout(() => $("#donorName")?.focus(), 500);
+        if (window.__openGive) window.__openGive(btn.dataset.amount);
       });
     });
   })();
@@ -392,20 +392,72 @@
   (function watchLive() {
     const frame = $("#liveFrame");
     if (!frame) return;
+    const wrap = frame.parentElement;
     const toEmbed = (u = "") => {
       if (!u) return "";
       if (u.includes("/embed")) return u;
       const id = youtubeId(u);
-      if (id) return `https://www.youtube.com/embed/${id}`;
-      // channel /live or search-style URLs: hand off as-is
-      return u.replace("watch?v=", "embed/");
+      return id ? `https://www.youtube.com/embed/${id}` : "";
     };
-    frame.src = toEmbed(CFG.liveEmbedUrl);
+    const embed = toEmbed(CFG.liveEmbedUrl);
+    if (embed) {
+      frame.src = embed;
+    } else {
+      // No embeddable video set → show a click-to-watch poster linking to the channel.
+      frame.remove();
+      const poster = document.createElement("a");
+      poster.href = CFG.youtubeChannel || "#";
+      poster.target = "_blank"; poster.rel = "noopener";
+      poster.className = "live-poster";
+      if (CFG.livePoster) poster.style.backgroundImage = `url('${CFG.livePoster}')`;
+      poster.innerHTML = '<span class="live-play"><svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="text-white font-600 text-lg">Tap to watch on YouTube</span>';
+      wrap.appendChild(poster);
+    }
     if (CFG.liveTitle) { const t = $("#liveTitle"); if (t) t.textContent = CFG.liveTitle; }
     if (CFG.liveBlurb) { const b = $("#liveBlurb"); if (b) b.textContent = CFG.liveBlurb; }
     const yt = $("#watchYoutube");
     if (yt) yt.href = CFG.youtubeChannel || "#";
   })();
+
+  /* =========================================================
+     HERO SLIDER  (multiple banner images, click prev/next/dots)
+     ========================================================= */
+  (function heroSlider() {
+    const wrap = $("#heroSlides");
+    if (!wrap) return;
+    const imgs = (Array.isArray(CFG.heroSlides) && CFG.heroSlides.length)
+      ? CFG.heroSlides : ["assets/img/hero-banner.svg"];
+    wrap.innerHTML = imgs.map((src, i) =>
+      `<div class="hero-slide ${i === 0 ? "active" : ""}" style="background-image:url('${src}')"></div>`).join("");
+    const dotsWrap = $("#heroDots");
+    if (dotsWrap) dotsWrap.innerHTML = imgs.map((_, i) =>
+      `<button class="hero-dot ${i === 0 ? "active" : ""}" data-i="${i}" aria-label="Go to slide ${i + 1}"></button>`).join("");
+    const slides = $$(".hero-slide", wrap);
+    const dots = dotsWrap ? $$(".hero-dot", dotsWrap) : [];
+    let idx = 0, timer = null;
+    const go = (n) => {
+      idx = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle("active", i === idx));
+      dots.forEach((d, i) => d.classList.toggle("active", i === idx));
+    };
+    const start = () => { stop(); if (slides.length > 1) timer = setInterval(() => go(idx + 1), 6000); };
+    const stop = () => { if (timer) clearInterval(timer); };
+    $("#heroNext")?.addEventListener("click", () => { go(idx + 1); start(); });
+    $("#heroPrev")?.addEventListener("click", () => { go(idx - 1); start(); });
+    dots.forEach((d) => d.addEventListener("click", () => { go(+d.dataset.i); start(); }));
+    start();
+  })();
+
+  /* ---------- Mobile dropdown accordions ---------- */
+  $$("[data-msub]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const el = document.getElementById(btn.dataset.msub);
+      if (!el) return;
+      el.classList.toggle("open");
+      const sign = btn.querySelector("span");
+      if (sign) sign.textContent = el.classList.contains("open") ? "－" : "＋";
+    });
+  });
 
   /* =========================================================
      WELCOME DONATION POPUP  (on load, closable)
@@ -429,18 +481,7 @@
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && !wm.classList.contains("hidden")) close();
     });
-    // Pre-select an amount on the main donation form, then let "Give Now" scroll.
-    $$("#welcomeAmounts .amount-card").forEach((card) => {
-      card.addEventListener("click", () => {
-        $$("#welcomeAmounts .amount-card").forEach((c) => c.classList.remove("active"));
-        card.classList.add("active");
-        if (amountInput) amountInput.value = card.dataset.amount;
-        $$(".amount-card", $("#amountGrid")).forEach((c) =>
-          c.classList.toggle("active", c.dataset.amount === card.dataset.amount)
-        );
-      });
-    });
-
+    // The amount chips + "Give Now" are [data-give] → they open the give modal.
     if (!seen) setTimeout(open, Number(CFG.popupDelay) || 1200);
   })();
 
