@@ -7,29 +7,15 @@
   "use strict";
 
   /* ----------------------------------------------------------
-     PAYSTACK CONFIG  ← Add your live/test public key here.
-     Get it from: https://dashboard.paystack.com/#/settings/developer
-     Leaving it blank keeps the site in safe "demo" mode.
+     All editable settings live in assets/js/config.js.
+     We read them here with safe fallbacks so the site still
+     works even if that file is missing.
   ---------------------------------------------------------- */
-  const PAYSTACK_PUBLIC_KEY = ""; // e.g. "pk_live_xxxxxxxxxxxxxxxxxxxx"
-  const CURRENCY = "NGN";
-
-  /* ----------------------------------------------------------
-     EMAIL / LEAD NOTIFICATIONS
-     Both the Contact form and Donation form send their details
-     to NOTIFY_EMAIL. You can change the address any time.
-
-     • Leave FORM_ENDPOINT blank  → submissions open the visitor's
-       email app pre-filled to NOTIFY_EMAIL (works out of the box).
-     • Set FORM_ENDPOINT to a free Formspree URL → submissions are
-       emailed silently in the background (recommended for live use):
-         1. Create a free form at https://formspree.io (use the
-            koredebusuyi.career@gmail.com inbox).
-         2. Paste the endpoint below, e.g.
-            "https://formspree.io/f/abcdwxyz".
-  ---------------------------------------------------------- */
-  const NOTIFY_EMAIL  = "koredebusuyi.career@gmail.com";
-  const FORM_ENDPOINT = ""; // ← paste your Formspree URL to send emails silently
+  const CFG = window.MINISTRY_CONFIG || {};
+  const PAYSTACK_PUBLIC_KEY = CFG.paystackPublicKey || "";
+  const CURRENCY            = CFG.currency || "NGN";
+  const NOTIFY_EMAIL        = CFG.notifyEmail || "koredebusuyi.career@gmail.com";
+  const FORM_ENDPOINT       = CFG.formEndpoint || "";
 
   const $  = (sel, ctx = document) => ctx.querySelector(sel);
   const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
@@ -59,6 +45,64 @@
   /* ---------- Footer year ---------- */
   const yearEl = $("#year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  /* ---------- YouTube helpers ---------- */
+  // Pulls the 11-char video id from any common YouTube URL shape.
+  const youtubeId = (url = "") => {
+    const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : "";
+  };
+  const youtubeThumb = (url) => {
+    const id = youtubeId(url);
+    return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : "";
+  };
+
+  /* ---------- Render sermons from config ----------
+     Edit the list in assets/js/config.js — cards rebuild here.
+     Thumbnails are derived from each YouTube link automatically. */
+  const renderSermons = () => {
+    const grid = $("#sermonGrid");
+    if (!grid) return;
+    const sermons = Array.isArray(CFG.sermons) ? CFG.sermons : [];
+    const fallbacks = ["assets/img/sermon-1.svg", "assets/img/sermon-2.svg", "assets/img/sermon-3.svg"];
+    grid.innerHTML = sermons.map((s, i) => {
+      const href = s.youtube || CFG.youtubeChannel || "#";
+      const thumb = s.thumbnail || youtubeThumb(s.youtube) || fallbacks[i % 3];
+      const fb = fallbacks[i % 3];
+      const safeTitle = (s.title || "Message").replace(/"/g, "&quot;");
+      return `
+        <article class="sermon-card reveal">
+          <a href="${href}" target="_blank" rel="noopener" class="block relative" aria-label="Watch: ${safeTitle}">
+            <img src="${thumb}" onerror="this.onerror=null;this.src='${fb}'" alt="${safeTitle} thumbnail" loading="lazy" class="w-full" />
+            <span class="play-overlay"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+          </a>
+          <div class="p-5">
+            <time class="text-xs text-gold-dark font-600 uppercase tracking-wide">${s.date || ""}</time>
+            <h3 class="font-serif text-xl font-700 text-navy mt-1">${safeTitle}</h3>
+            <p class="text-sm text-gray-600 mt-2">${s.blurb || ""}</p>
+            <a href="${href}" target="_blank" rel="noopener" class="btn-watch mt-4">▶ Watch Message</a>
+          </div>
+        </article>`;
+    }).join("");
+  };
+  renderSermons();
+
+  // "View all messages" + hero button point to the channel.
+  const allLink = $("#allMessagesLink");
+  if (allLink && CFG.youtubeChannel) allLink.href = CFG.youtubeChannel;
+
+  /* ---------- Contact details from config ---------- */
+  const c = CFG.contact || {};
+  const setText = (sel, val) => { const el = $(sel); if (el && val) el.textContent = val; };
+  const setHref = (sel, val) => { const el = $(sel); if (el && val) el.href = val; };
+  setText("#cAddress", c.address);
+  if (c.email) { setText("#cEmailLink", c.email); setHref("#cEmailLink", "mailto:" + c.email); }
+  if (c.phone) { setText("#cPhoneLink", c.phone); setHref("#cPhoneLink", "tel:" + c.phone.replace(/\s+/g, "")); }
+  if (c.whatsapp) {
+    const wa = "https://wa.me/" + c.whatsapp;
+    setHref("#waBtn", wa);
+    setHref("#waFooterLink", wa);
+  }
 
   /* ---------- Sticky header on scroll ---------- */
   const header = $("#header");

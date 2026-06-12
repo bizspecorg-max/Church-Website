@@ -78,24 +78,56 @@ Amounts are automatically converted to kobo (`amount * 100`).
 > For production you should also verify each transaction server-side using your
 > **secret key** and Paystack's `/transaction/verify/:reference` endpoint.
 
-## ✏️ Editing content
+## ⚙️ One file for everything: `assets/js/config.js`
+
+The settings you'll change most often are all in **`assets/js/config.js`** — no
+need to dig through the HTML. Edit, save, refresh:
+
+| Setting | What it controls |
+|---------|------------------|
+| `paystackPublicKey` | Switch donations from demo → live |
+| `notifyEmail` | Where Contact + Donation submissions are emailed |
+| `formEndpoint` | Formspree URL for silent background email |
+| `youtubeChannel` | "Watch Messages" / "View all messages" link |
+| `sermons[]` | **Each message's title, date & YouTube link** |
+| `contact` | Address, email, phone, WhatsApp (feeds page + footer) |
+
+### Updating a sermon / message (YouTube)
+Open `config.js` and edit the `sermons` list. To change a message you only need
+to update its **`youtube`** link — the thumbnail is pulled from YouTube
+automatically. Add or remove items freely; the cards rebuild themselves.
+
+```js
+sermons: [
+  { title: "The Power of Faith", date: "May 18, 2026",
+    youtube: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+    blurb: "Short description shown on the card." },
+  // add as many as you like…
+],
+```
+
+### Adding the Prophet's real photo
+Save the photo as **`assets/img/prophet.jpg`** (that exact name) and it shows up
+in both the hero and the profile section automatically. Until that file exists,
+a placeholder is shown. To use a different name, update the two
+`<img src="assets/img/prophet.jpg">` tags in `index.html`.
+
+## ✏️ Other content
 
 - **Text & figures:** edit directly in `index.html` (sections are clearly
   labeled with HTML comments like `<!-- 4. MINISTRY IMPACT -->`).
 - **Impact numbers:** change the `data-count` attributes in the Impact section.
 - **Brand colors:** edit the `tailwind.config` block in `index.html` and the
   `:root` variables in `assets/css/custom.css`.
-- **Contact details / WhatsApp:** update the phone number `2348000000000` and
-  email in the Contact section and footer.
+
 ## 📧 Email notifications (Contact + Donations)
 
 Both the **Contact form** and the **Donation form** email their details to the
-ministry inbox. The address and delivery method live at the top of
-`assets/js/main.js`:
+ministry inbox. The address and delivery method live in `assets/js/config.js`:
 
 ```js
-const NOTIFY_EMAIL  = "koredebusuyi.career@gmail.com"; // change any time
-const FORM_ENDPOINT = ""; // see below
+notifyEmail:  "koredebusuyi.career@gmail.com", // change any time
+formEndpoint: "",                              // see below
 ```
 
 - **Out of the box (no setup):** when `FORM_ENDPOINT` is blank, submitting a
