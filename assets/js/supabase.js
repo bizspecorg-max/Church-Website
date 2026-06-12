@@ -45,6 +45,23 @@
       return { ok: !error, error };
     },
 
+    /* ---- Videos / Messages ---- */
+    async getVideos() {
+      if (!client) return [];
+      const { data, error } = await client
+        .from("videos")
+        .select("title, category, youtube_url, description, sort_order, published")
+        .eq("published", true)
+        .order("sort_order", { ascending: true });
+      if (error || !data) return [];
+      return data.map((r) => ({
+        title: r.title,
+        date: r.category || "",
+        youtube: r.youtube_url || "",
+        blurb: r.description || "",
+      }));
+    },
+
     /* ---- Auth ---- */
     async signUp(email, password) {
       if (!client) return noop();

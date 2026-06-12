@@ -56,30 +56,31 @@ window.MINISTRY_CONFIG = {
     instagram: "https://www.instagram.com/",
   },
 
-  /* ---------- Recent Messages / Sermons ----------
-     To embed a real video, paste its link into `youtube`, e.g.
-     "https://www.youtube.com/watch?v=VIDEO_ID" (copy it from the
-     channel). The thumbnail is pulled from the video automatically.
-     While `youtube` is blank, the card links to the channel.
-     Add or remove items freely; the cards rebuild from this list. */
+  /* ---------- Recent Messages / Videos ----------
+     These play INSIDE the website (no leaving for YouTube).
+     Source of truth is the Supabase `videos` table when configured;
+     this list is the fallback / seed. To change a video, paste its
+     YouTube link into `youtube` — the thumbnail is auto-generated.
+     NOTE: the samples below are public worship/prophetic videos so
+     the site plays out of the box; replace with the Prophet's own. */
   sermons: [
     {
-      title:   "Distance Is Not A Barrier",
-      date:    "Latest Broadcast",
-      youtube: "",   // ← paste a video link from the channel
-      blurb:   "Receive your healing, deliverance and breakthrough — wherever you are, distance is not a barrier.",
+      title:   "Distance Is Not A Barrier — Just Have Faith",
+      date:    "Prophetic Word",
+      youtube: "https://www.youtube.com/watch?v=rYJWRyg89wA",
+      blurb:   "Wherever you are, distance is not a barrier — receive your healing and breakthrough by faith.",
     },
     {
-      title:   "The Power of Faith",
-      date:    "Sunday Service",
-      youtube: "",
-      blurb:   "Discover how unwavering faith unlocks the supernatural and moves the hand of God in your life.",
+      title:   "Way Maker — Worship Encounter",
+      date:    "Praise & Worship",
+      youtube: "https://www.youtube.com/watch?v=hWgJij1MSI4",
+      blurb:   "Enter His presence with this powerful worship and let God move in your situation.",
     },
     {
-      title:   "Breaking Every Chain",
-      date:    "Deliverance Service",
-      youtube: "",
-      blurb:   "A prophetic word of deliverance — receive freedom from every limitation through the name of Jesus.",
+      title:   "Way Maker (Live)",
+      date:    "Live Worship",
+      youtube: "https://www.youtube.com/watch?v=QM8jQHE5AAk",
+      blurb:   "A live worship experience — miracle worker, promise keeper, light in the darkness.",
     },
   ],
 
@@ -88,7 +89,7 @@ window.MINISTRY_CONFIG = {
      e.g. "https://www.youtube.com/watch?v=VIDEO_ID".
      Leave liveEmbedUrl blank to show a click-to-watch poster that
      opens the channel (recommended until you pick a video). */
-  liveEmbedUrl: "",
+  liveEmbedUrl: "https://www.youtube.com/watch?v=QM8jQHE5AAk",
   livePoster:   "https://images.unsplash.com/photo-1510590337019-5ef8d3d32116?auto=format&fit=crop&w=1280&q=80",
   liveTitle:    "Watch Live & On-Demand",
   liveBlurb:    "Join our services, crusades and broadcasts live from anywhere in the world. Be blessed, healed, and lifted in the presence of God.",
@@ -119,8 +120,8 @@ window.MINISTRY_CONFIG = {
        2. Settings → API → copy the Project URL and the anon public key
        3. Paste them below, then run the SQL from the README to create
           the `contacts` and `donations` tables.  */
-  supabaseUrl:     "",   // e.g. "https://xxxxxxxx.supabase.co"
-  supabaseAnonKey: "",   // the long anon/public key (safe for the browser)
+  supabaseUrl:     "https://pozpdwaoeauntfpyjhtk.supabase.co",
+  supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvenBkd2FvZWF1bnRmcHlqaHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNzkxODMsImV4cCI6MjA5Njg1NTE4M30.1oFrYU0i92V_yQm3pQWkeh2L-IEMpztip97fr08Jod4",
 
   /* ---------- Contact details ----------
      These also feed the footer and WhatsApp button.

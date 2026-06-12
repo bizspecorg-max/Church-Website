@@ -842,6 +842,26 @@
     </div>
   </div>
 
+  <!-- ===================================================== -->
+  <!-- INLINE VIDEO PLAYER (plays messages on-site) -->
+  <!-- ===================================================== -->
+  <div id="videoModal" class="fixed inset-0 z-[68] hidden" role="dialog" aria-modal="true" aria-labelledby="videoModalTitle">
+    <div class="absolute inset-0 bg-black/90" data-close-video></div>
+    <div class="relative min-h-full flex items-center justify-center p-4">
+      <div class="w-full max-w-4xl">
+        <div class="flex items-center justify-between mb-3 gap-4">
+          <h3 id="videoModalTitle" class="text-white font-serif text-lg sm:text-xl font-700 truncate"></h3>
+          <button data-close-video class="flex-none text-white/80 hover:text-white" aria-label="Close video">
+            <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="relative rounded-xl overflow-hidden bg-black aspect-video shadow-2xl ring-1 ring-white/15">
+          <iframe id="videoFrame" class="absolute inset-0 w-full h-full" src="" title="Video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
 

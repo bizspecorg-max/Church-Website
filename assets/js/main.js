@@ -57,35 +57,82 @@
     return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : "";
   };
 
-  /* ---------- Render sermons from config ----------
-     Edit the list in assets/js/config.js — cards rebuild here.
-     Thumbnails are derived from each YouTube link automatically. */
-  const renderSermons = () => {
-    const grid = $("#sermonGrid");
-    if (!grid) return;
-    const sermons = Array.isArray(CFG.sermons) ? CFG.sermons : [];
+  /* ---------- Inline video player (play on-site, not on YouTube) ---------- */
+  const videoModal = $("#videoModal");
+  const videoFrame = $("#videoFrame");
+  const videoTitle = $("#videoModalTitle");
+  const openVideo = (id, title) => {
+    if (!videoModal || !id) return;
+    videoFrame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`;
+    if (videoTitle) videoTitle.textContent = title || "";
+    videoModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  };
+  const closeVideo = () => {
+    if (!videoModal) return;
+    videoModal.classList.add("hidden");
+    videoFrame.src = ""; // stop playback
+    document.body.style.overflow = "";
+  };
+  if (videoModal) {
+    $$("[data-close-video]").forEach((el) => el.addEventListener("click", closeVideo));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !videoModal.classList.contains("hidden")) closeVideo(); });
+  }
+
+  /* ---------- Render messages ----------
+     Source: Supabase `videos` table when configured, else config.sermons.
+     Videos with a YouTube link play INSIDE the site via the modal above. */
+  const sermonGrid = $("#sermonGrid");
+  const renderSermons = (list) => {
+    if (!sermonGrid) return;
+    const items = Array.isArray(list) ? list : [];
     const fallbacks = ["assets/img/sermon-1.svg", "assets/img/sermon-2.svg", "assets/img/sermon-3.svg"];
-    grid.innerHTML = sermons.map((s, i) => {
-      const href = s.youtube || CFG.youtubeChannel || "#";
-      const thumb = s.thumbnail || youtubeThumb(s.youtube) || fallbacks[i % 3];
+    const channel = CFG.youtubeChannel || "#";
+    sermonGrid.innerHTML = items.map((s, i) => {
+      const id = youtubeId(s.youtube || "");
       const fb = fallbacks[i % 3];
+      const thumb = s.thumbnail || (id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : fb);
       const safeTitle = (s.title || "Message").replace(/"/g, "&quot;");
-      return `
-        <article class="sermon-card reveal">
-          <a href="${href}" target="_blank" rel="noopener" class="block relative" aria-label="Watch: ${safeTitle}">
-            <img src="${thumb}" onerror="this.onerror=null;this.src='${fb}'" alt="${safeTitle} thumbnail" loading="lazy" class="w-full" />
-            <span class="play-overlay"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-          </a>
+      const attr = id ? `data-vid="${id}" data-title="${safeTitle}"` : "";
+      const media = id
+        ? `<button type="button" class="block relative w-full cursor-pointer" ${attr} aria-label="Play: ${safeTitle}">
+             <img src="${thumb}" onerror="this.onerror=null;this.src='${fb}'" alt="${safeTitle}" loading="lazy" class="w-full" />
+             <span class="play-overlay"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+           </button>`
+        : `<a href="${channel}" target="_blank" rel="noopener" class="block relative">
+             <img src="${fb}" alt="${safeTitle}" loading="lazy" class="w-full" />
+             <span class="play-overlay"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+           </a>`;
+      const cta = id
+        ? `<button type="button" class="btn-watch mt-4" ${attr}>▶ Watch Message</button>`
+        : `<a href="${channel}" target="_blank" rel="noopener" class="btn-watch mt-4">▶ Watch on YouTube</a>`;
+      return `<article class="sermon-card reveal visible">
+          ${media}
           <div class="p-5">
             <time class="text-xs text-gold-dark font-600 uppercase tracking-wide">${s.date || ""}</time>
             <h3 class="font-serif text-xl font-700 text-navy mt-1">${safeTitle}</h3>
             <p class="text-sm text-gray-600 mt-2">${s.blurb || ""}</p>
-            <a href="${href}" target="_blank" rel="noopener" class="btn-watch mt-4">▶ Watch Message</a>
+            ${cta}
           </div>
         </article>`;
     }).join("");
   };
-  renderSermons();
+  // Clicks on any play control open the inline player.
+  sermonGrid?.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-vid]");
+    if (t) { e.preventDefault(); openVideo(t.dataset.vid, t.dataset.title); }
+  });
+
+  // Render instantly from config, then upgrade from Supabase if available.
+  renderSermons(CFG.sermons || []);
+  (async () => {
+    if (window.MinistryDB && MinistryDB.enabled && MinistryDB.getVideos) {
+      try {
+        const rows = await MinistryDB.getVideos();
+        if (rows && rows.length) renderSermons(rows);
+      } catch (_) { /* keep config fallback */ }
+    }
+  })();
 
   // "View all messages" + hero button point to the channel.
   const allLink = $("#allMessagesLink");
