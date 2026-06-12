@@ -1,0 +1,103 @@
+# Prophet AA Emmanuel Ministries — Website
+
+A modern, responsive, mobile-first single-page ministry website built with
+**HTML + Tailwind CSS + vanilla JavaScript**. No build step required — just
+open `index.html` in a browser or deploy the folder to any static host.
+
+## ✨ Features
+
+- Mobile-first, fully responsive (mobile / tablet / desktop)
+- Sticky header that turns solid on scroll + mobile menu
+- Smooth scroll reveal animations & animated impact counters
+- 10 sections: Hero, About, Prophet, Impact, Gallery, Sermons,
+  Partnership/Donations, Testimonies, Contact, Footer
+- Donation flow with amount cards, validation, summary modal, and a
+  **Paystack integration placeholder** ready to go live
+- SEO meta tags, Open Graph, accessible markup, reduced-motion support
+- Deep blue (`#0b1f4d`) + gold (`#c9a227`) brand palette
+
+## 📁 Structure
+
+```
+Church-Website/
+├── index.html              # All sections & markup
+├── assets/
+│   ├── css/custom.css      # Component classes, animations, brand styles
+│   ├── js/main.js          # Nav, reveal, counters, donation, Paystack
+│   └── img/                # SVG placeholder images (swap with real photos)
+└── README.md
+```
+
+## 🚀 Run locally
+
+Just open the file:
+
+```bash
+open index.html          # macOS
+# or serve it:
+python3 -m http.server 8000   # then visit http://localhost:8000
+```
+
+## 🖼️ Replace placeholder images
+
+All images live in `assets/img/` as lightweight SVG placeholders. Swap them
+for real `.jpg`/`.webp` photos (keep the same filename, or update the `src`
+in `index.html`):
+
+| File | Used for |
+|------|----------|
+| `logo.svg` | Header & footer logo / favicon |
+| `hero-banner.svg` | Hero background banner |
+| `prophet-hero.svg`, `prophet.svg` | Prophet portraits |
+| `about.svg` | About section image |
+| `gallery-1..8.svg` | Gallery grid |
+| `sermon-1..3.svg` | Sermon thumbnails |
+| `testimony-1..3.svg` | Testimony photos |
+
+Tip: optimize photos to WebP and keep them under ~200 KB for fast loading.
+
+## 💳 Enable Paystack (go live)
+
+The donation flow is wired and runs in **demo mode** until you add a key.
+
+1. Create a Paystack account → Dashboard → **Settings → API Keys & Webhooks**.
+2. Copy your **Public Key** (`pk_live_...` or `pk_test_...`).
+3. Open `assets/js/main.js` and set:
+
+   ```js
+   const PAYSTACK_PUBLIC_KEY = "pk_live_xxxxxxxxxxxxxxxxxxxx";
+   ```
+
+That's it — clicking **Pay with Paystack** now opens the real checkout.
+Amounts are automatically converted to kobo (`amount * 100`).
+
+> For production you should also verify each transaction server-side using your
+> **secret key** and Paystack's `/transaction/verify/:reference` endpoint.
+
+## ✏️ Editing content
+
+- **Text & figures:** edit directly in `index.html` (sections are clearly
+  labeled with HTML comments like `<!-- 4. MINISTRY IMPACT -->`).
+- **Impact numbers:** change the `data-count` attributes in the Impact section.
+- **Brand colors:** edit the `tailwind.config` block in `index.html` and the
+  `:root` variables in `assets/css/custom.css`.
+- **Contact details / WhatsApp:** update the phone number `2348000000000` and
+  email in the Contact section and footer.
+- **Contact form:** currently shows a success message client-side. Connect it
+  to a service like Formspree or EmailJS (see the `TODO` in `main.js`).
+
+## ♿ Accessibility & SEO
+
+- Semantic landmarks, skip link, ARIA labels on icons/buttons
+- Keyboard-dismissible modal (Esc) and focus management
+- `prefers-reduced-motion` respected
+- Meta description, keywords, canonical, Open Graph & Twitter cards
+
+## 🌐 Deploy
+
+Drop the folder on any static host — **GitHub Pages, Netlify, Vercel,
+Cloudflare Pages**, or traditional shared hosting. No server needed.
+
+---
+
+© Prophet AA Emmanuel Ministries. Placeholder content — customize before launch.

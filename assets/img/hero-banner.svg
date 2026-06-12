@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Ministry Banner">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1f4d"/>
+      <stop offset="1" stop-color="#16306e"/>
+    </linearGradient>
+    <radialGradient id="gl" cx="0.5" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="rgba(230,196,90,0.18)"/>
+      <stop offset="1" stop-color="rgba(230,196,90,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#gl)"/>
+  <path d="M800.0 288.0 L800.0 558.0 M719.0 378.0 L881.0 378.0" stroke="#e6c45a" stroke-width="31.500000000000004" stroke-linecap="round" opacity="0.9"/>
+  <text x="800.0" y="630.0" text-anchor="middle" font-family="Georgia, serif" font-size="55" fill="#ffffff" letter-spacing="1">Ministry Banner</text>
+  <text x="800.0" y="702.0" text-anchor="middle" font-family="Georgia, serif" font-size="45" fill="#cdd6ea" opacity="0.8">Replace with crusade / worship photo</text>
+</svg>

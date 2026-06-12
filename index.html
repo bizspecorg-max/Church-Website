@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============ SEO META TAGS ============ -->
+  <title>Prophet AA Emmanuel Ministries | Prayer, Prophecy & God's Word</title>
+  <meta name="description" content="Prophet AA Emmanuel Ministries is transforming lives through prayer, prophecy, and God's Word. Partner with us, watch messages, and support our global mission." />
+  <meta name="keywords" content="Prophet AA Emmanuel, ministry, church, prayer, prophecy, gospel, donation, partnership, crusade, Nigeria church" />
+  <meta name="author" content="Prophet AA Emmanuel Ministries" />
+  <meta name="theme-color" content="#0b1f4d" />
+  <link rel="canonical" href="https://www.aaemmanuelministries.org/" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Prophet AA Emmanuel Ministries" />
+  <meta property="og:description" content="Transforming Lives Through Prayer, Prophecy, and God's Word." />
+  <meta property="og:image" content="assets/img/hero-banner.svg" />
+  <meta property="og:url" content="https://www.aaemmanuelministries.org/" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg" />
+
+  <!-- ============ FONTS ============ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- ============ TAILWIND CSS ============ -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy:  { DEFAULT: '#0b1f4d', light: '#16306e', dark: '#081634' },
+            gold:  { DEFAULT: '#c9a227', light: '#e6c45a', dark: '#a8851a' },
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+          keyframes: {
+            fadeup: { '0%': { opacity: 0, transform: 'translateY(24px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+            float:  { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+          },
+          animation: { fadeup: 'fadeup .8s ease forwards', float: 'float 6s ease-in-out infinite' },
+        },
+      },
+    };
+  </script>
+
+  <!-- ============ PAYSTACK (placeholder integration) ============ -->
+  <!-- Loads the Paystack inline checkout library. Add your public key in assets/js/main.js -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+
+  <link rel="stylesheet" href="assets/css/custom.css" />
+</head>
+
+<body class="font-sans text-navy-dark bg-white antialiased">
+
+  <!-- Skip link for accessibility -->
+  <a href="#hero" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:bg-navy focus:text-white focus:px-4 focus:py-2 focus:rounded">Skip to content</a>
+
+  <!-- ===================================================== -->
+  <!-- STICKY HEADER -->
+  <!-- ===================================================== -->
+  <header id="header" class="fixed top-0 inset-x-0 z-50 transition-all duration-300">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+      <div class="flex items-center justify-between h-16 lg:h-20">
+        <!-- Logo -->
+        <a href="#hero" class="flex items-center gap-3 group">
+          <img src="assets/img/logo.svg" alt="Prophet AA Emmanuel Ministries logo" class="h-10 w-10 lg:h-12 lg:w-12" width="48" height="48" />
+          <span class="leading-tight">
+            <span class="block font-serif text-base lg:text-lg font-700 nav-text">Prophet AA Emmanuel</span>
+            <span class="block text-[10px] lg:text-xs tracking-[0.2em] uppercase nav-subtext">Ministries</span>
+          </span>
+        </a>
+
+        <!-- Desktop nav -->
+        <ul class="hidden lg:flex items-center gap-8 text-sm font-500">
+          <li><a href="#about"    class="nav-link">About</a></li>
+          <li><a href="#prophet"  class="nav-link">The Prophet</a></li>
+          <li><a href="#impact"   class="nav-link">Impact</a></li>
+          <li><a href="#gallery"  class="nav-link">Gallery</a></li>
+          <li><a href="#sermons"  class="nav-link">Messages</a></li>
+          <li><a href="#testimonies" class="nav-link">Testimonies</a></li>
+          <li><a href="#contact"  class="nav-link">Contact</a></li>
+        </ul>
+
+        <div class="hidden lg:block">
+          <a href="#donate" class="btn-gold text-sm">Partner With Us</a>
+        </div>
+
+        <!-- Mobile toggle -->
+        <button id="menuBtn" class="lg:hidden p-2 rounded-md nav-text" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <svg id="menuIcon" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="lg:hidden hidden bg-navy text-white shadow-xl">
+      <ul class="px-6 py-4 space-y-1 text-base">
+        <li><a href="#about"    class="mobile-link">About</a></li>
+        <li><a href="#prophet"  class="mobile-link">The Prophet</a></li>
+        <li><a href="#impact"   class="mobile-link">Impact</a></li>
+        <li><a href="#gallery"  class="mobile-link">Gallery</a></li>
+        <li><a href="#sermons"  class="mobile-link">Messages</a></li>
+        <li><a href="#testimonies" class="mobile-link">Testimonies</a></li>
+        <li><a href="#contact"  class="mobile-link">Contact</a></li>
+        <li class="pt-3"><a href="#donate" class="btn-gold w-full text-center">Partner With Us</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+  <!-- ===================================================== -->
+  <!-- 1. HERO -->
+  <!-- ===================================================== -->
+  <section id="hero" class="relative min-h-screen flex items-center overflow-hidden">
+    <!-- Banner image -->
+    <img src="assets/img/hero-banner.svg" alt="Worship gathering at Prophet AA Emmanuel Ministries" class="absolute inset-0 w-full h-full object-cover" fetchpriority="high" />
+    <div class="absolute inset-0 bg-gradient-to-r from-navy-dark/95 via-navy/85 to-navy/40"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24 pb-16">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="text-white max-w-xl reveal">
+          <span class="inline-flex items-center gap-2 text-gold-light text-sm font-500 tracking-[0.25em] uppercase mb-5">
+            <span class="h-px w-8 bg-gold"></span> Welcome Home
+          </span>
+          <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-700 leading-[1.1]">
+            Transforming Lives Through Prayer, Prophecy, and <span class="text-gold-light">God's Word</span>
+          </h1>
+          <p class="mt-6 text-lg text-blue-100/90 leading-relaxed">
+            Raising people of faith, purpose, and impact through the power of Jesus Christ.
+          </p>
+          <div class="mt-9 flex flex-wrap gap-4">
+            <a href="#donate" class="btn-gold">Partner With Us</a>
+            <a href="#sermons" class="btn-outline-light">
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              Watch Messages
+            </a>
+          </div>
+          <div class="mt-10 flex items-center gap-6 text-sm text-blue-100/80">
+            <div><span class="block text-2xl font-700 text-white">120K+</span>Souls Reached</div>
+            <div class="h-10 w-px bg-white/20"></div>
+            <div><span class="block text-2xl font-700 text-white">32</span>Nations</div>
+            <div class="h-10 w-px bg-white/20"></div>
+            <div><span class="block text-2xl font-700 text-white">18</span>Years of Ministry</div>
+          </div>
+        </div>
+
+        <!-- Prophet image -->
+        <div class="hidden lg:flex justify-center reveal">
+          <div class="relative animate-float">
+            <div class="absolute -inset-4 bg-gold/20 rounded-3xl blur-2xl"></div>
+            <img src="assets/img/prophet-hero.svg" alt="Prophet AA Emmanuel" class="relative rounded-3xl shadow-2xl ring-1 ring-white/20 w-[340px] h-[400px] object-cover" width="340" height="400" />
+            <div class="absolute -bottom-5 -left-5 bg-white rounded-xl shadow-xl px-5 py-3">
+              <p class="font-serif text-navy font-700 text-lg leading-none">Prophet AA Emmanuel</p>
+              <p class="text-xs text-gray-500 mt-1">Founder & Visionary</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a href="#about" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/70 hover:text-gold-light transition" aria-label="Scroll to about">
+      <svg class="h-7 w-7 animate-bounce" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+    </a>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 2. ABOUT THE MINISTRY -->
+  <!-- ===================================================== -->
+  <section id="about" class="py-20 lg:py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-14 items-center">
+        <div class="reveal">
+          <div class="relative">
+            <img src="assets/img/about.svg" alt="Ministry worship and community" class="rounded-2xl shadow-xl w-full" width="900" height="700" loading="lazy" />
+            <div class="absolute -bottom-6 -right-6 hidden sm:block bg-navy text-white rounded-2xl p-6 shadow-xl max-w-[210px]">
+              <p class="font-serif text-3xl text-gold-light font-700">Est. 2008</p>
+              <p class="text-sm text-blue-100/80 mt-1">Serving God and humanity with excellence.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <span class="section-eyebrow">About The Ministry</span>
+          <h2 class="section-title">A House of Faith, Purpose &amp; Power</h2>
+          <p class="mt-5 text-gray-600 leading-relaxed">
+            Prophet AA Emmanuel Ministries is a Christ-centered, Spirit-led ministry committed to
+            restoring hope, healing the broken-hearted, and raising believers who live out their God-given
+            purpose. For over a decade we have carried the gospel across cities and nations through
+            crusades, prophetic conferences, and compassionate outreach.
+          </p>
+
+          <div class="mt-8 grid sm:grid-cols-2 gap-5">
+            <div class="card-soft">
+              <div class="icon-badge">✦</div>
+              <h3 class="font-serif text-xl font-700 text-navy mt-3">Our Vision</h3>
+              <p class="text-sm text-gray-600 mt-2">To raise a generation of believers walking in faith, purpose, and supernatural impact across the nations of the earth.</p>
+            </div>
+            <div class="card-soft">
+              <div class="icon-badge">✚</div>
+              <h3 class="font-serif text-xl font-700 text-navy mt-3">Our Mission</h3>
+              <p class="text-sm text-gray-600 mt-2">To transform lives through prayer, prophecy, sound teaching of God's Word, and acts of love to the broken and needy.</p>
+            </div>
+          </div>
+
+          <blockquote class="mt-8 border-l-4 border-gold pl-5 italic text-navy">
+            "The Spirit of the Lord is upon me, because he hath anointed me to preach the gospel to the poor;
+            he hath sent me to heal the brokenhearted."
+            <footer class="mt-1 not-italic text-sm text-gray-500">— Luke 4:18 (KJV) · Our Scripture Foundation</footer>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 3. MEET PROPHET AA EMMANUEL -->
+  <!-- ===================================================== -->
+  <section id="prophet" class="py-20 lg:py-28 bg-gradient-to-b from-slate-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-5 gap-12 items-center">
+        <div class="lg:col-span-2 reveal">
+          <div class="relative max-w-sm mx-auto">
+            <div class="absolute -inset-3 bg-gradient-to-tr from-gold/30 to-navy/20 rounded-3xl blur-xl"></div>
+            <img src="assets/img/prophet.svg" alt="Portrait of Prophet AA Emmanuel" class="relative rounded-3xl shadow-2xl w-full" width="800" height="1000" loading="lazy" />
+          </div>
+        </div>
+
+        <div class="lg:col-span-3 reveal">
+          <span class="section-eyebrow">Meet The Prophet</span>
+          <h2 class="section-title">Prophet AA Emmanuel</h2>
+          <p class="text-gold-dark font-500 mt-1">Founder · Teacher · Servant of God</p>
+
+          <p class="mt-5 text-gray-600 leading-relaxed">
+            Prophet AA Emmanuel is a passionate minister of the gospel whose life is devoted to seeing
+            men and women encounter the transforming power of Jesus Christ. Known for a prophetic and
+            teaching grace, he ministers with clarity, compassion, and an unwavering commitment to truth.
+          </p>
+
+          <div class="mt-6 space-y-4">
+            <div class="flex gap-4">
+              <span class="timeline-dot">1</span>
+              <div>
+                <h3 class="font-600 text-navy">The Calling</h3>
+                <p class="text-sm text-gray-600">Answered the call to ministry in his early twenties after a profound encounter with God, devoting his life to prayer and the study of the Word.</p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <span class="timeline-dot">2</span>
+              <div>
+                <h3 class="font-600 text-navy">The Journey</h3>
+                <p class="text-sm text-gray-600">From a small fellowship to a thriving ministry, he has hosted crusades and conferences that have gathered thousands seeking restoration.</p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <span class="timeline-dot">3</span>
+              <div>
+                <h3 class="font-600 text-navy">The Impact</h3>
+                <p class="text-sm text-gray-600">Today his message reaches across 30+ nations through live gatherings, media, and humanitarian outreach to the vulnerable.</p>
+              </div>
+            </div>
+          </div>
+
+          <a href="#donate" class="btn-navy mt-8 inline-flex">Join the Mission</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 4. MINISTRY IMPACT -->
+  <!-- ===================================================== -->
+  <section id="impact" class="py-20 lg:py-24 bg-navy relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(circle at 20% 30%, #e6c45a 0, transparent 40%), radial-gradient(circle at 80% 70%, #e6c45a 0, transparent 40%);"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <span class="section-eyebrow text-gold-light">Our Impact</span>
+      <h2 class="section-title text-white">Lives Touched, Nations Reached</h2>
+      <p class="mt-4 text-blue-100/80 max-w-2xl mx-auto">By God's grace, the ministry continues to make a measurable difference across communities and continents.</p>
+
+      <div class="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="stat-card reveal">
+          <p class="stat-number" data-count="125000" data-suffix="+">0</p>
+          <p class="stat-label">Souls Reached</p>
+        </div>
+        <div class="stat-card reveal">
+          <p class="stat-number" data-count="240" data-suffix="+">0</p>
+          <p class="stat-label">Community Projects</p>
+        </div>
+        <div class="stat-card reveal">
+          <p class="stat-number" data-count="58000" data-suffix="+">0</p>
+          <p class="stat-label">Prayer Requests Handled</p>
+        </div>
+        <div class="stat-card reveal">
+          <p class="stat-number" data-count="32" data-suffix="">0</p>
+          <p class="stat-label">Countries Impacted</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 5. GALLERY -->
+  <!-- ===================================================== -->
+  <section id="gallery" class="py-20 lg:py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <span class="section-eyebrow">Gallery</span>
+        <h2 class="section-title">Moments of Faith &amp; Fellowship</h2>
+        <p class="mt-4 text-gray-600">Glimpses from our services, crusades, conferences, and outreach programs.</p>
+      </div>
+
+      <div class="mt-12 grid grid-cols-2 lg:grid-cols-4 auto-rows-[180px] sm:auto-rows-[220px] gap-4">
+        <figure class="gallery-item row-span-2"><img src="assets/img/gallery-1.svg" alt="Church service" loading="lazy" /><figcaption>Sunday Service</figcaption></figure>
+        <figure class="gallery-item"><img src="assets/img/gallery-2.svg" alt="Crusade night" loading="lazy" /><figcaption>Crusade Night</figcaption></figure>
+        <figure class="gallery-item"><img src="assets/img/gallery-3.svg" alt="Annual conference" loading="lazy" /><figcaption>Annual Conference</figcaption></figure>
+        <figure class="gallery-item row-span-2"><img src="assets/img/gallery-4.svg" alt="Community outreach" loading="lazy" /><figcaption>Community Outreach</figcaption></figure>
+        <figure class="gallery-item"><img src="assets/img/gallery-5.svg" alt="Prayer vigil" loading="lazy" /><figcaption>Prayer Vigil</figcaption></figure>
+        <figure class="gallery-item"><img src="assets/img/gallery-6.svg" alt="Youth revival" loading="lazy" /><figcaption>Youth Revival</figcaption></figure>
+        <figure class="gallery-item"><img src="assets/img/gallery-7.svg" alt="Baptism service" loading="lazy" /><figcaption>Baptism Service</figcaption></figure>
+        <figure class="gallery-item"><img src="assets/img/gallery-8.svg" alt="Charity mission" loading="lazy" /><figcaption>Charity Mission</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 6. SERMONS & MESSAGES -->
+  <!-- ===================================================== -->
+  <section id="sermons" class="py-20 lg:py-28 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 reveal">
+        <div>
+          <span class="section-eyebrow">Sermons &amp; Messages</span>
+          <h2 class="section-title">Recent Messages</h2>
+        </div>
+        <a href="#" class="text-navy font-600 hover:text-gold-dark transition inline-flex items-center gap-1">View all messages →</a>
+      </div>
+
+      <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
+        <!-- Sermon card -->
+        <article class="sermon-card reveal">
+          <div class="relative">
+            <img src="assets/img/sermon-1.svg" alt="The Power of Faith sermon thumbnail" loading="lazy" />
+            <a href="#" class="play-overlay" aria-label="Watch: The Power of Faith"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></a>
+          </div>
+          <div class="p-5">
+            <time class="text-xs text-gold-dark font-600 uppercase tracking-wide">May 18, 2026</time>
+            <h3 class="font-serif text-xl font-700 text-navy mt-1">The Power of Faith</h3>
+            <p class="text-sm text-gray-600 mt-2">Discover how unwavering faith unlocks the supernatural and moves the hand of God in your life.</p>
+            <a href="#" class="btn-watch mt-4">▶ Watch Message</a>
+          </div>
+        </article>
+
+        <article class="sermon-card reveal">
+          <div class="relative">
+            <img src="assets/img/sermon-2.svg" alt="Walking in Purpose sermon thumbnail" loading="lazy" />
+            <a href="#" class="play-overlay" aria-label="Watch: Walking in Purpose"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></a>
+          </div>
+          <div class="p-5">
+            <time class="text-xs text-gold-dark font-600 uppercase tracking-wide">May 4, 2026</time>
+            <h3 class="font-serif text-xl font-700 text-navy mt-1">Walking in Purpose</h3>
+            <p class="text-sm text-gray-600 mt-2">Understand God's unique design for your life and learn to walk boldly in your divine assignment.</p>
+            <a href="#" class="btn-watch mt-4">▶ Watch Message</a>
+          </div>
+        </article>
+
+        <article class="sermon-card reveal">
+          <div class="relative">
+            <img src="assets/img/sermon-3.svg" alt="Breaking Every Chain sermon thumbnail" loading="lazy" />
+            <a href="#" class="play-overlay" aria-label="Watch: Breaking Every Chain"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></a>
+          </div>
+          <div class="p-5">
+            <time class="text-xs text-gold-dark font-600 uppercase tracking-wide">April 20, 2026</time>
+            <h3 class="font-serif text-xl font-700 text-navy mt-1">Breaking Every Chain</h3>
+            <p class="text-sm text-gray-600 mt-2">A prophetic word of deliverance — receive freedom from every limitation through the name of Jesus.</p>
+            <a href="#" class="btn-watch mt-4">▶ Watch Message</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 7. PARTNERSHIP & DONATIONS -->
+  <!-- ===================================================== -->
+  <section id="donate" class="py-20 lg:py-28 bg-gradient-to-br from-navy-dark via-navy to-navy-light relative overflow-hidden">
+    <div class="absolute -top-24 -right-24 h-72 w-72 bg-gold/20 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-24 -left-24 h-72 w-72 bg-gold/10 rounded-full blur-3xl"></div>
+
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <span class="section-eyebrow text-gold-light">Partnership &amp; Giving</span>
+        <h2 class="section-title text-white">Sow Into Lives That Will Never Be the Same</h2>
+        <p class="mt-4 text-blue-100/85">Your generous partnership fuels crusades, outreaches, and the spread of the gospel to the nations. Every seed counts — give cheerfully and become part of the story.</p>
+      </div>
+
+      <div class="mt-12 grid lg:grid-cols-2 gap-8">
+        <!-- Donation amount cards + form -->
+        <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 reveal">
+          <h3 class="font-serif text-2xl font-700 text-navy">Make a Donation</h3>
+          <p class="text-sm text-gray-500 mt-1">Choose an amount or enter your own.</p>
+
+          <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3" id="amountGrid">
+            <button type="button" class="amount-card" data-amount="5000">₦5,000</button>
+            <button type="button" class="amount-card" data-amount="10000">₦10,000</button>
+            <button type="button" class="amount-card" data-amount="25000">₦25,000</button>
+            <button type="button" class="amount-card" data-amount="50000">₦50,000</button>
+            <button type="button" class="amount-card" data-amount="100000">₦100,000</button>
+            <button type="button" class="amount-card" data-amount="custom">Custom</button>
+          </div>
+
+          <form id="donationForm" class="mt-6 space-y-4" novalidate>
+            <div>
+              <label for="donorName" class="form-label">Full Name</label>
+              <input id="donorName" name="name" type="text" required autocomplete="name" class="form-input" placeholder="John Doe" />
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label for="donorEmail" class="form-label">Email</label>
+                <input id="donorEmail" name="email" type="email" required autocomplete="email" class="form-input" placeholder="you@email.com" />
+              </div>
+              <div>
+                <label for="donorPhone" class="form-label">Phone Number</label>
+                <input id="donorPhone" name="phone" type="tel" required autocomplete="tel" class="form-input" placeholder="+234 800 000 0000" />
+              </div>
+            </div>
+            <div>
+              <label for="donorAmount" class="form-label">Amount (₦)</label>
+              <input id="donorAmount" name="amount" type="number" min="100" step="100" required inputmode="numeric" class="form-input" placeholder="Enter amount" />
+            </div>
+            <button type="submit" class="btn-gold w-full justify-center text-base py-3.5">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+              Donate Securely
+            </button>
+            <p class="text-xs text-gray-400 text-center flex items-center justify-center gap-1">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Secured by Paystack · 100% goes to the ministry
+            </p>
+          </form>
+        </div>
+
+        <!-- Partnership info -->
+        <div class="text-white reveal flex flex-col justify-center">
+          <h3 class="font-serif text-3xl font-700">Why Partner With Us?</h3>
+          <ul class="mt-6 space-y-5">
+            <li class="flex gap-4">
+              <span class="partner-check">✓</span>
+              <div><p class="font-600">Spread the Gospel</p><p class="text-sm text-blue-100/75">Help us reach unreached communities with crusades and media broadcasts.</p></div>
+            </li>
+            <li class="flex gap-4">
+              <span class="partner-check">✓</span>
+              <div><p class="font-600">Empower the Needy</p><p class="text-sm text-blue-100/75">Fund food drives, scholarships, and medical outreaches for the vulnerable.</p></div>
+            </li>
+            <li class="flex gap-4">
+              <span class="partner-check">✓</span>
+              <div><p class="font-600">Build God's House</p><p class="text-sm text-blue-100/75">Support facilities and resources that nurture believers in their faith.</p></div>
+            </li>
+          </ul>
+          <div class="mt-8 bg-white/10 backdrop-blur rounded-xl p-5 border border-white/15">
+            <p class="italic text-blue-50">"Give, and it shall be given unto you; good measure, pressed down, and shaken together, and running over."</p>
+            <p class="text-sm text-gold-light mt-2">— Luke 6:38</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 8. TESTIMONIES -->
+  <!-- ===================================================== -->
+  <section id="testimonies" class="py-20 lg:py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <span class="section-eyebrow">Testimonies</span>
+        <h2 class="section-title">Changed Lives, Grateful Hearts</h2>
+        <p class="mt-4 text-gray-600">Real stories from people who encountered God through this ministry.</p>
+      </div>
+
+      <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
+        <figure class="testimony-card reveal">
+          <p class="text-gold text-4xl font-serif leading-none">“</p>
+          <blockquote class="text-gray-600 -mt-3">After years of waiting, God blessed my family with a child following the prophetic prayer. I am forever grateful to this ministry.</blockquote>
+          <figcaption class="mt-5 flex items-center gap-3">
+            <img src="assets/img/testimony-1.svg" alt="Grace A." class="h-12 w-12 rounded-full object-cover" loading="lazy" />
+            <div><p class="font-600 text-navy">Grace A.</p><p class="text-xs text-gray-500">Lagos, Nigeria</p></div>
+          </figcaption>
+        </figure>
+
+        <figure class="testimony-card reveal">
+          <p class="text-gold text-4xl font-serif leading-none">“</p>
+          <blockquote class="text-gray-600 -mt-3">I was at the lowest point of my life when I joined a service online. The Word restored my hope and I found a new job within weeks.</blockquote>
+          <figcaption class="mt-5 flex items-center gap-3">
+            <img src="assets/img/testimony-2.svg" alt="Daniel O." class="h-12 w-12 rounded-full object-cover" loading="lazy" />
+            <div><p class="font-600 text-navy">Daniel O.</p><p class="text-xs text-gray-500">Abuja, Nigeria</p></div>
+          </figcaption>
+        </figure>
+
+        <figure class="testimony-card reveal">
+          <p class="text-gold text-4xl font-serif leading-none">“</p>
+          <blockquote class="text-gray-600 -mt-3">The medical outreach saved my mother's life. This ministry truly cares for people beyond the pulpit. God bless Prophet Emmanuel.</blockquote>
+          <figcaption class="mt-5 flex items-center gap-3">
+            <img src="assets/img/testimony-3.svg" alt="Mary E." class="h-12 w-12 rounded-full object-cover" loading="lazy" />
+            <div><p class="font-600 text-navy">Mary E.</p><p class="text-xs text-gray-500">Accra, Ghana</p></div>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- 9. CONTACT US -->
+  <!-- ===================================================== -->
+  <section id="contact" class="py-20 lg:py-28 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12">
+        <div class="reveal">
+          <span class="section-eyebrow">Get In Touch</span>
+          <h2 class="section-title">We'd Love to Hear From You</h2>
+          <p class="mt-4 text-gray-600">Whether you need prayer, have a question, or want to partner — reach out and our team will respond.</p>
+
+          <ul class="mt-8 space-y-5">
+            <li class="contact-row">
+              <span class="contact-icon">📍</span>
+              <div><p class="font-600 text-navy">Address</p><p class="text-sm text-gray-600">12 Grace Avenue, Victoria Island, Lagos, Nigeria</p></div>
+            </li>
+            <li class="contact-row">
+              <span class="contact-icon">✉️</span>
+              <div><p class="font-600 text-navy">Email</p><a href="mailto:hello@aaemmanuelministries.org" class="text-sm text-gray-600 hover:text-gold-dark">hello@aaemmanuelministries.org</a></div>
+            </li>
+            <li class="contact-row">
+              <span class="contact-icon">📞</span>
+              <div><p class="font-600 text-navy">Phone</p><a href="tel:+2348000000000" class="text-sm text-gray-600 hover:text-gold-dark">+234 800 000 0000</a></div>
+            </li>
+          </ul>
+
+          <a href="https://wa.me/2348000000000" target="_blank" rel="noopener" class="mt-8 inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1eb858] text-white font-600 px-6 py-3 rounded-full transition shadow-lg">
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+            Chat on WhatsApp
+          </a>
+        </div>
+
+        <div class="reveal">
+          <form id="contactForm" class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 space-y-4" novalidate>
+            <div>
+              <label for="cName" class="form-label">Full Name</label>
+              <input id="cName" name="name" type="text" required autocomplete="name" class="form-input" placeholder="Your name" />
+            </div>
+            <div>
+              <label for="cEmail" class="form-label">Email</label>
+              <input id="cEmail" name="email" type="email" required autocomplete="email" class="form-input" placeholder="you@email.com" />
+            </div>
+            <div>
+              <label for="cSubject" class="form-label">Subject</label>
+              <input id="cSubject" name="subject" type="text" class="form-input" placeholder="How can we help?" />
+            </div>
+            <div>
+              <label for="cMessage" class="form-label">Message</label>
+              <textarea id="cMessage" name="message" rows="4" required class="form-input resize-none" placeholder="Write your message or prayer request..."></textarea>
+            </div>
+            <button type="submit" class="btn-navy w-full justify-center py-3.5">Send Message</button>
+            <p id="contactStatus" class="text-sm text-center text-green-600 hidden">Thank you! Your message has been received.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <!-- ===================================================== -->
+  <!-- 10. FOOTER -->
+  <!-- ===================================================== -->
+  <footer class="bg-navy-dark text-blue-100/80">
+    <!-- Donation CTA strip -->
+    <div class="bg-gradient-to-r from-gold-dark to-gold">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-navy-dark text-center sm:text-left">
+          <p class="font-serif text-2xl font-700">Your seed can change a life today.</p>
+          <p class="text-navy/80 text-sm">Partner with Prophet AA Emmanuel Ministries.</p>
+        </div>
+        <a href="#donate" class="bg-navy hover:bg-navy-dark text-white font-600 px-7 py-3 rounded-full transition shadow-lg whitespace-nowrap">Give Now</a>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div>
+        <div class="flex items-center gap-3">
+          <img src="assets/img/logo.svg" alt="Ministry logo" class="h-11 w-11" width="44" height="44" />
+          <span class="font-serif text-lg font-700 text-white">AA Emmanuel<br/>Ministries</span>
+        </div>
+        <p class="mt-4 text-sm leading-relaxed">Transforming lives through prayer, prophecy, and God's Word across the nations.</p>
+      </div>
+
+      <div>
+        <h4 class="footer-title">Quick Links</h4>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li><a href="#about" class="footer-link">About</a></li>
+          <li><a href="#prophet" class="footer-link">The Prophet</a></li>
+          <li><a href="#sermons" class="footer-link">Messages</a></li>
+          <li><a href="#gallery" class="footer-link">Gallery</a></li>
+          <li><a href="#contact" class="footer-link">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-title">Get Involved</h4>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li><a href="#donate" class="footer-link">Partner / Donate</a></li>
+          <li><a href="#testimonies" class="footer-link">Testimonies</a></li>
+          <li><a href="#impact" class="footer-link">Our Impact</a></li>
+          <li><a href="https://wa.me/2348000000000" class="footer-link">Prayer Request</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-title">Connect</h4>
+        <p class="mt-4 text-sm">Follow us on social media for daily inspiration.</p>
+        <div class="mt-4 flex gap-3">
+          <a href="#" aria-label="Facebook" class="social-icon"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879v-6.987H7.898v-2.892h2.54V9.797c0-2.507 1.492-3.892 3.777-3.892 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg></a>
+          <a href="#" aria-label="Instagram" class="social-icon"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+          <a href="#" aria-label="YouTube" class="social-icon"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+          <a href="#" aria-label="X (Twitter)" class="social-icon"><svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+        <p>&copy; <span id="year"></span> Prophet AA Emmanuel Ministries. All rights reserved.</p>
+        <p class="text-blue-100/50">Built with faith · Privacy Policy · Terms</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button id="toTop" class="fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full bg-navy text-white shadow-lg hidden items-center justify-center hover:bg-gold hover:text-navy transition" aria-label="Back to top">
+    <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+  </button>
+
+  <!-- ===================================================== -->
+  <!-- DONATION MODAL -->
+  <!-- ===================================================== -->
+  <div id="donationModal" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="absolute inset-0 bg-navy-dark/70 backdrop-blur-sm" data-close-modal></div>
+    <div class="relative min-h-full flex items-center justify-center p-4">
+      <div id="modalPanel" class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+        <div class="bg-gradient-to-r from-navy to-navy-light p-6 text-white relative">
+          <button data-close-modal class="absolute top-4 right-4 text-white/80 hover:text-white" aria-label="Close">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+          <h3 id="modalTitle" class="font-serif text-2xl font-700">Confirm Your Donation</h3>
+          <p class="text-sm text-blue-100/80 mt-1">You're about to bless this ministry. Thank you!</p>
+        </div>
+
+        <div class="p-6">
+          <dl class="space-y-3 text-sm">
+            <div class="flex justify-between"><dt class="text-gray-500">Name</dt><dd id="sumName" class="font-600 text-navy">—</dd></div>
+            <div class="flex justify-between"><dt class="text-gray-500">Email</dt><dd id="sumEmail" class="font-600 text-navy">—</dd></div>
+            <div class="flex justify-between"><dt class="text-gray-500">Phone</dt><dd id="sumPhone" class="font-600 text-navy">—</dd></div>
+          </dl>
+          <div class="mt-5 bg-slate-50 rounded-xl p-5 text-center">
+            <p class="text-xs uppercase tracking-wide text-gray-500">Donation Amount</p>
+            <p id="sumAmount" class="font-serif text-4xl font-700 text-navy mt-1">₦0</p>
+          </div>
+
+          <button id="payNowBtn" class="btn-gold w-full justify-center mt-6 py-3.5 text-base">
+            Pay with Paystack
+          </button>
+          <button data-close-modal class="w-full text-center text-sm text-gray-500 mt-3 hover:text-navy">Cancel</button>
+
+          <p class="text-[11px] text-gray-400 text-center mt-4 leading-relaxed">
+            🔒 Demo mode: Paystack is not yet configured. Add your public key in
+            <code class="text-gray-500">assets/js/main.js</code> to enable live payments.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

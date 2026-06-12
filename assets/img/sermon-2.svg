@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img" aria-label="Walking in Purpose">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1f4d"/>
+      <stop offset="1" stop-color="#16306e"/>
+    </linearGradient>
+    <radialGradient id="gl" cx="0.5" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="rgba(230,196,90,0.18)"/>
+      <stop offset="1" stop-color="rgba(230,196,90,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <rect width="800" height="450" fill="url(#gl)"/>
+  <circle cx="400.0" cy="207.0" r="58.5" fill="rgba(230,196,90,0.18)" stroke="#e6c45a" stroke-width="2"/><path d="M379.75 175.5 L431.5 207.0 L379.75 238.5 Z" fill="#e6c45a"/>
+  <text x="400.0" y="315.0" text-anchor="middle" font-family="Georgia, serif" font-size="27" fill="#ffffff" letter-spacing="1">Walking in Purpose</text>
+  <text x="400.0" y="351.0" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#cdd6ea" opacity="0.8">Watch message</text>
+</svg>
