@@ -153,7 +153,7 @@
 
   donationForm?.addEventListener("submit", (e) => {
     e.preventDefault();
-    const fields = ["#donorName", "#donorEmail", "#donorPhone", "#donorAmount"].map($);
+    const fields = ["#donorName", "#donorEmail", "#donorPhone", "#donorAmount"].map((s) => $(s));
     const allValid = fields.map(validateField).every(Boolean);
     const amount = parseInt(amountInput.value, 10) || 0;
     if (!allValid || amount < 100) {
@@ -216,7 +216,7 @@
   const contactForm = $("#contactForm");
   contactForm?.addEventListener("submit", (e) => {
     e.preventDefault();
-    const fields = ["#cName", "#cEmail", "#cMessage"].map($);
+    const fields = ["#cName", "#cEmail", "#cMessage"].map((s) => $(s));
     const valid = fields.map(validateField).every(Boolean);
     if (!valid) {
       showToast("Please fill in your name, email, and message.");

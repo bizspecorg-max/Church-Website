@@ -40,9 +40,13 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 
 ## 🖼️ Replace placeholder images
 
-All images live in `assets/img/` as lightweight SVG placeholders. Swap them
-for real `.jpg`/`.webp` photos (keep the same filename, or update the `src`
-in `index.html`):
+Each `<img>` loads a professional **Unsplash stock photo** as its `src`, with a
+local branded **SVG in `assets/img/` as an automatic `onerror` fallback** — so
+if a photo ever fails to load (offline, blocked, etc.) the site degrades to a
+clean placeholder instead of a broken image.
+
+To use your **own** photos, just replace the Unsplash URL in each `<img src="...">`
+(or drop files into `assets/img/` and point `src` there). The fallback SVGs are:
 
 | File | Used for |
 |------|----------|
