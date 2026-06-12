@@ -34,8 +34,12 @@
           body: JSON.stringify({ _subject: subject, _replyto: data.Email || NOTIFY_EMAIL, ...data }),
         });
         if (res.ok) return true;
-      } catch (_) { /* fall through to mailto */ }
+      } catch (_) { /* fall through */ }
     }
+    // When Supabase is the system of record, DON'T pop the email client —
+    // it can interrupt the database insert. The DB keeps the submission.
+    if (window.MinistryDB && MinistryDB.enabled) return false;
+    // Last resort (no DB, no Formspree): open a pre-filled email.
     const body = Object.entries(data).map(([k, v]) => `${k}: ${v}`).join("\n");
     window.location.href =
       `mailto:${NOTIFY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -79,57 +83,72 @@
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !videoModal.classList.contains("hidden")) closeVideo(); });
   }
 
-  /* ---------- Render messages ----------
-     Source: Supabase `videos` table when configured, else config.sermons.
-     Videos with a YouTube link play INSIDE the site via the modal above. */
-  const sermonGrid = $("#sermonGrid");
-  const renderSermons = (list) => {
-    if (!sermonGrid) return;
+  /* ---------- Render video sections ----------
+     Source: Supabase `videos` table (grouped by `section`), else config.
+     mode "inline" → plays on-site in the popup; "link" → opens YouTube. */
+  const videoWrap = $("#videoSections");
+  const FB_THUMBS = ["assets/img/sermon-1.svg", "assets/img/sermon-2.svg", "assets/img/sermon-3.svg"];
+  const videoCard = (s, i) => {
+    const id = youtubeId(s.youtube || "");
+    const fb = FB_THUMBS[i % 3];
+    const thumb = s.thumbnail || (id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : fb);
+    const safeTitle = (s.title || "Message").replace(/"/g, "&quot;");
+    const linkOut = s.mode === "link" || !id;
+    const href = s.youtube || CFG.youtubeChannel || "#";
+    const media = linkOut
+      ? `<a href="${href}" target="_blank" rel="noopener" class="block relative">
+           <img src="${thumb}" onerror="this.onerror=null;this.src='${fb}'" alt="${safeTitle}" loading="lazy" class="w-full" />
+           <span class="play-overlay"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+         </a>`
+      : `<button type="button" class="block relative w-full cursor-pointer" data-vid="${id}" data-title="${safeTitle}" aria-label="Play: ${safeTitle}">
+           <img src="${thumb}" onerror="this.onerror=null;this.src='${fb}'" alt="${safeTitle}" loading="lazy" class="w-full" />
+           <span class="play-overlay"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+         </button>`;
+    const cta = linkOut
+      ? `<a href="${href}" target="_blank" rel="noopener" class="btn-watch mt-4">▶ Watch on YouTube</a>`
+      : `<button type="button" class="btn-watch mt-4" data-vid="${id}" data-title="${safeTitle}">▶ Watch Message</button>`;
+    return `<article class="sermon-card reveal visible">
+        ${media}
+        <div class="p-5">
+          <time class="text-xs text-gold-dark font-600 uppercase tracking-wide">${s.date || ""}</time>
+          <h3 class="font-serif text-xl font-700 text-navy mt-1">${safeTitle}</h3>
+          <p class="text-sm text-gray-600 mt-2">${s.blurb || ""}</p>
+          ${cta}
+        </div>
+      </article>`;
+  };
+  const renderVideos = (list) => {
+    if (!videoWrap) return;
     const items = Array.isArray(list) ? list : [];
-    const fallbacks = ["assets/img/sermon-1.svg", "assets/img/sermon-2.svg", "assets/img/sermon-3.svg"];
-    const channel = CFG.youtubeChannel || "#";
-    sermonGrid.innerHTML = items.map((s, i) => {
-      const id = youtubeId(s.youtube || "");
-      const fb = fallbacks[i % 3];
-      const thumb = s.thumbnail || (id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : fb);
-      const safeTitle = (s.title || "Message").replace(/"/g, "&quot;");
-      const attr = id ? `data-vid="${id}" data-title="${safeTitle}"` : "";
-      const media = id
-        ? `<button type="button" class="block relative w-full cursor-pointer" ${attr} aria-label="Play: ${safeTitle}">
-             <img src="${thumb}" onerror="this.onerror=null;this.src='${fb}'" alt="${safeTitle}" loading="lazy" class="w-full" />
-             <span class="play-overlay"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-           </button>`
-        : `<a href="${channel}" target="_blank" rel="noopener" class="block relative">
-             <img src="${fb}" alt="${safeTitle}" loading="lazy" class="w-full" />
-             <span class="play-overlay"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
-           </a>`;
-      const cta = id
-        ? `<button type="button" class="btn-watch mt-4" ${attr}>▶ Watch Message</button>`
-        : `<a href="${channel}" target="_blank" rel="noopener" class="btn-watch mt-4">▶ Watch on YouTube</a>`;
-      return `<article class="sermon-card reveal visible">
-          ${media}
-          <div class="p-5">
-            <time class="text-xs text-gold-dark font-600 uppercase tracking-wide">${s.date || ""}</time>
-            <h3 class="font-serif text-xl font-700 text-navy mt-1">${safeTitle}</h3>
-            <p class="text-sm text-gray-600 mt-2">${s.blurb || ""}</p>
-            ${cta}
-          </div>
-        </article>`;
-    }).join("");
+    const order = [];
+    const groups = {};
+    items.forEach((it) => {
+      const sec = it.section || "Recent Messages";
+      if (!groups[sec]) { groups[sec] = []; order.push(sec); }
+      groups[sec].push(it);
+    });
+    videoWrap.innerHTML = order.map((sec) => `
+      <div class="reveal visible">
+        <h3 class="font-serif text-2xl font-700 text-navy mb-5 flex items-center gap-3">
+          <span class="h-6 w-1.5 rounded bg-gold"></span>${sec}
+        </h3>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
+          ${groups[sec].map((s, i) => videoCard(s, i)).join("")}
+        </div>
+      </div>`).join("");
   };
   // Clicks on any play control open the inline player.
-  sermonGrid?.addEventListener("click", (e) => {
+  videoWrap?.addEventListener("click", (e) => {
     const t = e.target.closest("[data-vid]");
     if (t) { e.preventDefault(); openVideo(t.dataset.vid, t.dataset.title); }
   });
-
   // Render instantly from config, then upgrade from Supabase if available.
-  renderSermons(CFG.sermons || []);
+  renderVideos(CFG.sermons || []);
   (async () => {
     if (window.MinistryDB && MinistryDB.enabled && MinistryDB.getVideos) {
       try {
         const rows = await MinistryDB.getVideos();
-        if (rows && rows.length) renderSermons(rows);
+        if (rows && rows.length) renderVideos(rows);
       } catch (_) { /* keep config fallback */ }
     }
   })();
@@ -469,11 +488,9 @@
   /* =========================================================
      HERO SLIDER  (multiple banner images, click prev/next/dots)
      ========================================================= */
-  (function heroSlider() {
+  const buildHero = (imgs) => {
     const wrap = $("#heroSlides");
-    if (!wrap) return;
-    const imgs = (Array.isArray(CFG.heroSlides) && CFG.heroSlides.length)
-      ? CFG.heroSlides : ["assets/img/hero-banner.svg"];
+    if (!wrap || !imgs.length) return;
     wrap.innerHTML = imgs.map((src, i) =>
       `<div class="hero-slide ${i === 0 ? "active" : ""}" style="background-image:url('${src}')"></div>`).join("");
     const dotsWrap = $("#heroDots");
@@ -493,6 +510,15 @@
     $("#heroPrev")?.addEventListener("click", () => { go(idx - 1); start(); });
     dots.forEach((d) => d.addEventListener("click", () => { go(+d.dataset.i); start(); }));
     start();
+  };
+  // Hero images: from Supabase `hero_slides` when available, else config.
+  (async function heroSlider() {
+    let imgs = (Array.isArray(CFG.heroSlides) && CFG.heroSlides.length)
+      ? CFG.heroSlides.slice() : ["assets/img/hero-banner.svg"];
+    if (window.MinistryDB && MinistryDB.enabled && MinistryDB.getHeroSlides) {
+      try { const rows = await MinistryDB.getHeroSlides(); if (rows && rows.length) imgs = rows; } catch (_) {}
+    }
+    buildHero(imgs);
   })();
 
   /* ---------- Mobile dropdown accordions ---------- */

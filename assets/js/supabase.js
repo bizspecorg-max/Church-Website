@@ -45,21 +45,35 @@
       return { ok: !error, error };
     },
 
-    /* ---- Videos / Messages ---- */
+    /* ---- Videos / Messages (grouped into sections) ---- */
     async getVideos() {
       if (!client) return [];
       const { data, error } = await client
         .from("videos")
-        .select("title, category, youtube_url, description, sort_order, published")
+        .select("title, section, category, youtube_url, description, play_mode, sort_order, published")
         .eq("published", true)
         .order("sort_order", { ascending: true });
       if (error || !data) return [];
       return data.map((r) => ({
         title: r.title,
+        section: r.section || "Recent Messages",
         date: r.category || "",
         youtube: r.youtube_url || "",
         blurb: r.description || "",
+        mode: r.play_mode || "inline", // "inline" = play on-site, "link" = open YouTube
       }));
+    },
+
+    /* ---- Hero slider images ---- */
+    async getHeroSlides() {
+      if (!client) return [];
+      const { data, error } = await client
+        .from("hero_slides")
+        .select("image_url, sort_order, published")
+        .eq("published", true)
+        .order("sort_order", { ascending: true });
+      if (error || !data) return [];
+      return data.map((r) => r.image_url).filter(Boolean);
     },
 
     /* ---- Auth ---- */

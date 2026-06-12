@@ -451,14 +451,15 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 reveal">
         <div>
-          <span class="section-eyebrow">Sermons &amp; Messages</span>
-          <h2 class="section-title">Recent Messages</h2>
+          <span class="section-eyebrow">Watch &amp; Be Blessed</span>
+          <h2 class="section-title">Messages &amp; Videos</h2>
         </div>
-        <a id="allMessagesLink" href="#" target="_blank" rel="noopener" class="text-navy font-600 hover:text-gold-dark transition inline-flex items-center gap-1">View all messages →</a>
+        <a id="allMessagesLink" href="#" target="_blank" rel="noopener" class="text-navy font-600 hover:text-gold-dark transition inline-flex items-center gap-1">Visit our YouTube channel →</a>
       </div>
 
-      <!-- Cards are generated from MINISTRY_CONFIG.sermons (see assets/js/config.js) -->
-      <div id="sermonGrid" class="mt-9 grid sm:grid-cols-2 lg:grid-cols-3 gap-7"></div>
+      <!-- Video sections are generated from the Supabase `videos` table,
+           grouped by their `section`. Falls back to MINISTRY_CONFIG.sermons. -->
+      <div id="videoSections" class="mt-9 space-y-12"></div>
     </div>
   </section>
 
