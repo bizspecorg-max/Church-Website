@@ -91,6 +91,14 @@
   const allLink = $("#allMessagesLink");
   if (allLink && CFG.youtubeChannel) allLink.href = CFG.youtubeChannel;
 
+  /* ---------- Prophet photo from a URL (optional) ---------- */
+  if (CFG.prophetPhoto) {
+    ["#prophetHeroImg", "#prophetImg"].forEach((sel) => {
+      const el = $(sel);
+      if (el) el.src = CFG.prophetPhoto;
+    });
+  }
+
   /* ---------- Contact details from config ---------- */
   const c = CFG.contact || {};
   const setText = (sel, val) => { const el = $(sel); if (el && val) el.textContent = val; };

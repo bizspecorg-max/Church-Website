@@ -23,6 +23,14 @@ window.MINISTRY_CONFIG = {
   notifyEmail:  "koredebusuyi.career@gmail.com",
   formEndpoint: "",                 // e.g. "https://formspree.io/f/abcdwxyz"
 
+  /* ---------- Prophet's photo ----------
+     Two ways to set the Prophet's real picture:
+       1. Save the image as  assets/img/prophet.jpg  (recommended), OR
+       2. Paste a public image URL here (e.g. from your phone/cloud).
+     If left "", option 1 (the local file) is used, with a placeholder
+     shown until you add it. */
+  prophetPhoto: "",
+
   /* ---------- YouTube ----------
      Channel link used by the hero "Watch Messages" button and
      the "View all messages" link. */
