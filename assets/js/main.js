@@ -120,6 +120,20 @@
   const renderVideos = (list) => {
     if (!videoWrap) return;
     const items = Array.isArray(list) ? list : [];
+
+    // Big featured player = first inline video, full width, image fills.
+    const feat = $("#featuredVideo");
+    if (feat) {
+      const f = items.find((s) => s.mode !== "link" && youtubeId(s.youtube));
+      if (f) {
+        const fid = youtubeId(f.youtube);
+        feat.innerHTML = `<div class="rounded-2xl overflow-hidden shadow-2xl ring-1 ring-slate-200 bg-black reveal visible">
+          <div class="relative aspect-video"><iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${fid}?rel=0&modestbranding=1" title="Featured video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+          <div class="bg-white p-5"><p class="text-xs text-gold-dark font-600 uppercase tracking-wide">▶ Featured Message</p><h3 class="font-serif text-2xl font-700 text-navy mt-1">${(f.title || "").replace(/</g, "&lt;")}</h3><p class="text-sm text-gray-600 mt-1">${(f.blurb || "").replace(/</g, "&lt;")}</p></div>
+        </div>`;
+      } else { feat.innerHTML = ""; }
+    }
+
     const order = [];
     const groups = {};
     items.forEach((it) => {

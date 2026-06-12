@@ -58,9 +58,11 @@
     /* ---- Videos / Messages (grouped into sections) ---- */
     async getVideos() {
       if (!client) return [];
+      // select("*") so it works whether or not the section/play_mode columns
+      // have been added yet — the DB always drives the site.
       const { data, error } = await client
         .from("videos")
-        .select("title, section, category, youtube_url, description, play_mode, sort_order, published")
+        .select("*")
         .eq("published", true)
         .order("sort_order", { ascending: true });
       if (error || !data) return [];
@@ -70,7 +72,7 @@
         date: r.category || "",
         youtube: r.youtube_url || "",
         blurb: r.description || "",
-        mode: r.play_mode || "inline", // "inline" = play on-site, "link" = open YouTube
+        mode: r.play_mode || "inline",
       }));
     },
 
@@ -79,7 +81,7 @@
       if (!client) return [];
       const { data, error } = await client
         .from("hero_slides")
-        .select("image_url, sort_order, published")
+        .select("*")
         .eq("published", true)
         .order("sort_order", { ascending: true });
       if (error || !data) return [];

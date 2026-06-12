@@ -24,8 +24,7 @@ section[id] { scroll-margin-top: 5.5rem; }   /* offset for the fixed header */
 .font-700 { font-weight: 700; }
 
 /* ---------- Header: two-tier (utility bar + dark nav) ---------- */
-#topbar { transition: max-height .35s ease, opacity .25s ease; max-height: 60px; overflow: hidden; }
-#header.scrolled #topbar { max-height: 0; opacity: 0; }      /* tuck away on scroll */
+/* The whole header is position:fixed, so the address bar stays put. */
 #navbar { background: var(--navy-dark); }
 #header.scrolled #navbar { box-shadow: 0 6px 24px rgba(8, 22, 52, 0.35); }
 
