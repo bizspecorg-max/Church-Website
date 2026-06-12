@@ -142,6 +142,59 @@ formEndpoint: "",                              // see below
 
 Donation emails include the donor's name, email, phone, and amount.
 
+## 🎬 Watch Live, opening popup & partnership tiers
+
+- **Watch Live** — the `#watch` section embeds `liveEmbedUrl` from `config.js`.
+  Use your channel's `/live` URL or any YouTube link; the buttons point to
+  `youtubeChannel`.
+- **Opening donation popup** — greets visitors on arrival and is fully closable
+  (X, backdrop, Esc, or "continue to website"). Control it in `config.js`:
+  `showPopup`, `popupOnce` (once per visit vs every load), `popupDelay`.
+- **Partnership tiers** — the monthly-giving cards render from
+  `config.partnership`. "Become a Partner" pre-fills the donation form.
+
+## 🗄️ Supabase backend (optional) — login + saving submissions
+
+The site works fully without a backend. Adding Supabase unlocks **member
+login/sign-up** and **saving Contact + Donation submissions to a database**.
+
+1. Create a free project at **[supabase.com](https://supabase.com)**.
+2. **Settings → API** → copy the **Project URL** and the **anon public key**.
+3. Paste them into `assets/js/config.js`:
+   ```js
+   supabaseUrl:     "https://xxxxxxxx.supabase.co",
+   supabaseAnonKey: "eyJhbGciOi...your-anon-key...",
+   ```
+4. In Supabase **SQL Editor**, run this to create the tables:
+   ```sql
+   create table public.contacts (
+     id uuid primary key default gen_random_uuid(),
+     name text, email text, subject text, message text,
+     created_at timestamptz default now()
+   );
+   create table public.donations (
+     id uuid primary key default gen_random_uuid(),
+     name text, email text, phone text,
+     amount numeric, status text,
+     created_at timestamptz default now()
+   );
+   alter table public.contacts  enable row level security;
+   alter table public.donations enable row level security;
+   -- allow the website (anon) to insert form submissions:
+   create policy "anon insert contacts"  on public.contacts  for insert to anon with check (true);
+   create policy "anon insert donations" on public.donations for insert to anon with check (true);
+   ```
+5. **Auth** is on by default (email + password). To require email confirmation,
+   leave it as-is; to allow instant login, disable "Confirm email" under
+   **Authentication → Providers → Email**.
+
+Once configured, the **Login** button (header) opens a sign-in / sign-up modal,
+and every Contact/Donation submission is also stored in your tables. To view
+submissions, open the **Table Editor** in Supabase (or build an admin view).
+
+> Security note: the anon key is meant to be public (safe in the browser). Row
+> Level Security policies above only allow inserts, not reading others' data.
+
 ## ♿ Accessibility & SEO
 
 - Semantic landmarks, skip link, ARIA labels on icons/buttons

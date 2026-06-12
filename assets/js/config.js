@@ -62,6 +62,43 @@ window.MINISTRY_CONFIG = {
     },
   ],
 
+  /* ---------- Watch Live / Video ----------
+     The "Watch Live" section embeds this video. Paste any YouTube
+     watch/live URL or an embed URL. Use the channel's /live link
+     for an always-current livestream. */
+  liveEmbedUrl: "https://www.youtube.com/embed?listType=search&list=prophet%20aa%20emmanuel%20ministries%20live",
+  liveTitle:    "Live Service & Broadcasts",
+  liveBlurb:    "Join our services and broadcasts live from anywhere in the world. Be blessed, healed, and lifted in the presence of God.",
+
+  /* ---------- Opening donation popup ----------
+     A gentle giving invitation that greets visitors on arrival.
+       showPopup:   true/false to enable.
+       popupOnce:   true  → show once per browsing session (recommended)
+                    false → show on every page load.
+       popupDelay:  milliseconds to wait before showing. */
+  showPopup:  true,
+  popupOnce:  true,
+  popupDelay: 1200,
+
+  /* ---------- Partnership tiers (monthly giving) ----------
+     Shown as cards in the Partnership section. Edit freely. */
+  partnership: [
+    { name: "Friend Partner",   amount: 5000,  perks: "Monthly newsletter & prayer covering" },
+    { name: "Kingdom Partner",  amount: 10000, perks: "Everything in Friend + partner-only messages", featured: true },
+    { name: "Covenant Partner", amount: 25000, perks: "Everything in Kingdom + quarterly impact report" },
+  ],
+
+  /* ---------- Supabase backend (optional) ----------
+     Enables member login/sign-up and saves Contact + Donation
+     submissions to your database. Leave blank to keep the site
+     fully static (forms still email as before).
+       1. Create a free project at https://supabase.com
+       2. Settings → API → copy the Project URL and the anon public key
+       3. Paste them below, then run the SQL from the README to create
+          the `contacts` and `donations` tables.  */
+  supabaseUrl:     "",   // e.g. "https://xxxxxxxx.supabase.co"
+  supabaseAnonKey: "",   // the long anon/public key (safe for the browser)
+
   /* ---------- Contact details ----------
      These also feed the footer and WhatsApp button.
      Use full international format (no +, no spaces) for whatsapp. */

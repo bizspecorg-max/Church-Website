@@ -229,15 +229,19 @@
   let donation = { name: "", email: "", phone: "", amount: 0 };
   let donationLeadSent = false;
 
-  // Email the donor's details (captured the moment they submit, before paying).
+  // Email the donor's details (captured the moment they submit, before paying)
+  // and save to Supabase if it's configured.
   const captureDonationLead = () => {
-    sendLead("New Donation — ₦" + donation.amount.toLocaleString("en-US"), {
+    const payload = {
       Name: donation.name,
       Email: donation.email,
       Phone: donation.phone,
       Amount: "₦" + donation.amount.toLocaleString("en-US"),
+      amountValue: donation.amount,
       Status: "Details submitted (pre-payment)",
-    });
+    };
+    sendLead("New Donation — ₦" + donation.amount.toLocaleString("en-US"), payload);
+    if (window.MinistryDB && MinistryDB.enabled) MinistryDB.saveDonation(payload);
     donationLeadSent = true;
   };
 
@@ -331,13 +335,16 @@
       showToast("Please fill in your name, email, and message.");
       return;
     }
-    // Email the message to the ministry inbox (see NOTIFY_EMAIL / FORM_ENDPOINT).
-    sendLead("New Contact Message — Ministry Website", {
+    // Email the message to the ministry inbox (see NOTIFY_EMAIL / FORM_ENDPOINT)
+    // and save to Supabase if configured.
+    const contactData = {
       Name: $("#cName").value.trim(),
       Email: $("#cEmail").value.trim(),
       Subject: $("#cSubject").value.trim() || "(none)",
       Message: $("#cMessage").value.trim(),
-    });
+    };
+    sendLead("New Contact Message — Ministry Website", contactData);
+    if (window.MinistryDB && MinistryDB.enabled) MinistryDB.saveContact(contactData);
     const status = $("#contactStatus");
     status.classList.remove("hidden");
     contactForm.reset();
@@ -349,4 +356,197 @@
   $$(".form-input").forEach((input) =>
     input.addEventListener("input", () => input.classList.remove("invalid"))
   );
+
+  /* =========================================================
+     PARTNERSHIP TIERS (monthly giving)
+     ========================================================= */
+  (function partnership() {
+    const wrap = $("#partnershipTiers");
+    if (!wrap) return;
+    const tiers = Array.isArray(CFG.partnership) ? CFG.partnership : [];
+    if (!tiers.length) { wrap.remove(); return; }
+    wrap.innerHTML = tiers.map((t) => `
+      <div class="tier-card ${t.featured ? "tier-featured" : ""}">
+        ${t.featured ? '<span class="tier-badge">Most Popular</span>' : ""}
+        <h3 class="font-serif text-xl font-700 ${t.featured ? "text-white" : "text-navy"}">${t.name}</h3>
+        <p class="mt-2 font-serif text-3xl font-700 ${t.featured ? "text-gold-light" : "text-navy"}">₦${Number(t.amount).toLocaleString("en-US")}<span class="text-sm font-sans font-400 ${t.featured ? "text-blue-100/70" : "text-gray-400"}">/mo</span></p>
+        <p class="mt-3 text-sm ${t.featured ? "text-blue-100/80" : "text-gray-600"}">${t.perks || ""}</p>
+        <button type="button" class="tier-choose ${t.featured ? "tier-choose-light" : ""}" data-amount="${t.amount}">Become a Partner</button>
+      </div>`).join("");
+
+    $$(".tier-choose", wrap).forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (amountInput) amountInput.value = btn.dataset.amount;
+        $$(".amount-card", $("#amountGrid")).forEach((c) =>
+          c.classList.toggle("active", c.dataset.amount === btn.dataset.amount)
+        );
+        document.getElementById("donate").scrollIntoView({ behavior: "smooth" });
+        setTimeout(() => $("#donorName")?.focus(), 500);
+      });
+    });
+  })();
+
+  /* =========================================================
+     WATCH LIVE
+     ========================================================= */
+  (function watchLive() {
+    const frame = $("#liveFrame");
+    if (!frame) return;
+    const toEmbed = (u = "") => {
+      if (!u) return "";
+      if (u.includes("/embed")) return u;
+      const id = youtubeId(u);
+      if (id) return `https://www.youtube.com/embed/${id}`;
+      // channel /live or search-style URLs: hand off as-is
+      return u.replace("watch?v=", "embed/");
+    };
+    frame.src = toEmbed(CFG.liveEmbedUrl);
+    if (CFG.liveTitle) { const t = $("#liveTitle"); if (t) t.textContent = CFG.liveTitle; }
+    if (CFG.liveBlurb) { const b = $("#liveBlurb"); if (b) b.textContent = CFG.liveBlurb; }
+    const yt = $("#watchYoutube");
+    if (yt) yt.href = CFG.youtubeChannel || "#";
+  })();
+
+  /* =========================================================
+     WELCOME DONATION POPUP  (on load, closable)
+     ========================================================= */
+  (function welcomePopup() {
+    const wm = $("#welcomeModal");
+    if (!wm || CFG.showPopup === false) return;
+
+    const KEY = "aae_seen_welcome";
+    const seen = CFG.popupOnce !== false && sessionStorage.getItem(KEY) === "1";
+    const open = () => {
+      wm.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      try { sessionStorage.setItem(KEY, "1"); } catch (_) {}
+    };
+    const close = () => {
+      wm.classList.add("hidden");
+      document.body.style.overflow = "";
+    };
+    $$("[data-close-welcome]").forEach((el) => el.addEventListener("click", close));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !wm.classList.contains("hidden")) close();
+    });
+    // Pre-select an amount on the main donation form, then let "Give Now" scroll.
+    $$("#welcomeAmounts .amount-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        $$("#welcomeAmounts .amount-card").forEach((c) => c.classList.remove("active"));
+        card.classList.add("active");
+        if (amountInput) amountInput.value = card.dataset.amount;
+        $$(".amount-card", $("#amountGrid")).forEach((c) =>
+          c.classList.toggle("active", c.dataset.amount === card.dataset.amount)
+        );
+      });
+    });
+
+    if (!seen) setTimeout(open, Number(CFG.popupDelay) || 1200);
+  })();
+
+  /* =========================================================
+     LOGIN / ACCOUNT  (Supabase)
+     ========================================================= */
+  (function auth() {
+    const am = $("#authModal");
+    if (!am) return;
+    const form = $("#authForm");
+    const emailEl = $("#authEmail");
+    const passEl = $("#authPassword");
+    const submit = $("#authSubmit");
+    const titleEl = $("#authTitle");
+    const subEl = $("#authSubtitle");
+    const toggle = $("#authToggle");
+    const toggleText = $("#authToggleText");
+    const statusEl = $("#authStatus");
+    const btnText = $("#loginBtnText");
+    const db = window.MinistryDB;
+    let mode = "in"; // "in" | "up"
+    let currentUser = null;
+
+    const open = () => { am.classList.remove("hidden"); document.body.style.overflow = "hidden"; emailEl.focus(); };
+    const close = () => { am.classList.add("hidden"); document.body.style.overflow = ""; };
+    const setStatus = (msg, ok) => {
+      statusEl.textContent = msg;
+      statusEl.classList.remove("hidden");
+      statusEl.classList.toggle("text-green-600", !!ok);
+      statusEl.classList.toggle("text-red-500", !ok);
+    };
+
+    const render = () => {
+      if (mode === "in") {
+        titleEl.textContent = "Welcome back";
+        subEl.textContent = "Sign in to your member account.";
+        submit.textContent = "Sign In";
+        toggleText.textContent = "New here?";
+        toggle.textContent = "Create an account";
+      } else {
+        titleEl.textContent = "Create account";
+        subEl.textContent = "Join the ministry's online community.";
+        submit.textContent = "Sign Up";
+        toggleText.textContent = "Already a member?";
+        toggle.textContent = "Sign in";
+      }
+      statusEl.classList.add("hidden");
+    };
+
+    const updateNav = (user) => {
+      currentUser = user;
+      if (!btnText) return;
+      btnText.textContent = user ? (user.email.split("@")[0]) : "Login";
+    };
+
+    // Open triggers
+    const openOrInfo = () => {
+      if (!db || !db.enabled) {
+        open();
+        setStatus("Login isn't active yet — add your Supabase keys in config.js.", false);
+        return;
+      }
+      if (currentUser) {
+        // Logged in → offer sign out
+        db.signOut().then(() => { updateNav(null); showToast("Signed out."); });
+        return;
+      }
+      render();
+      open();
+    };
+    $("#loginBtn")?.addEventListener("click", openOrInfo);
+    $("#loginBtnMobile")?.addEventListener("click", openOrInfo);
+    $$("[data-close-auth]").forEach((el) => el.addEventListener("click", close));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !am.classList.contains("hidden")) close();
+    });
+    toggle?.addEventListener("click", () => { mode = mode === "in" ? "up" : "in"; render(); });
+
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!db || !db.enabled) { setStatus("Supabase isn't configured yet.", false); return; }
+      const email = emailEl.value.trim();
+      const pass = passEl.value;
+      if (!email || pass.length < 6) { setStatus("Enter a valid email and a 6+ char password.", false); return; }
+      submit.disabled = true;
+      submit.textContent = "Please wait…";
+      const res = mode === "in" ? await db.signIn(email, pass) : await db.signUp(email, pass);
+      submit.disabled = false;
+      render();
+      if (res.ok) {
+        if (mode === "up") {
+          setStatus("Account created! Check your email to confirm, then sign in.", true);
+          mode = "in"; render();
+        } else {
+          showToast("Welcome back! You're signed in.");
+          close();
+        }
+      } else {
+        setStatus((res.error && res.error.message) || "Something went wrong. Try again.", false);
+      }
+    });
+
+    // Reflect existing session + live changes
+    if (db && db.enabled) {
+      db.getUser().then(updateNav);
+      db.onAuthChange(updateNav);
+    }
+  })();
 })();

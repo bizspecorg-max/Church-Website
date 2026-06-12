@@ -79,17 +79,21 @@
         </a>
 
         <!-- Desktop nav -->
-        <ul class="hidden lg:flex items-center gap-8 text-sm font-500">
+        <ul class="hidden lg:flex items-center gap-7 text-sm font-500">
           <li><a href="#about"    class="nav-link">About</a></li>
           <li><a href="#prophet"  class="nav-link">The Prophet</a></li>
-          <li><a href="#impact"   class="nav-link">Impact</a></li>
+          <li><a href="#watch"    class="nav-link">Watch Live</a></li>
           <li><a href="#gallery"  class="nav-link">Gallery</a></li>
           <li><a href="#sermons"  class="nav-link">Messages</a></li>
           <li><a href="#testimonies" class="nav-link">Testimonies</a></li>
           <li><a href="#contact"  class="nav-link">Contact</a></li>
         </ul>
 
-        <div class="hidden lg:block">
+        <div class="hidden lg:flex items-center gap-4">
+          <button id="loginBtn" class="nav-link text-sm font-600 inline-flex items-center gap-1">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <span id="loginBtnText">Login</span>
+          </button>
           <a href="#donate" class="btn-gold text-sm">Partner With Us</a>
         </div>
 
@@ -105,11 +109,12 @@
       <ul class="px-6 py-4 space-y-1 text-base">
         <li><a href="#about"    class="mobile-link">About</a></li>
         <li><a href="#prophet"  class="mobile-link">The Prophet</a></li>
-        <li><a href="#impact"   class="mobile-link">Impact</a></li>
+        <li><a href="#watch"    class="mobile-link">Watch Live</a></li>
         <li><a href="#gallery"  class="mobile-link">Gallery</a></li>
         <li><a href="#sermons"  class="mobile-link">Messages</a></li>
         <li><a href="#testimonies" class="mobile-link">Testimonies</a></li>
         <li><a href="#contact"  class="mobile-link">Contact</a></li>
+        <li><button id="loginBtnMobile" class="mobile-link w-full text-left">Login / Sign up</button></li>
         <li class="pt-3"><a href="#donate" class="btn-gold w-full text-center">Partner With Us</a></li>
       </ul>
     </div>
@@ -215,6 +220,33 @@
             he hath sent me to heal the brokenhearted."
             <footer class="mt-1 not-italic text-sm text-gray-500">— Luke 4:18 (KJV) · Our Scripture Foundation</footer>
           </blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- WATCH LIVE -->
+  <!-- ===================================================== -->
+  <section id="watch" class="py-12 lg:py-20 bg-navy-dark relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(circle at 15% 20%, #e6c45a 0, transparent 35%), radial-gradient(circle at 85% 80%, #e6c45a 0, transparent 35%);"></div>
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <span class="section-eyebrow text-gold-light inline-flex items-center gap-2 justify-center">
+          <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span></span>
+          Watch Live
+        </span>
+        <h2 id="liveTitle" class="section-title text-white">Live Service &amp; Broadcasts</h2>
+        <p id="liveBlurb" class="mt-4 text-blue-100/80">Join our services and broadcasts live from anywhere in the world.</p>
+      </div>
+
+      <div class="mt-9 reveal">
+        <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/15 bg-black aspect-video">
+          <iframe id="liveFrame" class="absolute inset-0 w-full h-full" src="" title="Live broadcast" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+        <div class="mt-6 flex flex-wrap justify-center gap-4">
+          <a id="watchYoutube" href="#" target="_blank" rel="noopener" class="btn-gold">▶ Watch on YouTube</a>
+          <a href="#donate" class="btn-outline-light">Support the Broadcast</a>
         </div>
       </div>
     </div>
@@ -361,7 +393,10 @@
         <p class="mt-4 text-blue-100/85">Your generous partnership fuels crusades, outreaches, and the spread of the gospel to the nations. Every seed counts — give cheerfully and become part of the story.</p>
       </div>
 
-      <div class="mt-9 grid lg:grid-cols-2 gap-8">
+      <!-- Monthly partnership tiers (rendered from MINISTRY_CONFIG.partnership) -->
+      <div id="partnershipTiers" class="mt-10 grid sm:grid-cols-3 gap-5"></div>
+
+      <div class="mt-10 grid lg:grid-cols-2 gap-8">
         <!-- Donation amount cards + form -->
         <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 reveal">
           <h3 class="font-serif text-2xl font-700 text-navy">Make a Donation</h3>
@@ -643,10 +678,79 @@
     </div>
   </div>
 
+  <!-- ===================================================== -->
+  <!-- WELCOME DONATION POPUP (appears on load, closable) -->
+  <!-- ===================================================== -->
+  <div id="welcomeModal" class="fixed inset-0 z-[65] hidden" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+    <div class="absolute inset-0 bg-navy-dark/70 backdrop-blur-sm" data-close-welcome></div>
+    <div class="relative min-h-full flex items-center justify-center p-4">
+      <div id="welcomePanel" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+        <div class="grid sm:grid-cols-5">
+          <div class="sm:col-span-2 bg-gradient-to-br from-navy to-navy-light p-6 flex flex-col justify-center text-white relative">
+            <span class="text-gold-light text-xs font-600 tracking-[0.2em] uppercase">Partner</span>
+            <p class="font-serif text-3xl font-700 leading-tight mt-2">Sow a Seed Today</p>
+            <p class="text-sm text-blue-100/80 mt-2">Your gift takes the gospel to the nations.</p>
+          </div>
+          <div class="sm:col-span-3 p-6 relative">
+            <button data-close-welcome class="absolute top-3 right-3 text-gray-400 hover:text-navy" aria-label="Close">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <h3 id="welcomeTitle" class="font-serif text-2xl font-700 text-navy">Before you explore…</h3>
+            <p class="text-sm text-gray-600 mt-1">Choose an amount to bless the ministry, or continue to the website.</p>
+            <div class="mt-4 grid grid-cols-3 gap-2" id="welcomeAmounts">
+              <button type="button" class="amount-card" data-amount="5000">₦5,000</button>
+              <button type="button" class="amount-card" data-amount="10000">₦10,000</button>
+              <button type="button" class="amount-card" data-amount="25000">₦25,000</button>
+            </div>
+            <a href="#donate" data-close-welcome id="welcomeGive" class="btn-gold w-full justify-center mt-4">Give Now</a>
+            <button data-close-welcome class="w-full text-center text-sm text-gray-500 mt-3 hover:text-navy">Maybe later — continue to website →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- LOGIN / ACCOUNT MODAL -->
+  <!-- ===================================================== -->
+  <div id="authModal" class="fixed inset-0 z-[66] hidden" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="absolute inset-0 bg-navy-dark/70 backdrop-blur-sm" data-close-auth></div>
+    <div class="relative min-h-full flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+        <div class="bg-gradient-to-r from-navy to-navy-light p-5 text-white relative">
+          <button data-close-auth class="absolute top-4 right-4 text-white/80 hover:text-white" aria-label="Close">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+          <h3 id="authTitle" class="font-serif text-2xl font-700">Welcome</h3>
+          <p class="text-sm text-blue-100/80 mt-1" id="authSubtitle">Sign in to your member account.</p>
+        </div>
+        <form id="authForm" class="p-6 space-y-4" novalidate>
+          <div>
+            <label for="authEmail" class="form-label">Email</label>
+            <input id="authEmail" type="email" required autocomplete="email" class="form-input" placeholder="you@email.com" />
+          </div>
+          <div>
+            <label for="authPassword" class="form-label">Password</label>
+            <input id="authPassword" type="password" required autocomplete="current-password" minlength="6" class="form-input" placeholder="••••••••" />
+          </div>
+          <button type="submit" id="authSubmit" class="btn-navy w-full justify-center py-3">Sign In</button>
+          <p class="text-sm text-center text-gray-500">
+            <span id="authToggleText">New here?</span>
+            <button type="button" id="authToggle" class="text-gold-dark font-600 hover:underline">Create an account</button>
+          </p>
+          <p id="authStatus" class="text-sm text-center hidden"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
 
   <script src="assets/js/config.js"></script>
+  <!-- Supabase client library (powers optional login + data storage) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase.js"></script>
   <script src="assets/js/main.js"></script>
 </body>
 </html>
