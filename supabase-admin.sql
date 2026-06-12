@@ -41,6 +41,10 @@ drop policy if exists "admin read donations" on public.donations;
 create policy "admin read donations" on public.donations for select to authenticated
   using (exists (select 1 from public.admins a where a.email = auth.email()));
 
+drop policy if exists "admin read partners" on public.partners;
+create policy "admin read partners" on public.partners for select to authenticated
+  using (exists (select 1 from public.admins a where a.email = auth.email()));
+
 -- =====================================================================
 -- AFTER running this:
 --   1. Open the site, click Login → "Create an account" with the email

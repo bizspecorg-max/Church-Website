@@ -59,7 +59,7 @@
     $("#tab-" + tab.dataset.tab).classList.remove("hidden");
   }));
 
-  const loadAll = () => { loadVideos(); loadHero(); loadMessages(); loadDonations(); };
+  const loadAll = () => { loadVideos(); loadHero(); loadPartners(); loadMessages(); loadDonations(); };
 
   /* ---------- Edit modal ---------- */
   const editModal = $("#editModal"), editForm = $("#editForm"), editTitle = $("#editTitle");
@@ -185,6 +185,30 @@
     const { error } = await db.from(table).delete().eq("id", id);
     if (error) return toast("Error: " + error.message);
     toast("Deleted."); reload();
+  }
+
+  /* ---------- PARTNERS (read-only) ---------- */
+  async function loadPartners() {
+    const { data, error } = await db.from("partners").select("*").order("created_at", { ascending: false });
+    const wrap = $("#partnersList");
+    if (error) { wrap.innerHTML = `<p class="text-red-500 text-sm">${esc(error.message)}</p>`; return; }
+    if (!data.length) { wrap.innerHTML = `<p class="text-slate-500 text-sm">No partners yet.</p>`; return; }
+    wrap.innerHTML = `
+      <p class="mb-3 text-sm text-slate-600">${data.length} partners</p>
+      <table class="w-full text-sm bg-white rounded-xl overflow-hidden shadow-sm">
+        <thead class="bg-slate-50 text-slate-500 text-left"><tr>
+          <th class="p-3">Date</th><th class="p-3">Name</th><th class="p-3">Email</th><th class="p-3">Phone</th><th class="p-3">Country</th><th class="p-3">Monthly</th><th class="p-3">Status</th>
+        </tr></thead>
+        <tbody>${data.map((d) => `<tr class="border-t">
+          <td class="p-3 text-slate-400 whitespace-nowrap">${new Date(d.created_at).toLocaleDateString()}</td>
+          <td class="p-3 font-600 text-navy">${esc(d.name)}</td>
+          <td class="p-3">${esc(d.email)}</td>
+          <td class="p-3">${esc(d.phone)}</td>
+          <td class="p-3">${esc(d.country)}</td>
+          <td class="p-3 font-700">₦${Number(d.amount || 0).toLocaleString("en-US")}</td>
+          <td class="p-3 text-slate-500">${esc(d.status)}</td>
+        </tr>`).join("")}</tbody>
+      </table>`;
   }
 
   /* ---------- MESSAGES (read-only) ---------- */

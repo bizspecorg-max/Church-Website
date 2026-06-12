@@ -176,7 +176,9 @@
     const wa = "https://wa.me/" + c.whatsapp;
     setHref("#waBtn", wa);
     setHref("#waFooterLink", wa);
-    setHref("#navPrayer", wa);
+    const prayer = wa + "?text=" + encodeURIComponent("Hello, I would like to request prayer.");
+    setHref("#navPrayer", prayer);
+    setHref("#prayerBtn", prayer);
   }
   // Top utility bar
   setText("#topAddress", c.address);
@@ -396,6 +398,106 @@
     });
   }
 
+  /* =========================================================
+     PARTNER — sign up + details → direct contact + payment
+     ========================================================= */
+  (function partnerFlow() {
+    const modal = $("#partnerModal");
+    if (!modal) return;
+    const form = $("#partnerForm");
+    const success = $("#partnerSuccess");
+    const amtEl = $("#pAmount");
+    let current = null;
+
+    const open = (amount) => {
+      modal.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      form.classList.remove("hidden");
+      success.classList.add("hidden");
+      if (amount) {
+        amtEl.value = amount;
+        $$("#partnerAmounts .amount-card").forEach((c) => c.classList.toggle("active", c.dataset.amount === String(amount)));
+      }
+      setTimeout(() => $("#pName")?.focus(), 60);
+    };
+    const close = () => { modal.classList.add("hidden"); document.body.style.overflow = ""; };
+    window.__openPartner = open;
+
+    wireAmountChips($("#partnerAmounts"), amtEl);
+    $$("[data-close-partner]").forEach((el) => el.addEventListener("click", close));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.classList.contains("hidden")) close(); });
+
+    $$("[data-partner]").forEach((el) => el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const wm = $("#welcomeModal");
+      if (wm && !wm.classList.contains("hidden")) wm.classList.add("hidden");
+      const a = el.dataset.amount && el.dataset.amount !== "custom" ? el.dataset.amount : 0;
+      open(a);
+    }));
+
+    const charge = (d, onSuccess) => {
+      if (!PAYSTACK_PUBLIC_KEY) {
+        showToast("✅ Demo: " + fmt(d.amount) + " partnership captured. Add a Paystack key to go live.");
+        onSuccess && onSuccess({ reference: "DEMO" });
+        return;
+      }
+      if (typeof PaystackPop === "undefined") { showToast("Payment library failed to load."); return; }
+      PaystackPop.setup({
+        key: PAYSTACK_PUBLIC_KEY, email: d.email, amount: d.amount * 100, currency: CURRENCY,
+        metadata: { custom_fields: [
+          { display_name: "Full Name", variable_name: "full_name", value: d.name },
+          { display_name: "Phone", variable_name: "phone", value: d.phone },
+          { display_name: "Type", variable_name: "type", value: "Partnership" },
+        ] },
+        callback: (r) => onSuccess && onSuccess(r),
+        onClose: () => showToast("Payment window closed. You can try again anytime."),
+      }).openIframe();
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fields = [$("#pName"), $("#pEmail"), $("#pPhone"), $("#pAmount"), $("#pPassword")];
+      const ok = fields.map(validateField).every(Boolean);
+      const amount = parseInt(amtEl.value, 10) || 0;
+      if (!ok || amount < 100) {
+        if (amount < 100) amtEl.classList.add("invalid");
+        showToast("Please complete all fields (partnership min ₦100).");
+        return;
+      }
+      const d = {
+        name: $("#pName").value.trim(), email: $("#pEmail").value.trim(),
+        phone: $("#pPhone").value.trim(), country: $("#pCountry").value.trim(), amount,
+      };
+      const btn = $("#partnerSubmit");
+      btn.disabled = true; btn.textContent = "Registering…";
+      if (window.MinistryDB && MinistryDB.enabled) {
+        try { await MinistryDB.signUp(d.email, $("#pPassword").value); } catch (_) {}
+        try { await MinistryDB.savePartner({ Name: d.name, Email: d.email, Phone: d.phone, Country: d.country, amountValue: d.amount, Status: "registered" }); } catch (_) {}
+      }
+      btn.disabled = false; btn.textContent = "Register as Partner";
+      current = d;
+      $("#partnerName").textContent = d.name.split(" ")[0] || "Partner";
+      $("#partnerAmtText").textContent = d.amount.toLocaleString("en-US");
+      const wa = CFG.contact && CFG.contact.whatsapp ? CFG.contact.whatsapp : "";
+      const msg = `Hello, I am ${d.name}. I just registered as a partner (₦${d.amount.toLocaleString()}/month). I would love direct contact with the ministry.`;
+      $("#partnerWhatsapp").href = wa ? `https://wa.me/${wa}?text=${encodeURIComponent(msg)}` : (CFG.youtubeChannel || "#");
+      form.classList.add("hidden");
+      success.classList.remove("hidden");
+      showToast("Welcome to the partner family!");
+    });
+
+    $("#partnerPay").addEventListener("click", () => {
+      if (!current) return;
+      charge(current, (r) => {
+        if (window.MinistryDB && MinistryDB.enabled) {
+          try { MinistryDB.savePartner({ Name: current.name, Email: current.email, Phone: current.phone, Country: current.country, amountValue: current.amount, Status: "paid:" + ((r && r.reference) || "") }); } catch (_) {}
+        }
+        showToast("🎉 Thank you, partner! Ref: " + ((r && r.reference) || "DEMO"));
+        close();
+      });
+    });
+  })();
+
   /* ---------- Contact form ---------- */
   const contactForm = $("#contactForm");
   contactForm?.addEventListener("submit", async (e) => {
@@ -447,7 +549,8 @@
 
     $$(".tier-choose", wrap).forEach((btn) => {
       btn.addEventListener("click", () => {
-        if (window.__openGive) window.__openGive(btn.dataset.amount);
+        if (window.__openPartner) window.__openPartner(btn.dataset.amount);
+        else if (window.__openGive) window.__openGive(btn.dataset.amount);
       });
     });
   })();

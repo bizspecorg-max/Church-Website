@@ -64,6 +64,7 @@
       <div class="max-w-6xl mx-auto px-4 sm:px-6 flex gap-1 overflow-x-auto">
         <button class="admin-tab active" data-tab="videos">Videos</button>
         <button class="admin-tab" data-tab="hero">Hero Images</button>
+        <button class="admin-tab" data-tab="partners">Partners</button>
         <button class="admin-tab" data-tab="messages">Messages</button>
         <button class="admin-tab" data-tab="donations">Donations</button>
       </div>
@@ -90,6 +91,12 @@
           <button id="addHero" class="btn-gold text-sm">+ Add image</button>
         </div>
         <div id="heroList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- PARTNERS -->
+      <section id="tab-partners" class="admin-panel hidden">
+        <h2 class="font-serif text-2xl font-700 mb-5">Partners</h2>
+        <div id="partnersList" class="overflow-x-auto"></div>
       </section>
 
       <!-- MESSAGES -->

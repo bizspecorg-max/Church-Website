@@ -45,6 +45,16 @@
       return { ok: !error, error };
     },
 
+    async savePartner(data) {
+      if (!client) return noop();
+      const { error } = await client.from("partners").insert([{
+        name: data.Name, email: data.Email, phone: data.Phone,
+        country: data.Country, amount: data.amountValue || null,
+        status: data.Status || "registered",
+      }]);
+      return { ok: !error, error };
+    },
+
     /* ---- Videos / Messages (grouped into sections) ---- */
     async getVideos() {
       if (!client) return [];
