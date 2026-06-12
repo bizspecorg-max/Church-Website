@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin · Prophet AA Emmanuel Ministries</title>
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: {
+      colors: { navy: { DEFAULT: '#0b1f4d', light: '#16306e', dark: '#081634' }, gold: { DEFAULT: '#c9a227', light: '#e6c45a', dark: '#a8851a' } },
+      fontFamily: { serif: ['"Cormorant Garamond"', 'serif'], sans: ['Inter', 'sans-serif'] },
+    } } };
+  </script>
+  <link rel="stylesheet" href="assets/css/custom.css" />
+</head>
+<body class="font-sans bg-slate-100 text-navy-dark min-h-screen">
+
+  <!-- ============ LOGIN ============ -->
+  <div id="loginView" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div class="bg-gradient-to-r from-navy to-navy-light p-6 text-white text-center">
+        <img src="assets/img/logo.svg" alt="logo" class="h-14 w-14 mx-auto" />
+        <h1 class="font-serif text-2xl font-700 mt-3">Ministry Admin</h1>
+        <p class="text-sm text-blue-100/80">Sign in to manage the website</p>
+      </div>
+      <form id="loginForm" class="p-6 space-y-4" novalidate>
+        <div>
+          <label for="email" class="form-label">Email</label>
+          <input id="email" type="email" required autocomplete="email" class="form-input" placeholder="admin@email.com" />
+        </div>
+        <div>
+          <label for="password" class="form-label">Password</label>
+          <input id="password" type="password" required autocomplete="current-password" class="form-input" placeholder="••••••••" />
+        </div>
+        <button type="submit" id="loginSubmit" class="btn-navy w-full justify-center py-3">Sign In</button>
+        <p id="loginStatus" class="text-sm text-center hidden"></p>
+        <p id="configWarn" class="text-xs text-center text-red-500 hidden">Supabase isn't configured in assets/js/config.js.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ DASHBOARD ============ -->
+  <div id="dashView" class="hidden min-h-screen">
+    <header class="bg-navy-dark text-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <img src="assets/img/logo.svg" alt="logo" class="h-9 w-9" />
+          <span class="font-serif font-700">Ministry Admin</span>
+        </div>
+        <div class="flex items-center gap-4 text-sm">
+          <a href="index.html" target="_blank" class="text-blue-100/80 hover:text-gold-light">View site ↗</a>
+          <span id="whoami" class="hidden sm:inline text-blue-100/70"></span>
+          <button id="signOut" class="bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-full">Sign out</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="bg-white border-b">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 flex gap-1 overflow-x-auto">
+        <button class="admin-tab active" data-tab="videos">Videos</button>
+        <button class="admin-tab" data-tab="hero">Hero Images</button>
+        <button class="admin-tab" data-tab="messages">Messages</button>
+        <button class="admin-tab" data-tab="donations">Donations</button>
+      </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <p id="notAdmin" class="hidden bg-amber-50 border border-amber-200 text-amber-800 rounded-xl p-4 text-sm mb-6">
+        You're signed in but not on the admin list. Add your email to the <code>admins</code> table (see supabase-admin.sql).
+      </p>
+
+      <!-- VIDEOS -->
+      <section id="tab-videos" class="admin-panel">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-serif text-2xl font-700">Videos</h2>
+          <button id="addVideo" class="btn-gold text-sm">+ Add video</button>
+        </div>
+        <div id="videosList" class="space-y-3"></div>
+      </section>
+
+      <!-- HERO -->
+      <section id="tab-hero" class="admin-panel hidden">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-serif text-2xl font-700">Hero Images</h2>
+          <button id="addHero" class="btn-gold text-sm">+ Add image</button>
+        </div>
+        <div id="heroList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- MESSAGES -->
+      <section id="tab-messages" class="admin-panel hidden">
+        <h2 class="font-serif text-2xl font-700 mb-5">Contact Messages</h2>
+        <div id="messagesList" class="space-y-3"></div>
+      </section>
+
+      <!-- DONATIONS -->
+      <section id="tab-donations" class="admin-panel hidden">
+        <h2 class="font-serif text-2xl font-700 mb-5">Donations</h2>
+        <div id="donationsList" class="overflow-x-auto"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============ EDIT MODAL (videos / hero) ============ -->
+  <div id="editModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-navy-dark/70 backdrop-blur-sm" data-close-edit></div>
+    <div class="relative min-h-full flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto">
+        <div class="bg-navy p-5 text-white flex items-center justify-between">
+          <h3 id="editTitle" class="font-serif text-xl font-700">Edit</h3>
+          <button data-close-edit aria-label="Close"><svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>
+        <form id="editForm" class="p-6 space-y-4"></form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>
