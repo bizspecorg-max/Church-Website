@@ -150,12 +150,30 @@
           ${groups[sec].map((s, i) => videoCard(s, i)).join("")}
         </div>
       </div>`).join("");
+
+    // Filled video wall (replaces the old image gallery).
+    const gal = $("#videoGallery");
+    if (gal) {
+      const playable = items.filter((s) => youtubeId(s.youtube)).slice(0, 8);
+      gal.innerHTML = playable.map((s, i) => {
+        const id = youtubeId(s.youtube);
+        const fb = FB_THUMBS[i % 3];
+        const thumb = s.thumbnail || `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+        const st = (s.title || "Video").replace(/"/g, "&quot;");
+        const inner = `<img src="${thumb}" onerror="this.onerror=null;this.src='${fb}'" alt="${st}" loading="lazy" /><span class="play-overlay" style="opacity:1;background:rgba(8,22,52,.22)"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>${st}</figcaption>`;
+        return s.mode === "link"
+          ? `<a class="gallery-item aspect-video block" href="${s.youtube}" target="_blank" rel="noopener">${inner}</a>`
+          : `<button type="button" class="gallery-item aspect-video w-full" data-vid="${id}" data-title="${st}">${inner}</button>`;
+      }).join("");
+    }
   };
   // Clicks on any play control open the inline player.
-  videoWrap?.addEventListener("click", (e) => {
+  const playClick = (e) => {
     const t = e.target.closest("[data-vid]");
     if (t) { e.preventDefault(); openVideo(t.dataset.vid, t.dataset.title); }
-  });
+  };
+  videoWrap?.addEventListener("click", playClick);
+  $("#videoGallery")?.addEventListener("click", playClick);
   // Render instantly from config, then upgrade from Supabase if available.
   renderVideos(CFG.sermons || []);
   (async () => {
