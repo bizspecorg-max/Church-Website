@@ -29,7 +29,7 @@ window.MINISTRY_CONFIG = {
        2. Paste a public image URL here (e.g. from your phone/cloud).
      If left "", option 1 (the local file) is used, with a placeholder
      shown until you add it. */
-  prophetPhoto: "",
+  prophetPhoto: "https://res.cloudinary.com/dfmigbgri/image/upload/v1781248935/prophet-portrait_elkbhj.jpg",
 
   /* ---------- YouTube ----------
      Channel link used by the hero "Watch Messages" button and
