@@ -14,8 +14,47 @@
   const PAYSTACK_PUBLIC_KEY = ""; // e.g. "pk_live_xxxxxxxxxxxxxxxxxxxx"
   const CURRENCY = "NGN";
 
+  /* ----------------------------------------------------------
+     EMAIL / LEAD NOTIFICATIONS
+     Both the Contact form and Donation form send their details
+     to NOTIFY_EMAIL. You can change the address any time.
+
+     • Leave FORM_ENDPOINT blank  → submissions open the visitor's
+       email app pre-filled to NOTIFY_EMAIL (works out of the box).
+     • Set FORM_ENDPOINT to a free Formspree URL → submissions are
+       emailed silently in the background (recommended for live use):
+         1. Create a free form at https://formspree.io (use the
+            koredebusuyi.career@gmail.com inbox).
+         2. Paste the endpoint below, e.g.
+            "https://formspree.io/f/abcdwxyz".
+  ---------------------------------------------------------- */
+  const NOTIFY_EMAIL  = "koredebusuyi.career@gmail.com";
+  const FORM_ENDPOINT = ""; // ← paste your Formspree URL to send emails silently
+
   const $  = (sel, ctx = document) => ctx.querySelector(sel);
   const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+  /* ---------- Lead / email delivery ----------
+     Sends a submission to NOTIFY_EMAIL. Uses Formspree (silent,
+     background) when FORM_ENDPOINT is set; otherwise falls back to
+     a pre-filled mailto so it still works with zero setup.
+     Returns true if sent silently, false if it used the mailto. */
+  async function sendLead(subject, data) {
+    if (FORM_ENDPOINT) {
+      try {
+        const res = await fetch(FORM_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ _subject: subject, _replyto: data.Email || NOTIFY_EMAIL, ...data }),
+        });
+        if (res.ok) return true;
+      } catch (_) { /* fall through to mailto */ }
+    }
+    const body = Object.entries(data).map(([k, v]) => `${k}: ${v}`).join("\n");
+    window.location.href =
+      `mailto:${NOTIFY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    return false;
+  }
 
   /* ---------- Footer year ---------- */
   const yearEl = $("#year");
@@ -136,6 +175,19 @@
   const donationForm = $("#donationForm");
   const modal = $("#donationModal");
   let donation = { name: "", email: "", phone: "", amount: 0 };
+  let donationLeadSent = false;
+
+  // Email the donor's details (captured the moment they submit, before paying).
+  const captureDonationLead = () => {
+    sendLead("New Donation — ₦" + donation.amount.toLocaleString("en-US"), {
+      Name: donation.name,
+      Email: donation.email,
+      Phone: donation.phone,
+      Amount: "₦" + donation.amount.toLocaleString("en-US"),
+      Status: "Details submitted (pre-payment)",
+    });
+    donationLeadSent = true;
+  };
 
   const openModal = () => {
     modal.classList.add("open");
@@ -167,15 +219,20 @@
       phone: $("#donorPhone").value.trim(),
       amount,
     };
+    donationLeadSent = false;
     $("#sumName").textContent = donation.name;
     $("#sumEmail").textContent = donation.email;
     $("#sumPhone").textContent = donation.phone;
     $("#sumAmount").textContent = "₦" + donation.amount.toLocaleString("en-US");
+    // If a Formspree endpoint is configured, email the lead silently right away.
+    if (FORM_ENDPOINT) captureDonationLead();
     openModal();
   });
 
   /* ---------- Paystack payment ---------- */
   $("#payNowBtn")?.addEventListener("click", () => {
+    // Make sure the donor's details reach the inbox even if they don't finish paying.
+    if (!donationLeadSent) captureDonationLead();
     if (!PAYSTACK_PUBLIC_KEY) {
       // Demo / placeholder mode — no key configured yet.
       closeModal();
@@ -214,7 +271,7 @@
 
   /* ---------- Contact form ---------- */
   const contactForm = $("#contactForm");
-  contactForm?.addEventListener("submit", (e) => {
+  contactForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const fields = ["#cName", "#cEmail", "#cMessage"].map((s) => $(s));
     const valid = fields.map(validateField).every(Boolean);
@@ -222,7 +279,13 @@
       showToast("Please fill in your name, email, and message.");
       return;
     }
-    // TODO: wire to a backend / email service (e.g. Formspree, EmailJS).
+    // Email the message to the ministry inbox (see NOTIFY_EMAIL / FORM_ENDPOINT).
+    sendLead("New Contact Message — Ministry Website", {
+      Name: $("#cName").value.trim(),
+      Email: $("#cEmail").value.trim(),
+      Subject: $("#cSubject").value.trim() || "(none)",
+      Message: $("#cMessage").value.trim(),
+    });
     const status = $("#contactStatus");
     status.classList.remove("hidden");
     contactForm.reset();

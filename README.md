@@ -87,8 +87,28 @@ Amounts are automatically converted to kobo (`amount * 100`).
   `:root` variables in `assets/css/custom.css`.
 - **Contact details / WhatsApp:** update the phone number `2348000000000` and
   email in the Contact section and footer.
-- **Contact form:** currently shows a success message client-side. Connect it
-  to a service like Formspree or EmailJS (see the `TODO` in `main.js`).
+## 📧 Email notifications (Contact + Donations)
+
+Both the **Contact form** and the **Donation form** email their details to the
+ministry inbox. The address and delivery method live at the top of
+`assets/js/main.js`:
+
+```js
+const NOTIFY_EMAIL  = "koredebusuyi.career@gmail.com"; // change any time
+const FORM_ENDPOINT = ""; // see below
+```
+
+- **Out of the box (no setup):** when `FORM_ENDPOINT` is blank, submitting a
+  form opens the visitor's email app pre-filled to `NOTIFY_EMAIL` (they tap
+  send). The donor's details are captured the moment they submit — before they
+  even pay — so no lead is lost.
+- **Recommended (silent, automatic emails):** create a free form at
+  **[formspree.io](https://formspree.io)** using the
+  `koredebusuyi.career@gmail.com` inbox, copy the endpoint
+  (e.g. `https://formspree.io/f/abcdwxyz`) into `FORM_ENDPOINT`, and both forms
+  will email in the background with no popups.
+
+Donation emails include the donor's name, email, phone, and amount.
 
 ## ♿ Accessibility & SEO
 
