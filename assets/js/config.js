@@ -93,6 +93,7 @@ window.MINISTRY_CONFIG = {
   showPopup:  true,
   popupOnce:  true,
   popupDelay: 1200,
+  popupImage: "", // optional: image shown in the popup (e.g. a Cloudinary event flyer)
 
   /* ---------- Partnership tiers (monthly giving) ----------
      Shown as cards in the Partnership section. Edit freely. */

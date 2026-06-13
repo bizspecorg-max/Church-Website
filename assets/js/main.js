@@ -674,6 +674,7 @@
     const wm = $("#welcomeModal");
     if (!wm || CFG.showPopup === false) return;
 
+    if (CFG.popupImage) { const im = $("#welcomeImage"); if (im) im.src = CFG.popupImage; }
     const KEY = "aae_seen_welcome";
     const seen = CFG.popupOnce !== false && sessionStorage.getItem(KEY) === "1";
     const open = () => {

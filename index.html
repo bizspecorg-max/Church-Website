@@ -804,28 +804,23 @@
   <div id="welcomeModal" class="fixed inset-0 z-[65] hidden" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
     <div class="absolute inset-0 bg-navy-dark/70 backdrop-blur-sm" data-close-welcome></div>
     <div class="relative min-h-full flex items-center justify-center p-4">
-      <div id="welcomePanel" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
-        <div class="grid sm:grid-cols-5">
-          <div class="sm:col-span-2 bg-gradient-to-br from-navy to-navy-light p-6 flex flex-col justify-center text-white relative">
-            <span class="text-gold-light text-xs font-600 tracking-[0.2em] uppercase">Partner</span>
-            <p class="font-serif text-3xl font-700 leading-tight mt-2">Sow a Seed Today</p>
-            <p class="text-sm text-blue-100/80 mt-2">Your gift takes the gospel to the nations.</p>
-          </div>
-          <div class="sm:col-span-3 p-6 relative">
-            <button data-close-welcome class="absolute top-3 right-3 text-gray-400 hover:text-navy" aria-label="Close">
-              <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-            <h3 id="welcomeTitle" class="font-serif text-2xl font-700 text-navy">Before you explore…</h3>
-            <p class="text-sm text-gray-600 mt-1">Choose an amount to bless the ministry, or continue to the website.</p>
-            <div class="mt-4 grid grid-cols-3 gap-2" id="welcomeAmounts">
-              <button type="button" class="amount-card" data-give data-amount="5000">₦5,000</button>
-              <button type="button" class="amount-card" data-give data-amount="10000">₦10,000</button>
-              <button type="button" class="amount-card" data-give data-amount="25000">₦25,000</button>
-            </div>
-            <a href="#" data-give id="welcomeGive" class="btn-gold w-full justify-center mt-4">Give Now</a>
-            <button data-close-welcome class="w-full text-center text-sm text-gray-500 mt-3 hover:text-navy">Maybe later — continue to website →</button>
+      <div id="welcomePanel" class="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden relative max-h-[92vh] overflow-y-auto">
+        <button data-close-welcome class="absolute top-3 right-3 z-10 h-9 w-9 rounded-full bg-navy-dark/80 text-white flex items-center justify-center hover:bg-navy transition" aria-label="Close">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <div class="p-6 sm:p-8 text-center">
+          <h3 id="welcomeTitle" class="font-serif text-2xl sm:text-3xl font-700 text-navy">🌟 Support the Work of God! 🌟</h3>
+          <p class="text-sm text-gray-600 mt-3 max-w-md mx-auto leading-relaxed">
+            Join us in spreading the gospel and transforming lives through your offering, tithes, and partnership.
+            Your generous giving enables <span class="font-600 text-navy">Dinab TV</span> to reach more souls,
+            expand God's kingdom, and continue impactful ministry work.
+          </p>
+          <div class="mt-5 flex flex-wrap justify-center gap-3">
+            <a href="#" data-give class="btn-gold">Donation</a>
+            <a href="#" data-partner class="btn-navy">Become a Partner</a>
           </div>
         </div>
+        <img id="welcomeImage" src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&w=1000&q=80" onerror="this.onerror=null;this.src='assets/img/hero-banner.svg'" alt="Ministry partnership" class="w-full h-56 sm:h-64 object-cover" />
       </div>
     </div>
   </div>
