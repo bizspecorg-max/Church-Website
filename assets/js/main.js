@@ -167,9 +167,16 @@
     const id = item ? youtubeId(item.youtube || "") : "";
     if (!id) { wrap.innerHTML = ""; if (sec) sec.classList.add("hidden"); return; }
     if (sec) sec.classList.remove("hidden");
-    wrap.innerHTML = `<div class="rounded-2xl overflow-hidden shadow-2xl ring-1 ring-slate-200 bg-black">
-      <div class="relative aspect-video"><iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1" title="Featured broadcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
-    </div>`;
+    if (item.mode === "link") {
+      // Go to the YouTube page instead of playing inline.
+      wrap.innerHTML = `<a href="${item.youtube}" target="_blank" rel="noopener" class="block relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-slate-200">
+        <div class="relative aspect-video"><div class="live-poster" style="background-image:url('https://img.youtube.com/vi/${id}/hqdefault.jpg')"><span class="live-play"><svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="text-white font-600 text-lg">Watch on YouTube</span></div></div>
+      </a>`;
+    } else {
+      wrap.innerHTML = `<div class="rounded-2xl overflow-hidden shadow-2xl ring-1 ring-slate-200 bg-black">
+        <div class="relative aspect-video"><iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1" title="Featured broadcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+      </div>`;
+    }
     // Heading/subtext for this section are managed via site content (applyContent).
   };
 
@@ -587,20 +594,26 @@
      WATCH LIVE
      ========================================================= */
   let CONTENT = {};          // editable site text/images from Supabase
-  let lastLiveUrl = "";
-  const applyWatchLive = (url) => {
+  let lastLive = "";
+  // src can be a URL string or a video item { youtube, mode }.
+  const applyWatchLive = (src) => {
     const wrap = $("#liveWrap");
     if (!wrap) return;
-    lastLiveUrl = url || "";
-    const id = youtubeId(url || "");
+    lastLive = src;
+    const url = typeof src === "string" ? src : (src && src.youtube) || "";
+    const linkMode = typeof src === "object" && src && src.mode === "link";
+    const id = youtubeId(url);
     const poster = CONTENT.live_poster || CFG.livePoster;
-    if (id) {
+    if (id && !linkMode) {
       wrap.innerHTML = `<iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1" title="Live broadcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
     } else {
-      wrap.innerHTML = `<a href="${CFG.youtubeChannel || "#"}" target="_blank" rel="noopener" class="live-poster"${poster ? ` style="background-image:url('${poster}')"` : ""}><span class="live-play"><svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="text-white font-600 text-lg">Tap to watch on YouTube</span></a>`;
+      // "link" mode (or no embeddable video) → click-through poster.
+      const href = id ? url : (CFG.youtubeChannel || "#");
+      const bg = id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : poster;
+      wrap.innerHTML = `<a href="${href}" target="_blank" rel="noopener" class="live-poster"${bg ? ` style="background-image:url('${bg}')"` : ""}><span class="live-play"><svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="text-white font-600 text-lg">Tap to watch on YouTube</span></a>`;
     }
     const yt = $("#watchYoutube");
-    if (yt) yt.href = CFG.youtubeChannel || "#";
+    if (yt) yt.href = (id ? url : (CFG.youtubeChannel || "#"));
   };
 
   /* ---------- Load & distribute all videos (Supabase-managed) ----------
@@ -613,7 +626,7 @@
     // Watch Live: first "Watch Live" row WITH a valid video, else any, else config.
     const live = items.find((v) => (v.section || "") === "Watch Live" && youtubeId(v.youtube))
       || items.find((v) => (v.section || "") === "Watch Live");
-    applyWatchLive(live ? live.youtube : CFG.liveEmbedUrl);
+    applyWatchLive(live || CFG.liveEmbedUrl);
     // Featured: first "Featured" row WITH a valid video; otherwise the first
     // playable inline video — so the section never blanks out.
     const big = items.find((v) => (v.section || "") === "Featured" && youtubeId(v.youtube))
@@ -666,7 +679,7 @@
     if (window.MinistryDB && MinistryDB.enabled && MinistryDB.getContent) {
       try {
         const c = await MinistryDB.getContent();
-        if (c && Object.keys(c).length) { CONTENT = c; applyContent(); applyWatchLive(lastLiveUrl); }
+        if (c && Object.keys(c).length) { CONTENT = c; applyContent(); applyWatchLive(lastLive); }
       } catch (_) {}
     }
   })();
