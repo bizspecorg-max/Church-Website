@@ -27,6 +27,8 @@ create policy "Public can read published videos"
   on public.videos for select using (published = true);
 
 insert into public.videos (title, section, category, youtube_url, description, play_mode, sort_order) values
+  ('Live Service & Broadcasts', 'Watch Live', 'Live', 'https://www.youtube.com/watch?v=QM8jQHE5AAk', 'Join our services and broadcasts live from anywhere in the world.', 'inline', 0),
+  ('Featured Broadcast', 'Featured', 'Latest', 'https://www.youtube.com/watch?v=rYJWRyg89wA', 'This week''s featured message — watch and be blessed.', 'inline', 0),
   ('Distance Is Not A Barrier — Just Have Faith', 'Recent Messages', 'Prophetic Word', 'https://www.youtube.com/watch?v=rYJWRyg89wA', 'Wherever you are, distance is not a barrier — receive your healing and breakthrough by faith.', 'inline', 1),
   ('I Know Who I Am', 'Recent Messages', 'Identity in Christ', 'https://www.youtube.com/watch?v=frtZ4XfoXxM', 'Discover your true identity as a child of God — chosen, redeemed and victorious.', 'inline', 2),
   ('Who Is On The Lord''s Side', 'Recent Messages', 'Consecration', 'https://www.youtube.com/watch?v=aULdIMQn1AQ', 'A call to full surrender and consecration to the Lordship of Jesus Christ.', 'inline', 3),

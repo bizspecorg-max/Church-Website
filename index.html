@@ -350,7 +350,7 @@
       </div>
 
       <div class="mt-9 reveal">
-        <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/15 bg-black aspect-video">
+        <div id="liveWrap" class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/15 bg-black aspect-video">
           <iframe id="liveFrame" class="absolute inset-0 w-full h-full" src="" title="Live broadcast" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
         <div class="mt-6 flex flex-wrap justify-center gap-4">
@@ -358,6 +358,20 @@
           <a href="#" data-give class="btn-outline-light">Support the Broadcast</a>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- FEATURED BROADCAST (single big video, managed from Supabase) -->
+  <!-- ===================================================== -->
+  <section id="bigVideoSection" class="py-12 lg:py-20 bg-white hidden">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto reveal">
+        <span class="section-eyebrow">Featured Broadcast</span>
+        <h2 id="bigVideoTitle" class="section-title">Watch the Latest</h2>
+        <p id="bigVideoBlurb" class="mt-4 text-gray-600"></p>
+      </div>
+      <div id="bigVideo" class="mt-9 reveal"></div>
     </div>
   </section>
 
@@ -475,12 +489,9 @@
         <a id="allMessagesLink" href="#" target="_blank" rel="noopener" class="text-navy font-600 hover:text-gold-dark transition inline-flex items-center gap-1">Visit our YouTube channel →</a>
       </div>
 
-      <!-- Big featured player (first inline video) -->
-      <div id="featuredVideo" class="mt-9"></div>
-
       <!-- Video sections are generated from the Supabase `videos` table,
            grouped by their `section`. Falls back to MINISTRY_CONFIG.sermons. -->
-      <div id="videoSections" class="mt-12 space-y-12"></div>
+      <div id="videoSections" class="mt-9 space-y-12"></div>
     </div>
   </section>
 

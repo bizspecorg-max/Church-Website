@@ -11,9 +11,19 @@ create table if not exists public.admins (
 );
 alter table public.admins enable row level security;
 
--- 👇 CHANGE THIS to the email you will log in with, then it's locked down.
-insert into public.admins (email) values ('koredebusuyi.career@gmail.com')
+-- 👇 These emails may manage the site. The admin panel lets you sign in with
+--    just "admin" (it maps to admin@dinabtv.com).
+insert into public.admins (email) values
+  ('admin@dinabtv.com'),
+  ('koredebusuyi.career@gmail.com')
 on conflict do nothing;
+
+-- IMPORTANT: also CREATE the login itself in Supabase →
+--   Authentication → Users → "Add user":
+--     Email:    admin@dinabtv.com
+--     Password: admin            (or anything you like)
+--     ✅ tick "Auto Confirm User"
+-- Then log in at /admin.html with username "admin" and that password.
 
 -- An authenticated user may check the admins list (needed by the app).
 drop policy if exists "admins readable by authenticated" on public.admins;

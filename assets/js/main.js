@@ -117,23 +117,13 @@
         </div>
       </article>`;
   };
-  const renderVideos = (list) => {
+  // Reserved section names that get their own dedicated spots on the page.
+  const RESERVED = ["Watch Live", "Featured"];
+
+  // Grouped message sections (excludes the reserved sections).
+  const renderSections = (list) => {
     if (!videoWrap) return;
     const items = Array.isArray(list) ? list : [];
-
-    // Big featured player = first inline video, full width, image fills.
-    const feat = $("#featuredVideo");
-    if (feat) {
-      const f = items.find((s) => s.mode !== "link" && youtubeId(s.youtube));
-      if (f) {
-        const fid = youtubeId(f.youtube);
-        feat.innerHTML = `<div class="rounded-2xl overflow-hidden shadow-2xl ring-1 ring-slate-200 bg-black reveal visible">
-          <div class="relative aspect-video"><iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${fid}?rel=0&modestbranding=1" title="Featured video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
-          <div class="bg-white p-5"><p class="text-xs text-gold-dark font-600 uppercase tracking-wide">▶ Featured Message</p><h3 class="font-serif text-2xl font-700 text-navy mt-1">${(f.title || "").replace(/</g, "&lt;")}</h3><p class="text-sm text-gray-600 mt-1">${(f.blurb || "").replace(/</g, "&lt;")}</p></div>
-        </div>`;
-      } else { feat.innerHTML = ""; }
-    }
-
     const order = [];
     const groups = {};
     items.forEach((it) => {
@@ -150,23 +140,40 @@
           ${groups[sec].map((s, i) => videoCard(s, i)).join("")}
         </div>
       </div>`).join("");
-
-    // Filled video wall (replaces the old image gallery).
-    const gal = $("#videoGallery");
-    if (gal) {
-      const playable = items.filter((s) => youtubeId(s.youtube)).slice(0, 8);
-      gal.innerHTML = playable.map((s, i) => {
-        const id = youtubeId(s.youtube);
-        const fb = FB_THUMBS[i % 3];
-        const thumb = s.thumbnail || `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-        const st = (s.title || "Video").replace(/"/g, "&quot;");
-        const inner = `<img src="${thumb}" onerror="this.onerror=null;this.src='${fb}'" alt="${st}" loading="lazy" /><span class="play-overlay" style="opacity:1;background:rgba(8,22,52,.22)"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>${st}</figcaption>`;
-        return s.mode === "link"
-          ? `<a class="gallery-item aspect-video block" href="${s.youtube}" target="_blank" rel="noopener">${inner}</a>`
-          : `<button type="button" class="gallery-item aspect-video w-full" data-vid="${id}" data-title="${st}">${inner}</button>`;
-      }).join("");
-    }
   };
+
+  // Filled video wall (On-Demand) — shows all playable videos.
+  const renderGallery = (list) => {
+    const gal = $("#videoGallery");
+    if (!gal) return;
+    const playable = (Array.isArray(list) ? list : []).filter((s) => youtubeId(s.youtube)).slice(0, 8);
+    gal.innerHTML = playable.map((s, i) => {
+      const id = youtubeId(s.youtube);
+      const fb = FB_THUMBS[i % 3];
+      const thumb = s.thumbnail || `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+      const st = (s.title || "Video").replace(/"/g, "&quot;");
+      const inner = `<img src="${thumb}" onerror="this.onerror=null;this.src='${fb}'" alt="${st}" loading="lazy" /><span class="play-overlay" style="opacity:1;background:rgba(8,22,52,.22)"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>${st}</figcaption>`;
+      return s.mode === "link"
+        ? `<a class="gallery-item aspect-video block" href="${s.youtube}" target="_blank" rel="noopener">${inner}</a>`
+        : `<button type="button" class="gallery-item aspect-video w-full" data-vid="${id}" data-title="${st}">${inner}</button>`;
+    }).join("");
+  };
+
+  // Big single featured video (the dedicated section after Watch Live).
+  const applyBigVideo = (item) => {
+    const wrap = $("#bigVideo");
+    const sec = $("#bigVideoSection");
+    if (!wrap) return;
+    const id = item ? youtubeId(item.youtube || "") : "";
+    if (!id) { wrap.innerHTML = ""; if (sec) sec.classList.add("hidden"); return; }
+    if (sec) sec.classList.remove("hidden");
+    wrap.innerHTML = `<div class="rounded-2xl overflow-hidden shadow-2xl ring-1 ring-slate-200 bg-black">
+      <div class="relative aspect-video"><iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1" title="Featured broadcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+    </div>`;
+    const t = $("#bigVideoTitle"); if (t && item.title) t.textContent = item.title;
+    const b = $("#bigVideoBlurb"); if (b) b.textContent = item.blurb || "";
+  };
+
   // Clicks on any play control open the inline player.
   const playClick = (e) => {
     const t = e.target.closest("[data-vid]");
@@ -174,16 +181,6 @@
   };
   videoWrap?.addEventListener("click", playClick);
   $("#videoGallery")?.addEventListener("click", playClick);
-  // Render instantly from config, then upgrade from Supabase if available.
-  renderVideos(CFG.sermons || []);
-  (async () => {
-    if (window.MinistryDB && MinistryDB.enabled && MinistryDB.getVideos) {
-      try {
-        const rows = await MinistryDB.getVideos();
-        if (rows && rows.length) renderVideos(rows);
-      } catch (_) { /* keep config fallback */ }
-    }
-  })();
 
   // "View all messages" + hero button point to the channel.
   const allLink = $("#allMessagesLink");
@@ -590,34 +587,41 @@
   /* =========================================================
      WATCH LIVE
      ========================================================= */
-  (function watchLive() {
-    const frame = $("#liveFrame");
-    if (!frame) return;
-    const wrap = frame.parentElement;
-    const toEmbed = (u = "") => {
-      if (!u) return "";
-      if (u.includes("/embed")) return u;
-      const id = youtubeId(u);
-      return id ? `https://www.youtube.com/embed/${id}` : "";
-    };
-    const embed = toEmbed(CFG.liveEmbedUrl);
-    if (embed) {
-      frame.src = embed;
+  const applyWatchLive = (url) => {
+    const wrap = $("#liveWrap");
+    if (!wrap) return;
+    const id = youtubeId(url || "");
+    if (id) {
+      wrap.innerHTML = `<iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1" title="Live broadcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
     } else {
-      // No embeddable video set → show a click-to-watch poster linking to the channel.
-      frame.remove();
-      const poster = document.createElement("a");
-      poster.href = CFG.youtubeChannel || "#";
-      poster.target = "_blank"; poster.rel = "noopener";
-      poster.className = "live-poster";
-      if (CFG.livePoster) poster.style.backgroundImage = `url('${CFG.livePoster}')`;
-      poster.innerHTML = '<span class="live-play"><svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="text-white font-600 text-lg">Tap to watch on YouTube</span>';
-      wrap.appendChild(poster);
+      wrap.innerHTML = `<a href="${CFG.youtubeChannel || "#"}" target="_blank" rel="noopener" class="live-poster"${CFG.livePoster ? ` style="background-image:url('${CFG.livePoster}')"` : ""}><span class="live-play"><svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="text-white font-600 text-lg">Tap to watch on YouTube</span></a>`;
     }
     if (CFG.liveTitle) { const t = $("#liveTitle"); if (t) t.textContent = CFG.liveTitle; }
     if (CFG.liveBlurb) { const b = $("#liveBlurb"); if (b) b.textContent = CFG.liveBlurb; }
     const yt = $("#watchYoutube");
     if (yt) yt.href = CFG.youtubeChannel || "#";
+  };
+
+  /* ---------- Load & distribute all videos (Supabase-managed) ----------
+     One Supabase `videos` table drives every video on the page:
+       • a row with section "Watch Live" → the live player
+       • a row with section "Featured"   → the big featured video
+       • every other row → grouped Message sections + the On-Demand wall */
+  const distributeVideos = (items) => {
+    items = Array.isArray(items) ? items : [];
+    const live = items.find((v) => (v.section || "") === "Watch Live");
+    applyWatchLive(live ? live.youtube : CFG.liveEmbedUrl);
+    const big = items.find((v) => (v.section || "") === "Featured")
+      || items.find((s) => s.mode !== "link" && youtubeId(s.youtube));
+    applyBigVideo(big);
+    renderSections(items.filter((v) => !RESERVED.includes(v.section || "")));
+    renderGallery(items);
+  };
+  distributeVideos(CFG.sermons || []);     // instant paint from config
+  (async () => {                            // then let Supabase take over
+    if (window.MinistryDB && MinistryDB.enabled && MinistryDB.getVideos) {
+      try { const rows = await MinistryDB.getVideos(); if (rows && rows.length) distributeVideos(rows); } catch (_) {}
+    }
   })();
 
   /* =========================================================

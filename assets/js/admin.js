@@ -35,7 +35,11 @@
     const status = $("#loginStatus");
     const btn = $("#loginSubmit");
     btn.disabled = true; btn.textContent = "Signing in…";
-    const { data, error } = await db.auth.signInWithPassword({ email: $("#email").value.trim(), password: $("#password").value });
+    // Allow a simple username (e.g. "admin") → maps to admin@dinabtv.com.
+    const raw = $("#email").value.trim();
+    const ADMIN_DOMAIN = (CFG.adminEmailDomain || "dinabtv.com");
+    const email = raw.includes("@") ? raw : `${raw}@${ADMIN_DOMAIN}`;
+    const { data, error } = await db.auth.signInWithPassword({ email, password: $("#password").value });
     btn.disabled = false; btn.textContent = "Sign In";
     if (error) { status.textContent = error.message; status.className = "text-sm text-center text-red-500"; status.classList.remove("hidden"); return; }
     showDash(data.user);
@@ -115,7 +119,7 @@
     editTitle.textContent = v.id ? "Edit video" : "Add video";
     editForm.innerHTML =
       field("Title", "title", v.title || "") +
-      field("Section (heading it appears under)", "section", v.section || "Recent Messages") +
+      field('Section — "Watch Live", "Featured", or any heading', "section", v.section || "Recent Messages") +
       field("Label (e.g. Prophetic Word)", "category", v.category || "") +
       field("YouTube link", "youtube_url", v.youtube_url || "") +
       textarea("Description", "description", v.description || "") +
