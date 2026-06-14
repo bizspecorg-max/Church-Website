@@ -64,6 +64,7 @@
       <div class="max-w-6xl mx-auto px-4 sm:px-6 flex gap-1 overflow-x-auto">
         <button class="admin-tab active" data-tab="videos">Videos</button>
         <button class="admin-tab" data-tab="hero">Hero Images</button>
+        <button class="admin-tab" data-tab="content">Content</button>
         <button class="admin-tab" data-tab="partners">Partners</button>
         <button class="admin-tab" data-tab="messages">Messages</button>
         <button class="admin-tab" data-tab="donations">Donations</button>
@@ -91,6 +92,13 @@
           <button id="addHero" class="btn-gold text-sm">+ Add image</button>
         </div>
         <div id="heroList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- CONTENT (section headings / subtexts / poster) -->
+      <section id="tab-content" class="admin-panel hidden">
+        <h2 class="font-serif text-2xl font-700 mb-1">Site Content</h2>
+        <p class="text-sm text-slate-500 mb-5">Edit the headings, subtexts and the Watch Live poster image shown on the site.</p>
+        <form id="contentForm" class="space-y-4 max-w-xl"></form>
       </section>
 
       <!-- PARTNERS -->

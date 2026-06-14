@@ -46,6 +46,10 @@ create table if not exists public.admins (
   email text primary key, created_at timestamptz default now()
 );
 
+create table if not exists public.site_content (
+  key text primary key, value text, updated_at timestamptz default now()
+);
+
 -- ========== 2. ENABLE ROW LEVEL SECURITY ==========
 alter table public.videos       enable row level security;
 alter table public.hero_slides  enable row level security;
@@ -53,6 +57,7 @@ alter table public.contacts     enable row level security;
 alter table public.donations    enable row level security;
 alter table public.partners     enable row level security;
 alter table public.admins       enable row level security;
+alter table public.site_content enable row level security;
 
 -- ========== 3. PUBLIC (visitor) POLICIES ==========
 drop policy if exists "Public can read published videos" on public.videos;
@@ -69,6 +74,9 @@ create policy "Public can submit donation" on public.donations for insert with c
 
 drop policy if exists "Public can register partner" on public.partners;
 create policy "Public can register partner" on public.partners for insert with check (true);
+
+drop policy if exists "Public can read content" on public.site_content;
+create policy "Public can read content" on public.site_content for select using (true);
 
 -- ========== 4. ADMIN ACCESS ==========
 insert into public.admins (email) values ('admin@dinabtv.com') on conflict do nothing;
@@ -97,6 +105,11 @@ create policy "admin read donations" on public.donations for select to authentic
 drop policy if exists "admin read partners" on public.partners;
 create policy "admin read partners" on public.partners for select to authenticated
   using (exists (select 1 from public.admins a where a.email = auth.email()));
+
+drop policy if exists "admin manage content" on public.site_content;
+create policy "admin manage content" on public.site_content for all to authenticated
+  using (exists (select 1 from public.admins a where a.email = auth.email()))
+  with check (exists (select 1 from public.admins a where a.email = auth.email()));
 
 -- ========== 5. SEED VIDEOS (only if the table is empty) ==========
 insert into public.videos (title, section, category, youtube_url, description, play_mode, sort_order)

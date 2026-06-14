@@ -170,8 +170,7 @@
     wrap.innerHTML = `<div class="rounded-2xl overflow-hidden shadow-2xl ring-1 ring-slate-200 bg-black">
       <div class="relative aspect-video"><iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1" title="Featured broadcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
     </div>`;
-    const t = $("#bigVideoTitle"); if (t && item.title) t.textContent = item.title;
-    const b = $("#bigVideoBlurb"); if (b) b.textContent = item.blurb || "";
+    // Heading/subtext for this section are managed via site content (applyContent).
   };
 
   // Clicks on any play control open the inline player.
@@ -587,17 +586,19 @@
   /* =========================================================
      WATCH LIVE
      ========================================================= */
+  let CONTENT = {};          // editable site text/images from Supabase
+  let lastLiveUrl = "";
   const applyWatchLive = (url) => {
     const wrap = $("#liveWrap");
     if (!wrap) return;
+    lastLiveUrl = url || "";
     const id = youtubeId(url || "");
+    const poster = CONTENT.live_poster || CFG.livePoster;
     if (id) {
       wrap.innerHTML = `<iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1" title="Live broadcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
     } else {
-      wrap.innerHTML = `<a href="${CFG.youtubeChannel || "#"}" target="_blank" rel="noopener" class="live-poster"${CFG.livePoster ? ` style="background-image:url('${CFG.livePoster}')"` : ""}><span class="live-play"><svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="text-white font-600 text-lg">Tap to watch on YouTube</span></a>`;
+      wrap.innerHTML = `<a href="${CFG.youtubeChannel || "#"}" target="_blank" rel="noopener" class="live-poster"${poster ? ` style="background-image:url('${poster}')"` : ""}><span class="live-play"><svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="text-white font-600 text-lg">Tap to watch on YouTube</span></a>`;
     }
-    if (CFG.liveTitle) { const t = $("#liveTitle"); if (t) t.textContent = CFG.liveTitle; }
-    if (CFG.liveBlurb) { const b = $("#liveBlurb"); if (b) b.textContent = CFG.liveBlurb; }
     const yt = $("#watchYoutube");
     if (yt) yt.href = CFG.youtubeChannel || "#";
   };
@@ -621,6 +622,37 @@
   (async () => {                            // then let Supabase take over
     if (window.MinistryDB && MinistryDB.enabled && MinistryDB.getVideos) {
       try { const rows = await MinistryDB.getVideos(); if (rows && rows.length) distributeVideos(rows); } catch (_) {}
+    }
+  })();
+
+  /* ---------- Editable section content (headings, subtexts, poster) ---------- */
+  const CONTENT_DEFAULTS = {
+    live_title: "Live Service & Broadcasts",
+    live_blurb: "Join our services and broadcasts live from anywhere in the world.",
+    featured_title: "Featured Broadcast",
+    featured_blurb: "",
+    ondemand_title: "Watch Anytime, Anywhere",
+    ondemand_subtext: "Tap any broadcast to watch it right here — services, crusades, worship and the Word.",
+    messages_title: "Messages & Videos",
+  };
+  const applyContent = () => {
+    const g = (k) => (CONTENT[k] != null && CONTENT[k] !== "") ? CONTENT[k] : CONTENT_DEFAULTS[k];
+    const set = (sel, val) => { const el = $(sel); if (el && val != null) el.textContent = val; };
+    set("#liveTitle", g("live_title"));
+    set("#liveBlurb", g("live_blurb"));
+    set("#bigVideoTitle", g("featured_title"));
+    set("#bigVideoBlurb", CONTENT.featured_blurb != null ? CONTENT.featured_blurb : CONTENT_DEFAULTS.featured_blurb);
+    set("#ondemandTitle", g("ondemand_title"));
+    set("#ondemandSub", g("ondemand_subtext"));
+    set("#messagesTitle", g("messages_title"));
+  };
+  applyContent();
+  (async () => {
+    if (window.MinistryDB && MinistryDB.enabled && MinistryDB.getContent) {
+      try {
+        const c = await MinistryDB.getContent();
+        if (c && Object.keys(c).length) { CONTENT = c; applyContent(); applyWatchLive(lastLiveUrl); }
+      } catch (_) {}
     }
   })();
 

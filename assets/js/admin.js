@@ -63,7 +63,7 @@
     $("#tab-" + tab.dataset.tab).classList.remove("hidden");
   }));
 
-  const loadAll = () => { loadVideos(); loadHero(); loadPartners(); loadMessages(); loadDonations(); };
+  const loadAll = () => { loadVideos(); loadHero(); loadContent(); loadPartners(); loadMessages(); loadDonations(); };
 
   /* ---------- Edit modal ---------- */
   const editModal = $("#editModal"), editForm = $("#editForm"), editTitle = $("#editTitle");
@@ -216,6 +216,37 @@
     const { error } = await db.from(table).delete().eq("id", id);
     if (error) return toast("Error: " + error.message);
     toast("Deleted."); reload();
+  }
+
+  /* ---------- SITE CONTENT (headings / subtexts / poster) ---------- */
+  const CONTENT_FIELDS = [
+    ["live_title", "Watch Live — heading", "text"],
+    ["live_blurb", "Watch Live — subtext", "textarea"],
+    ["live_poster", "Watch Live — poster image URL", "text"],
+    ["featured_title", "Featured Broadcast — heading", "text"],
+    ["featured_blurb", "Featured Broadcast — subtext", "textarea"],
+    ["ondemand_title", "On-Demand — heading", "text"],
+    ["ondemand_subtext", "On-Demand — subtext", "textarea"],
+    ["messages_title", "Messages & Videos — heading", "text"],
+  ];
+  async function loadContent() {
+    const form = $("#contentForm");
+    if (!form) return;
+    const { data, error } = await db.from("site_content").select("key, value");
+    const map = {};
+    if (!error && data) data.forEach((r) => { map[r.key] = r.value; });
+    form.innerHTML = CONTENT_FIELDS.map(([k, label, type]) =>
+      type === "textarea"
+        ? `<div><label class="form-label">${label}</label><textarea class="form-input" name="${k}" rows="2">${esc(map[k] || "")}</textarea></div>`
+        : `<div><label class="form-label">${label}</label><input class="form-input" name="${k}" type="text" value="${esc(map[k] || "")}" /></div>`
+    ).join("") + `<button type="submit" class="btn-navy w-full justify-center py-3">Save content</button>`;
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const rows = CONTENT_FIELDS.map(([k]) => ({ key: k, value: form.querySelector(`[name="${k}"]`).value }));
+      const { error: err } = await db.from("site_content").upsert(rows, { onConflict: "key" });
+      if (err) return toast("Error: " + err.message);
+      toast("Content saved — refresh the site to see it.");
+    };
   }
 
   /* ---------- PARTNERS (read-only) ---------- */

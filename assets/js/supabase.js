@@ -76,6 +76,16 @@
       }));
     },
 
+    /* ---- Editable site content (headings, subtexts, poster) ---- */
+    async getContent() {
+      if (!client) return {};
+      const { data, error } = await client.from("site_content").select("key, value");
+      if (error || !data) return {};
+      const out = {};
+      data.forEach((r) => { out[r.key] = r.value; });
+      return out;
+    },
+
     /* ---- Hero slider images ---- */
     async getHeroSlides() {
       if (!client) return [];
