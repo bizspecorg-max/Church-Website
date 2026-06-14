@@ -80,6 +80,10 @@
   const select = (label, name, value, opts) => `
     <div><label class="form-label">${label}</label>
     <select class="form-input" name="${name}">${opts.map((o) => `<option value="${o}" ${o === value ? "selected" : ""}>${o}</option>`).join("")}</select></div>`;
+  const fieldList = (label, name, value, opts) => `
+    <div><label class="form-label">${label}</label>
+    <input class="form-input" name="${name}" type="text" value="${esc(value)}" list="dl_${name}" autocomplete="off" />
+    <datalist id="dl_${name}">${opts.map((o) => `<option value="${esc(o)}">`).join("")}</datalist></div>`;
   const checkbox = (label, name, checked) => `
     <label class="flex items-center gap-2 text-sm font-600 text-slate-600"><input type="checkbox" name="${name}" ${checked ? "checked" : ""} class="h-4 w-4" /> ${label}</label>`;
   const formData = (form) => {
@@ -89,29 +93,52 @@
   };
 
   /* ---------- VIDEOS ---------- */
+  const SECTION_NOTE = {
+    "Watch Live": "drives the live player",
+    "Featured": "drives the big featured video",
+  };
+  let knownSections = ["Recent Messages", "Praise & Worship", "Crusades & Conferences", "Watch Live", "Featured"];
+
+  const videoRow = (v) => `
+    <div class="bg-white rounded-xl shadow-sm border p-4 flex items-center gap-4">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-[11px] px-2 py-0.5 rounded-full ${v.play_mode === "link" ? "bg-slate-100 text-slate-600" : "bg-green-100 text-green-700"}">${v.play_mode === "link" ? "opens YouTube" : "plays on-site"}</span>
+          ${v.published ? "" : '<span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">hidden</span>'}
+          ${v.category ? `<span class="text-[11px] text-slate-400">${esc(v.category)}</span>` : ""}
+        </div>
+        <p class="font-600 text-navy truncate mt-0.5">${esc(v.title)}</p>
+        <p class="text-xs text-slate-400 truncate">${esc(v.youtube_url)}</p>
+      </div>
+      <div class="flex-none flex gap-2">
+        <button class="text-sm font-600 text-navy hover:text-gold-dark" data-edit-video='${esc(JSON.stringify(v))}'>Edit</button>
+        <button class="text-sm font-600 text-red-500 hover:text-red-700" data-del-video="${v.id}">Delete</button>
+      </div>
+    </div>`;
+
   async function loadVideos() {
     const { data, error } = await db.from("videos").select("*").order("sort_order", { ascending: true });
     const wrap = $("#videosList");
     if (error) { wrap.innerHTML = `<p class="text-red-500 text-sm">${esc(error.message)}</p>`; return; }
     if (!data.length) { wrap.innerHTML = `<p class="text-slate-500 text-sm">No videos yet — click “Add video”.</p>`; return; }
-    wrap.innerHTML = data.map((v) => `
-      <div class="bg-white rounded-xl shadow-sm border p-4 flex items-center gap-4">
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-[11px] font-700 uppercase tracking-wide text-gold-dark">${esc(v.section)}</span>
-            <span class="text-[11px] px-2 py-0.5 rounded-full ${v.play_mode === "link" ? "bg-slate-100 text-slate-600" : "bg-green-100 text-green-700"}">${v.play_mode === "link" ? "opens YouTube" : "plays on-site"}</span>
-            ${v.published ? "" : '<span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">hidden</span>'}
-          </div>
-          <p class="font-600 text-navy truncate mt-0.5">${esc(v.title)}</p>
-          <p class="text-xs text-slate-400 truncate">${esc(v.youtube_url)}</p>
+    // group by section
+    const order = []; const groups = {};
+    data.forEach((v) => { const s = v.section || "Recent Messages"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(v); });
+    knownSections = Array.from(new Set([...order, ...knownSections]));
+    wrap.innerHTML = order.map((sec) => `
+      <div class="mb-7">
+        <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <h3 class="font-700 text-navy flex items-center gap-2">
+            <span class="h-4 w-1.5 rounded bg-gold"></span>${esc(sec)}
+            <span class="text-xs font-400 text-slate-400">${groups[sec].length} video${groups[sec].length > 1 ? "s" : ""}${SECTION_NOTE[sec] ? " · " + SECTION_NOTE[sec] : ""}</span>
+          </h3>
+          <button class="text-sm font-600 text-gold-dark hover:underline" data-add-section="${esc(sec)}">+ Add to this section</button>
         </div>
-        <div class="flex-none flex gap-2">
-          <button class="text-sm font-600 text-navy hover:text-gold-dark" data-edit-video='${esc(JSON.stringify(v))}'>Edit</button>
-          <button class="text-sm font-600 text-red-500 hover:text-red-700" data-del-video="${v.id}">Delete</button>
-        </div>
+        <div class="space-y-2">${groups[sec].map(videoRow).join("")}</div>
       </div>`).join("");
     $$("[data-edit-video]", wrap).forEach((b) => b.addEventListener("click", () => editVideo(JSON.parse(b.dataset.editVideo))));
     $$("[data-del-video]", wrap).forEach((b) => b.addEventListener("click", () => delRow("videos", b.dataset.delVideo, loadVideos)));
+    $$("[data-add-section]", wrap).forEach((b) => b.addEventListener("click", () => editVideo({ section: b.dataset.addSection, play_mode: "inline", published: true, sort_order: 0 })));
   }
 
   function editVideo(v) {
@@ -119,7 +146,7 @@
     editTitle.textContent = v.id ? "Edit video" : "Add video";
     editForm.innerHTML =
       field("Title", "title", v.title || "") +
-      field('Section — "Watch Live", "Featured", or any heading', "section", v.section || "Recent Messages") +
+      fieldList('Section — pick or type a new one ("Watch Live" / "Featured" are special)', "section", v.section || "Recent Messages", knownSections) +
       field("Label (e.g. Prophetic Word)", "category", v.category || "") +
       field("YouTube link", "youtube_url", v.youtube_url || "") +
       textarea("Description", "description", v.description || "") +
