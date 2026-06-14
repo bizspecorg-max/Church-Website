@@ -15,7 +15,7 @@
       fontFamily: { serif: ['"Cormorant Garamond"', 'serif'], sans: ['Inter', 'sans-serif'] },
     } } };
   </script>
-  <link rel="stylesheet" href="assets/css/custom.css?v=20260614c" />
+  <link rel="stylesheet" href="assets/css/custom.css?v=20260614d" />
 </head>
 <body class="font-sans bg-slate-100 text-navy-dark min-h-screen">
 
@@ -78,10 +78,11 @@
 
       <!-- VIDEOS -->
       <section id="tab-videos" class="admin-panel">
-        <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center justify-between mb-2">
           <h2 class="font-serif text-2xl font-700">Videos</h2>
           <button id="addVideo" class="btn-gold text-sm">+ Add video</button>
         </div>
+        <p class="text-sm text-slate-500 mb-5">Grouped by section. Use ▲▼ to reorder a video. A section's position follows its first video — move a video to the top to bring its whole section up. The <b>Section</b> name is the heading; <b>Watch Live</b> and <b>Featured</b> are special spots.</p>
         <div id="videosList" class="space-y-3"></div>
       </section>
 
@@ -138,8 +139,8 @@
   <!-- Toast -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
 
-  <script src="assets/js/config.js?v=20260614c"></script>
+  <script src="assets/js/config.js?v=20260614d"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/admin.js?v=20260614c"></script>
+  <script src="assets/js/admin.js?v=20260614d"></script>
 </body>
 </html>

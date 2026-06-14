@@ -95,12 +95,17 @@
     </div></div>`;
   async function uploadImage(file) {
     if (!file) return null;
-    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
-    const path = `uploads/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const { error } = await db.storage.from("media").upload(path, file, { cacheControl: "3600", upsert: false });
-    if (error) { toast("Upload failed: " + error.message); return null; }
-    const { data } = db.storage.from("media").getPublicUrl(path);
-    return data.publicUrl;
+    try {
+      const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+      const path = `uploads/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await db.storage.from("media").upload(path, file, { cacheControl: "3600", upsert: false });
+      if (error) { toast("Upload failed: " + error.message + " — run supabase-storage.sql, or paste a URL."); return null; }
+      const { data } = db.storage.from("media").getPublicUrl(path);
+      return data.publicUrl;
+    } catch (e) {
+      toast("Upload needs Storage enabled (run supabase-storage.sql). For now, paste an image URL.");
+      return null;
+    }
   }
   const wireUploads = (form) => {
     $$("[data-upload-for]", form).forEach((inp) => inp.addEventListener("change", async (e) => {
@@ -136,7 +141,9 @@
         <p class="font-600 text-navy truncate mt-0.5">${esc(v.title)}</p>
         <p class="text-xs text-slate-400 truncate">${esc(v.youtube_url)}</p>
       </div>
-      <div class="flex-none flex gap-2">
+      <div class="flex-none flex items-center gap-2">
+        <button class="h-7 w-7 rounded bg-slate-100 hover:bg-slate-200 text-navy" data-move-up="${v.id}" title="Move up">▲</button>
+        <button class="h-7 w-7 rounded bg-slate-100 hover:bg-slate-200 text-navy" data-move-down="${v.id}" title="Move down">▼</button>
         <button class="text-sm font-600 text-navy hover:text-gold-dark" data-edit-video='${esc(JSON.stringify(v))}'>Edit</button>
         <button class="text-sm font-600 text-red-500 hover:text-red-700" data-del-video="${v.id}">Delete</button>
       </div>
@@ -165,6 +172,23 @@
     $$("[data-edit-video]", wrap).forEach((b) => b.addEventListener("click", () => editVideo(JSON.parse(b.dataset.editVideo))));
     $$("[data-del-video]", wrap).forEach((b) => b.addEventListener("click", () => delRow("videos", b.dataset.delVideo, loadVideos)));
     $$("[data-add-section]", wrap).forEach((b) => b.addEventListener("click", () => editVideo({ section: b.dataset.addSection, play_mode: "inline", published: true, sort_order: 0 })));
+    $$("[data-move-up]", wrap).forEach((b) => b.addEventListener("click", () => moveVideo(b.dataset.moveUp, "up")));
+    $$("[data-move-down]", wrap).forEach((b) => b.addEventListener("click", () => moveVideo(b.dataset.moveDown, "down")));
+  }
+
+  // Reorder: swap a video with its neighbour, then renumber everything 0..n.
+  async function moveVideo(id, dir) {
+    const { data, error } = await db.from("videos").select("id").order("sort_order", { ascending: true }).order("id", { ascending: true });
+    if (error || !data) return toast("Error: " + (error ? error.message : "could not load order"));
+    const ids = data.map((v) => String(v.id));
+    const i = ids.indexOf(String(id));
+    const j = dir === "up" ? i - 1 : i + 1;
+    if (i < 0 || j < 0 || j >= ids.length) return;
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+    const { error: upErr } = await Promise.all(ids.map((vid, k) => db.from("videos").update({ sort_order: k }).eq("id", vid)))
+      .then(() => ({})).catch((e) => ({ error: e }));
+    if (upErr) return toast("Error reordering: " + upErr.message);
+    loadVideos();
   }
 
   function editVideo(v) {
