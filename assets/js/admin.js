@@ -197,9 +197,21 @@
   function editVideo(v) {
     v = v || { play_mode: "inline", published: true, sort_order: 0 };
     editTitle.textContent = v.id ? "Edit video" : "Add video";
+    const cur = v.section || "Recent Messages";
+    const opts = Array.from(new Set([cur, ...knownSections]));
+    const sectionPicker = `
+      <div>
+        <label class="form-label">Section — where this video shows</label>
+        <select class="form-input" name="section_select">
+          ${opts.map((s) => `<option value="${esc(s)}" ${s === cur ? "selected" : ""}>${esc(s)}</option>`).join("")}
+          <option value="__new__">➕ Add a new section…</option>
+        </select>
+        <input class="form-input mt-2 hidden" name="section_new" placeholder="Type a new section name" />
+        <p class="text-xs text-slate-400 mt-1">"Watch Live" and "Featured" are special single-video spots.</p>
+      </div>`;
     editForm.innerHTML =
       field("Title", "title", v.title || "") +
-      fieldList('Section — pick or type a new one ("Watch Live" / "Featured" are special)', "section", v.section || "Recent Messages", knownSections) +
+      sectionPicker +
       field("Label (e.g. Prophetic Word)", "category", v.category || "") +
       field("YouTube link", "youtube_url", v.youtube_url || "") +
       textarea("Description", "description", v.description || "") +
@@ -207,9 +219,17 @@
       field("Sort order", "sort_order", v.sort_order ?? 0, "number") +
       checkbox("Published (visible on site)", "published", v.published !== false) +
       `<button type="submit" class="btn-navy w-full justify-center py-3">Save</button>`;
+    // Reveal the "new section" box when "Add a new section…" is chosen.
+    const selEl = editForm.querySelector('[name="section_select"]');
+    const newEl = editForm.querySelector('[name="section_new"]');
+    const syncNew = () => { newEl.classList.toggle("hidden", selEl.value !== "__new__"); if (selEl.value === "__new__") newEl.focus(); };
+    selEl.addEventListener("change", syncNew); syncNew();
     editForm.onsubmit = async (e) => {
       e.preventDefault();
       const d = formData(editForm);
+      d.section = d.section_select === "__new__" ? (d.section_new || "").trim() : d.section_select;
+      if (!d.section) d.section = "Recent Messages";
+      delete d.section_select; delete d.section_new;
       d.sort_order = parseInt(d.sort_order, 10) || 0;
       const q = v.id ? db.from("videos").update(d).eq("id", v.id) : db.from("videos").insert([d]);
       const { error } = await q;
