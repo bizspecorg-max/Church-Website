@@ -645,6 +645,11 @@
     set("#ondemandTitle", g("ondemand_title"));
     set("#ondemandSub", g("ondemand_subtext"));
     set("#messagesTitle", g("messages_title"));
+    // Editable images
+    const setImg = (sel, val) => { const el = $(sel); if (el && val) el.src = val; };
+    setImg("#aboutImg", CONTENT.about_image);
+    if (CONTENT.prophet_image) { setImg("#prophetHeroImg", CONTENT.prophet_image); setImg("#prophetImg", CONTENT.prophet_image); }
+    setImg("#welcomeImage", CONTENT.popup_image);
   };
   applyContent();
   (async () => {

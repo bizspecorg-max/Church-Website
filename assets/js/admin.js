@@ -86,6 +86,32 @@
     <datalist id="dl_${name}">${opts.map((o) => `<option value="${esc(o)}">`).join("")}</datalist></div>`;
   const checkbox = (label, name, checked) => `
     <label class="flex items-center gap-2 text-sm font-600 text-slate-600"><input type="checkbox" name="${name}" ${checked ? "checked" : ""} class="h-4 w-4" /> ${label}</label>`;
+  // Image field: URL input + an Upload button (uploads to Supabase Storage).
+  const imageField = (label, name, value) => `
+    <div><label class="form-label">${label}</label>
+    <div class="flex gap-2">
+      <input class="form-input flex-1" name="${name}" type="text" value="${esc(value)}" placeholder="Paste an image URL, or upload →" />
+      <label class="flex-none cursor-pointer bg-navy hover:bg-navy-dark text-white text-sm font-600 px-3 rounded-lg flex items-center transition">Upload<input type="file" accept="image/*" class="hidden" data-upload-for="${name}" /></label>
+    </div></div>`;
+  async function uploadImage(file) {
+    if (!file) return null;
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `uploads/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await db.storage.from("media").upload(path, file, { cacheControl: "3600", upsert: false });
+    if (error) { toast("Upload failed: " + error.message); return null; }
+    const { data } = db.storage.from("media").getPublicUrl(path);
+    return data.publicUrl;
+  }
+  const wireUploads = (form) => {
+    $$("[data-upload-for]", form).forEach((inp) => inp.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      toast("Uploading…");
+      const url = await uploadImage(file);
+      if (url) { const target = form.querySelector(`[name="${inp.dataset.uploadFor}"]`); if (target) target.value = url; toast("Uploaded ✓"); }
+      e.target.value = "";
+    }));
+  };
   const formData = (form) => {
     const o = {};
     $$("[name]", form).forEach((el) => { o[el.name] = el.type === "checkbox" ? el.checked : el.value; });
@@ -192,11 +218,12 @@
     h = h || { sort_order: 0, published: true };
     editTitle.textContent = h.id ? "Edit hero image" : "Add hero image";
     editForm.innerHTML =
-      field("Image URL", "image_url", h.image_url || "") +
+      imageField("Hero background image", "image_url", h.image_url || "") +
       field("Headline (optional)", "headline", h.headline || "") +
       field("Sort order", "sort_order", h.sort_order ?? 0, "number") +
       checkbox("Published", "published", h.published !== false) +
       `<button type="submit" class="btn-navy w-full justify-center py-3">Save</button>`;
+    wireUploads(editForm);
     editForm.onsubmit = async (e) => {
       e.preventDefault();
       const d = formData(editForm);
@@ -222,12 +249,15 @@
   const CONTENT_FIELDS = [
     ["live_title", "Watch Live — heading", "text"],
     ["live_blurb", "Watch Live — subtext", "textarea"],
-    ["live_poster", "Watch Live — poster image URL", "text"],
+    ["live_poster", "Watch Live — poster image", "image"],
     ["featured_title", "Featured Broadcast — heading", "text"],
     ["featured_blurb", "Featured Broadcast — subtext", "textarea"],
     ["ondemand_title", "On-Demand — heading", "text"],
     ["ondemand_subtext", "On-Demand — subtext", "textarea"],
     ["messages_title", "Messages & Videos — heading", "text"],
+    ["about_image", "About section — image", "image"],
+    ["prophet_image", "Prophet photo", "image"],
+    ["popup_image", "Welcome popup — image", "image"],
   ];
   async function loadContent() {
     const form = $("#contentForm");
@@ -238,8 +268,11 @@
     form.innerHTML = CONTENT_FIELDS.map(([k, label, type]) =>
       type === "textarea"
         ? `<div><label class="form-label">${label}</label><textarea class="form-input" name="${k}" rows="2">${esc(map[k] || "")}</textarea></div>`
-        : `<div><label class="form-label">${label}</label><input class="form-input" name="${k}" type="text" value="${esc(map[k] || "")}" /></div>`
+        : type === "image"
+          ? imageField(label, k, map[k] || "")
+          : `<div><label class="form-label">${label}</label><input class="form-input" name="${k}" type="text" value="${esc(map[k] || "")}" /></div>`
     ).join("") + `<button type="submit" class="btn-navy w-full justify-center py-3">Save content</button>`;
+    wireUploads(form);
     form.onsubmit = async (e) => {
       e.preventDefault();
       const rows = CONTENT_FIELDS.map(([k]) => ({ key: k, value: form.querySelector(`[name="${k}"]`).value }));
