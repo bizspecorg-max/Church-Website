@@ -125,8 +125,8 @@
 
   /* ---------- VIDEOS ---------- */
   const SECTION_NOTE = {
-    "Watch Live": "drives the live player",
-    "Featured": "drives the big featured video",
+    "Watch Live": "single spot — only the first video here plays in the live player",
+    "Featured": "single spot — only the first video here is the big featured video",
   };
   let knownSections = ["Recent Messages", "Praise & Worship", "Crusades & Conferences", "Watch Live", "Featured"];
 

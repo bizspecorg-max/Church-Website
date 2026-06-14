@@ -610,9 +610,13 @@
        • every other row → grouped Message sections + the On-Demand wall */
   const distributeVideos = (items) => {
     items = Array.isArray(items) ? items : [];
-    const live = items.find((v) => (v.section || "") === "Watch Live");
+    // Watch Live: first "Watch Live" row WITH a valid video, else any, else config.
+    const live = items.find((v) => (v.section || "") === "Watch Live" && youtubeId(v.youtube))
+      || items.find((v) => (v.section || "") === "Watch Live");
     applyWatchLive(live ? live.youtube : CFG.liveEmbedUrl);
-    const big = items.find((v) => (v.section || "") === "Featured")
+    // Featured: first "Featured" row WITH a valid video; otherwise the first
+    // playable inline video — so the section never blanks out.
+    const big = items.find((v) => (v.section || "") === "Featured" && youtubeId(v.youtube))
       || items.find((s) => s.mode !== "link" && youtubeId(s.youtube));
     applyBigVideo(big);
     renderSections(items.filter((v) => !RESERVED.includes(v.section || "")));
