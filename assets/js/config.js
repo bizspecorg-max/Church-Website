@@ -29,7 +29,7 @@ window.MINISTRY_CONFIG = {
        2. Paste a public image URL here (e.g. from your phone/cloud).
      If left "", option 1 (the local file) is used, with a placeholder
      shown until you add it. */
-  prophetPhoto: "https://res.cloudinary.com/dfmigbgri/image/upload/v1781248935/prophet-portrait_elkbhj.jpg",
+  prophetPhoto: "https://res.cloudinary.com/dbewrzeuj/image/upload/v1781420798/19rWO_rrxjch.jpg",
 
   /* ---------- Hero slider images ----------
      The big banner rotates through these (use 4+). Visitors can
@@ -96,7 +96,7 @@ window.MINISTRY_CONFIG = {
   showPopup:  true,
   popupOnce:  true,
   popupDelay: 1200,
-  popupImage: "", // optional: image shown in the popup (e.g. a Cloudinary event flyer)
+  popupImage: "https://res.cloudinary.com/dbewrzeuj/image/upload/v1781420798/19rWO_rrxjch.jpg", // shown in the welcome popup
 
   /* ---------- Partnership tiers (monthly giving) ----------
      Shown as cards in the Partnership section. Edit freely. */
