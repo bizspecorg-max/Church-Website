@@ -129,6 +129,8 @@
     "Featured": "single spot — only the first video here is the big featured video",
   };
   let knownSections = ["Recent Messages", "Praise & Worship", "Crusades & Conferences", "Watch Live", "Featured"];
+  let videosCache = [];   // look up rows by id (avoids breaking on quotes in titles)
+  let heroCache = [];
 
   const videoRow = (v) => `
     <div class="bg-white rounded-xl shadow-sm border p-4 flex items-center gap-4">
@@ -144,7 +146,7 @@
       <div class="flex-none flex items-center gap-2">
         <button class="h-7 w-7 rounded bg-slate-100 hover:bg-slate-200 text-navy" data-move-up="${v.id}" title="Move up">▲</button>
         <button class="h-7 w-7 rounded bg-slate-100 hover:bg-slate-200 text-navy" data-move-down="${v.id}" title="Move down">▼</button>
-        <button class="text-sm font-600 text-navy hover:text-gold-dark" data-edit-video='${esc(JSON.stringify(v))}'>Edit</button>
+        <button class="text-sm font-600 text-navy hover:text-gold-dark" data-edit-id="${v.id}">Edit</button>
         <button class="text-sm font-600 text-red-500 hover:text-red-700" data-del-video="${v.id}">Delete</button>
       </div>
     </div>`;
@@ -154,6 +156,7 @@
     const wrap = $("#videosList");
     if (error) { wrap.innerHTML = `<p class="text-red-500 text-sm">${esc(error.message)}</p>`; return; }
     if (!data.length) { wrap.innerHTML = `<p class="text-slate-500 text-sm">No videos yet — click “Add video”.</p>`; return; }
+    videosCache = data;
     // group by section
     const order = []; const groups = {};
     data.forEach((v) => { const s = v.section || "Recent Messages"; if (!groups[s]) { groups[s] = []; order.push(s); } groups[s].push(v); });
@@ -169,7 +172,7 @@
         </div>
         <div class="space-y-2">${groups[sec].map(videoRow).join("")}</div>
       </div>`).join("");
-    $$("[data-edit-video]", wrap).forEach((b) => b.addEventListener("click", () => editVideo(JSON.parse(b.dataset.editVideo))));
+    $$("[data-edit-id]", wrap).forEach((b) => b.addEventListener("click", () => { const v = videosCache.find((x) => String(x.id) === b.dataset.editId); if (v) editVideo(v); }));
     $$("[data-del-video]", wrap).forEach((b) => b.addEventListener("click", () => delRow("videos", b.dataset.delVideo, loadVideos)));
     $$("[data-add-section]", wrap).forEach((b) => b.addEventListener("click", () => editVideo({ section: b.dataset.addSection, play_mode: "inline", published: true, sort_order: 0 })));
     $$("[data-move-up]", wrap).forEach((b) => b.addEventListener("click", () => moveVideo(b.dataset.moveUp, "up")));
@@ -223,18 +226,19 @@
     const wrap = $("#heroList");
     if (error) { wrap.innerHTML = `<p class="text-red-500 text-sm">${esc(error.message)}</p>`; return; }
     if (!data.length) { wrap.innerHTML = `<p class="text-slate-500 text-sm">No hero images yet.</p>`; return; }
+    heroCache = data;
     wrap.innerHTML = data.map((h) => `
       <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
         <img src="${esc(h.image_url)}" alt="" class="w-full h-32 object-cover" />
         <div class="p-3 flex items-center justify-between">
           <span class="text-xs text-slate-500">order ${h.sort_order}${h.published ? "" : " · hidden"}</span>
           <div class="flex gap-2">
-            <button class="text-sm font-600 text-navy hover:text-gold-dark" data-edit-hero='${esc(JSON.stringify(h))}'>Edit</button>
+            <button class="text-sm font-600 text-navy hover:text-gold-dark" data-edit-hero-id="${h.id}">Edit</button>
             <button class="text-sm font-600 text-red-500" data-del-hero="${h.id}">Delete</button>
           </div>
         </div>
       </div>`).join("");
-    $$("[data-edit-hero]", wrap).forEach((b) => b.addEventListener("click", () => editHero(JSON.parse(b.dataset.editHero))));
+    $$("[data-edit-hero-id]", wrap).forEach((b) => b.addEventListener("click", () => { const h = heroCache.find((x) => String(x.id) === b.dataset.editHeroId); if (h) editHero(h); }));
     $$("[data-del-hero]", wrap).forEach((b) => b.addEventListener("click", () => delRow("hero_slides", b.dataset.delHero, loadHero)));
   }
 
