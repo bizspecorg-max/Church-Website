@@ -63,7 +63,7 @@
     $("#tab-" + tab.dataset.tab).classList.remove("hidden");
   }));
 
-  const loadAll = () => { loadVideos(); loadHero(); loadContent(); loadPartners(); loadMessages(); loadDonations(); };
+  const loadAll = () => { loadVideos(); loadHero(); loadImages(); loadContent(); loadPartners(); loadMessages(); loadDonations(); };
 
   /* ---------- Edit modal ---------- */
   const editModal = $("#editModal"), editForm = $("#editForm"), editTitle = $("#editTitle");
@@ -270,18 +270,52 @@
   }
 
   /* ---------- SITE CONTENT (headings / subtexts / poster) ---------- */
+  /* ---------- IMAGES (every editable site image) ---------- */
+  const IMAGE_SLOTS = [
+    ["prophet_image", "Prophet / Pastor photo"],
+    ["about_image", "About section image"],
+    ["live_poster", "Watch Live poster"],
+    ["popup_image", "Welcome popup image"],
+    ["testimony_1_image", "Testimony 1 photo"],
+    ["testimony_2_image", "Testimony 2 photo"],
+    ["testimony_3_image", "Testimony 3 photo"],
+  ];
+  async function loadImages() {
+    const form = $("#imagesForm");
+    if (!form) return;
+    const { data } = await db.from("site_content").select("key, value");
+    const map = {};
+    if (data) data.forEach((r) => { map[r.key] = r.value; });
+    form.innerHTML = IMAGE_SLOTS.map(([k, label]) => `
+      <div class="bg-white rounded-xl border p-4 flex items-center gap-4">
+        <img src="${esc(map[k] || "assets/img/logo.svg")}" onerror="this.onerror=null;this.src='assets/img/logo.svg'" class="h-16 w-16 rounded-lg object-cover bg-slate-100 flex-none" alt="" />
+        <div class="flex-1 min-w-0">
+          <label class="form-label">${label}</label>
+          <div class="flex gap-2">
+            <input class="form-input flex-1" name="${k}" type="text" value="${esc(map[k] || "")}" placeholder="Image URL or upload →" />
+            <label class="flex-none cursor-pointer bg-navy hover:bg-navy-dark text-white text-sm font-600 px-3 rounded-lg flex items-center transition">Upload<input type="file" accept="image/*" class="hidden" data-upload-for="${k}" /></label>
+          </div>
+        </div>
+      </div>`).join("") + `<button type="submit" class="btn-navy w-full justify-center py-3">Save images</button>`;
+    wireUploads(form);
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const rows = IMAGE_SLOTS.map(([k]) => ({ key: k, value: form.querySelector(`[name="${k}"]`).value }));
+      const { error } = await db.from("site_content").upsert(rows, { onConflict: "key" });
+      if (error) return toast("Error: " + error.message);
+      toast("Images saved — refresh the site to see them.");
+    };
+  }
+
+  /* ---------- SITE CONTENT (headings / subtexts) ---------- */
   const CONTENT_FIELDS = [
     ["live_title", "Watch Live — heading", "text"],
     ["live_blurb", "Watch Live — subtext", "textarea"],
-    ["live_poster", "Watch Live — poster image", "image"],
     ["featured_title", "Featured Broadcast — heading", "text"],
     ["featured_blurb", "Featured Broadcast — subtext", "textarea"],
     ["ondemand_title", "On-Demand — heading", "text"],
     ["ondemand_subtext", "On-Demand — subtext", "textarea"],
     ["messages_title", "Messages & Videos — heading", "text"],
-    ["about_image", "About section — image", "image"],
-    ["prophet_image", "Prophet photo", "image"],
-    ["popup_image", "Welcome popup — image", "image"],
   ];
   async function loadContent() {
     const form = $("#contentForm");

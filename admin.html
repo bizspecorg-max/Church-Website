@@ -15,7 +15,7 @@
       fontFamily: { serif: ['"Cormorant Garamond"', 'serif'], sans: ['Inter', 'sans-serif'] },
     } } };
   </script>
-  <link rel="stylesheet" href="assets/css/custom.css?v=20260614d" />
+  <link rel="stylesheet" href="assets/css/custom.css?v=20260614e" />
 </head>
 <body class="font-sans bg-slate-100 text-navy-dark min-h-screen">
 
@@ -64,6 +64,7 @@
       <div class="max-w-6xl mx-auto px-4 sm:px-6 flex gap-1 overflow-x-auto">
         <button class="admin-tab active" data-tab="videos">Videos</button>
         <button class="admin-tab" data-tab="hero">Hero Images</button>
+        <button class="admin-tab" data-tab="images">Images</button>
         <button class="admin-tab" data-tab="content">Content</button>
         <button class="admin-tab" data-tab="partners">Partners</button>
         <button class="admin-tab" data-tab="messages">Messages</button>
@@ -93,6 +94,13 @@
           <button id="addHero" class="btn-gold text-sm">+ Add image</button>
         </div>
         <div id="heroList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- IMAGES (every editable image on the site) -->
+      <section id="tab-images" class="admin-panel hidden">
+        <h2 class="font-serif text-2xl font-700 mb-1">Images</h2>
+        <p class="text-sm text-slate-500 mb-5">Edit any image on the site — paste a URL or upload. (Hero banner slides are in the <b>Hero Images</b> tab.)</p>
+        <form id="imagesForm" class="space-y-4 max-w-2xl"></form>
       </section>
 
       <!-- CONTENT (section headings / subtexts / poster) -->
@@ -139,8 +147,8 @@
   <!-- Toast -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
 
-  <script src="assets/js/config.js?v=20260614d"></script>
+  <script src="assets/js/config.js?v=20260614e"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/admin.js?v=20260614d"></script>
+  <script src="assets/js/admin.js?v=20260614e"></script>
 </body>
 </html>

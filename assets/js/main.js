@@ -653,6 +653,9 @@
     setImg("#aboutImg", CONTENT.about_image);
     if (CONTENT.prophet_image) { setImg("#prophetHeroImg", CONTENT.prophet_image); setImg("#prophetImg", CONTENT.prophet_image); }
     setImg("#welcomeImage", CONTENT.popup_image);
+    setImg("#testimonyImg1", CONTENT.testimony_1_image);
+    setImg("#testimonyImg2", CONTENT.testimony_2_image);
+    setImg("#testimonyImg3", CONTENT.testimony_3_image);
   };
   applyContent();
   (async () => {
