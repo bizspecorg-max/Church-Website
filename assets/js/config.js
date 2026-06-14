@@ -64,14 +64,17 @@ window.MINISTRY_CONFIG = {
      NOTE: the samples below are public worship/prophetic videos so
      the site plays out of the box; replace with the Prophet's own. */
   sermons: [
-    { section: "Recent Messages", title: "Distance Is Not A Barrier — Just Have Faith", date: "Prophetic Word", mode: "inline", youtube: "https://www.youtube.com/watch?v=rYJWRyg89wA", blurb: "Wherever you are, distance is not a barrier — receive your healing and breakthrough by faith." },
-    { section: "Recent Messages", title: "I Know Who I Am", date: "Identity in Christ", mode: "inline", youtube: "https://www.youtube.com/watch?v=frtZ4XfoXxM", blurb: "Discover your true identity as a child of God — chosen, redeemed and victorious." },
-    { section: "Recent Messages", title: "Who Is On The Lord's Side", date: "Consecration", mode: "inline", youtube: "https://www.youtube.com/watch?v=aULdIMQn1AQ", blurb: "A call to full surrender and consecration to the Lordship of Jesus Christ." },
-    { section: "Praise & Worship", title: "Way Maker — Worship Encounter", date: "Worship", mode: "inline", youtube: "https://www.youtube.com/watch?v=hWgJij1MSI4", blurb: "Enter His presence with this powerful worship and let God move in your situation." },
-    { section: "Praise & Worship", title: "TobeChukwu — Praise God", date: "Thanksgiving", mode: "inline", youtube: "https://www.youtube.com/watch?v=0N8jWaBQUuA", blurb: "Lift your voice in thanksgiving — He is worthy of all our praise and adoration." },
-    { section: "Praise & Worship", title: "Way Maker (Live)", date: "Live Worship", mode: "inline", youtube: "https://www.youtube.com/watch?v=QM8jQHE5AAk", blurb: "A live worship experience — miracle worker, promise keeper, light in the darkness." },
-    { section: "Crusades & Conferences", title: "Worship & Praise Medley", date: "Worship Night", mode: "link", youtube: "https://www.youtube.com/watch?v=eNKjlNyOFjY", blurb: "An atmosphere of worship — soak in His presence and be refreshed in spirit." },
-    { section: "Crusades & Conferences", title: "A Night of Praise Celebration", date: "Praise", mode: "link", youtube: "https://www.youtube.com/watch?v=J4vTs2py2ro", blurb: "Celebrate the goodness of God with thanksgiving, praise and adoration." },
+    { section: "Watch Live", title: "Live Service & Broadcasts", date: "Live", mode: "inline", youtube: "https://www.youtube.com/watch?v=QM8jQHE5AAk", blurb: "Join our services live from anywhere in the world." },
+    { section: "Featured", title: "Distance Is Not A Barrier — Just Have Faith", date: "Prophetic Word", mode: "inline", youtube: "https://www.youtube.com/watch?v=rYJWRyg89wA", blurb: "This week's featured message — watch and be blessed." },
+    { section: "Recent Messages", title: "I Know Who I Am", date: "Identity in Christ", mode: "inline", youtube: "https://www.youtube.com/watch?v=frtZ4XfoXxM", blurb: "Discover your true identity as a child of God." },
+    { section: "Recent Messages", title: "Who Is On The Lord's Side", date: "Consecration", mode: "inline", youtube: "https://www.youtube.com/watch?v=aULdIMQn1AQ", blurb: "A call to full surrender to the Lordship of Jesus." },
+    { section: "Recent Messages", title: "TobeChukwu — Praise God", date: "Thanksgiving", mode: "inline", youtube: "https://www.youtube.com/watch?v=0N8jWaBQUuA", blurb: "Lift your voice in thanksgiving to the Almighty." },
+    { section: "Recent Messages", title: "The Power of Faith", date: "Faith", mode: "inline", youtube: "https://www.youtube.com/watch?v=k28qCBwww0E", blurb: "Unwavering faith unlocks the supernatural in your life." },
+    { section: "Recent Messages", title: "Worship Encounter", date: "Worship", mode: "inline", youtube: "https://www.youtube.com/watch?v=eNKjlNyOFjY", blurb: "Soak in His presence and be refreshed in spirit." },
+    { section: "Recent Messages", title: "A Night of Praise", date: "Praise", mode: "inline", youtube: "https://www.youtube.com/watch?v=J4vTs2py2ro", blurb: "Celebrate the goodness of God with thanksgiving." },
+    { section: "Praise & Worship", title: "Way Maker — Worship", date: "Worship", mode: "inline", youtube: "https://www.youtube.com/watch?v=hWgJij1MSI4", blurb: "Enter His presence with this powerful worship." },
+    { section: "Praise & Worship", title: "Way Maker (Live)", date: "Live Worship", mode: "inline", youtube: "https://www.youtube.com/watch?v=QM8jQHE5AAk", blurb: "A live worship experience — miracle worker." },
+    { section: "Crusades & Conferences", title: "Crusade Highlights", date: "Crusade", mode: "link", youtube: "https://www.youtube.com/watch?v=eNKjlNyOFjY", blurb: "Highlights from our recent crusade gathering." },
   ],
 
   /* ---------- Watch Live / Video ----------
