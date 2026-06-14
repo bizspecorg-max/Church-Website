@@ -36,11 +36,9 @@ window.MINISTRY_CONFIG = {
      click the arrows/dots to move between them. Swap for your own
      crusade / service / conference photos any time. */
   heroSlides: [
-    "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&w=1920&q=80",
-    "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1920&q=80",
-    "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?auto=format&fit=crop&w=1920&q=80",
-    "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1920&q=80",
-    "https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=1920&q=80",
+    "https://res.cloudinary.com/dbewrzeuj/image/upload/v1781423907/iCBGa_1_pyy7xi.jpg",
+    "https://res.cloudinary.com/dbewrzeuj/image/upload/v1781423907/EUNaM_1_qfw4ho.jpg",
+    "https://res.cloudinary.com/dbewrzeuj/image/upload/v1781423907/tp8NG_v3chsi.jpg",
   ],
 
   /* ---------- YouTube ----------
