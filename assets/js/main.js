@@ -619,9 +619,12 @@
     renderGallery(items);
   };
   distributeVideos(CFG.sermons || []);     // instant paint from config
-  (async () => {                            // then let Supabase take over
+  (async () => {                            // then mirror Supabase exactly (admin == site)
     if (window.MinistryDB && MinistryDB.enabled && MinistryDB.getVideos) {
-      try { const rows = await MinistryDB.getVideos(); if (rows && rows.length) distributeVideos(rows); } catch (_) {}
+      try {
+        const rows = await MinistryDB.getVideos();
+        distributeVideos(rows || []);       // authoritative: whatever the DB has is what shows
+      } catch (_) { /* network error → keep the config paint */ }
     }
   })();
 
