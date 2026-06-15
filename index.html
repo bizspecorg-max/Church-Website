@@ -59,7 +59,7 @@
   <!-- Loads the Paystack inline checkout library. Add your public key in assets/js/main.js -->
   <script src="https://js.paystack.co/v1/inline.js"></script>
 
-  <link rel="stylesheet" href="assets/css/custom.css?v=20260615c" />
+  <link rel="stylesheet" href="assets/css/custom.css?v=20260615d" />
 </head>
 
 <body class="font-sans text-navy-dark bg-white antialiased">
@@ -307,8 +307,8 @@
 
         <div class="reveal">
           <span class="section-eyebrow">About The Ministry</span>
-          <h2 class="section-title">A House of Faith, Purpose &amp; Power</h2>
-          <p class="mt-5 text-gray-600 leading-relaxed">
+          <h2 id="aboutTitle" class="section-title">A House of Faith, Purpose &amp; Power</h2>
+          <p id="aboutText" class="mt-5 text-gray-600 leading-relaxed">
             Prophet AA Emmanuel Ministries is a Christ-centered, Spirit-led ministry committed to
             restoring hope, healing the broken-hearted, and raising believers who live out their God-given
             purpose. For over a decade we have carried the gospel across cities and nations through
@@ -440,25 +440,25 @@
     <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(circle at 20% 30%, #e6c45a 0, transparent 40%), radial-gradient(circle at 80% 70%, #e6c45a 0, transparent 40%);"></div>
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <span class="section-eyebrow text-gold-light">Our Impact</span>
-      <h2 class="section-title text-white">Lives Touched, Nations Reached</h2>
-      <p class="mt-4 text-blue-100/80 max-w-2xl mx-auto">By God's grace, the ministry continues to make a measurable difference across communities and continents.</p>
+      <h2 id="impactHeading" class="section-title text-white">Lives Touched, Nations Reached</h2>
+      <p id="impactIntro" class="mt-4 text-blue-100/80 max-w-2xl mx-auto">By God's grace, the ministry continues to make a measurable difference across communities and continents.</p>
 
       <div class="mt-9 grid grid-cols-2 lg:grid-cols-4 gap-5">
         <div class="stat-card reveal">
-          <p class="stat-number" data-count="125000" data-suffix="+">0</p>
-          <p class="stat-label">Souls Reached</p>
+          <p id="stat1Val" class="stat-number" data-count="125000" data-suffix="+">0</p>
+          <p id="stat1Lab" class="stat-label">Souls Reached</p>
         </div>
         <div class="stat-card reveal">
-          <p class="stat-number" data-count="240" data-suffix="+">0</p>
-          <p class="stat-label">Community Projects</p>
+          <p id="stat2Val" class="stat-number" data-count="240" data-suffix="+">0</p>
+          <p id="stat2Lab" class="stat-label">Community Projects</p>
         </div>
         <div class="stat-card reveal">
-          <p class="stat-number" data-count="58000" data-suffix="+">0</p>
-          <p class="stat-label">Prayer Requests Handled</p>
+          <p id="stat3Val" class="stat-number" data-count="58000" data-suffix="+">0</p>
+          <p id="stat3Lab" class="stat-label">Prayer Requests Handled</p>
         </div>
         <div class="stat-card reveal">
-          <p class="stat-number" data-count="32" data-suffix="">0</p>
-          <p class="stat-label">Countries Impacted</p>
+          <p id="stat4Val" class="stat-number" data-count="32" data-suffix="">0</p>
+          <p id="stat4Lab" class="stat-label">Countries Impacted</p>
         </div>
       </div>
     </div>
@@ -928,10 +928,10 @@
   <!-- Toast -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
 
-  <script src="assets/js/config.js?v=20260615c"></script>
+  <script src="assets/js/config.js?v=20260615d"></script>
   <!-- Supabase client library (powers optional login + data storage) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/supabase.js?v=20260615c"></script>
-  <script src="assets/js/main.js?v=20260615c"></script>
+  <script src="assets/js/supabase.js?v=20260615d"></script>
+  <script src="assets/js/main.js?v=20260615d"></script>
 </body>
 </html>

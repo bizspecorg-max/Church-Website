@@ -663,6 +663,10 @@
     journey_text: "From a small fellowship to a thriving ministry, he has hosted crusades and conferences that have gathered thousands seeking restoration.",
     impact_title: "The Impact",
     impact_text: "Today his message reaches across 30+ nations through live gatherings, media, and humanitarian outreach to the vulnerable.",
+    about_title: "A House of Faith, Purpose & Power",
+    about_text: "Prophet AA Emmanuel Ministries is a Christ-centered, Spirit-led ministry committed to restoring hope, healing the broken-hearted, and raising believers who live out their God-given purpose. For over a decade we have carried the gospel across cities and nations through crusades, prophetic conferences, and compassionate outreach.",
+    impact_heading: "Lives Touched, Nations Reached",
+    impact_intro: "By God's grace, the ministry continues to make a measurable difference across communities and continents.",
   };
   const applyContent = () => {
     const g = (k) => (CONTENT[k] != null && CONTENT[k] !== "") ? CONTENT[k] : CONTENT_DEFAULTS[k];
@@ -684,6 +688,36 @@
     set("#journeyText", g("journey_text"));
     set("#impactTitle", g("impact_title"));
     set("#impactText", g("impact_text"));
+    // About section
+    set("#aboutTitle", g("about_title"));
+    set("#aboutText", g("about_text"));
+    // Impact section heading/intro
+    set("#impactHeading", g("impact_heading"));
+    set("#impactIntro", g("impact_intro"));
+    // Impact stat numbers + labels (override the hardcoded defaults when set)
+    const setStat = (valSel, labSel, rawVal, rawLab) => {
+      const el = $(valSel);
+      if (el && rawVal) {
+        const digits = ((rawVal.match(/[\d,]+/) || [""])[0]).replace(/,/g, "");
+        const suffix = rawVal.replace(/[\d,]/g, "").trim();
+        if (digits) { el.dataset.count = digits; el.dataset.suffix = suffix; el.textContent = Number(digits).toLocaleString("en-US") + (suffix || ""); }
+        else el.textContent = rawVal;
+      }
+      const lab = $(labSel); if (lab && rawLab) lab.textContent = rawLab;
+    };
+    setStat("#stat1Val", "#stat1Lab", CONTENT.stat1_value, CONTENT.stat1_label);
+    setStat("#stat2Val", "#stat2Lab", CONTENT.stat2_value, CONTENT.stat2_label);
+    setStat("#stat3Val", "#stat3Lab", CONTENT.stat3_value, CONTENT.stat3_label);
+    setStat("#stat4Val", "#stat4Lab", CONTENT.stat4_value, CONTENT.stat4_label);
+    // Contact & social overrides (when set in the admin)
+    const sh = (sel, val) => { const el = $(sel); if (el && val) el.href = val; };
+    if (CONTENT.contact_address) { set("#cAddress", CONTENT.contact_address); set("#topAddress", CONTENT.contact_address); }
+    if (CONTENT.contact_email) { set("#cEmailLink", CONTENT.contact_email); sh("#cEmailLink", "mailto:" + CONTENT.contact_email); set("#topEmailText", CONTENT.contact_email); sh("#topEmail", "mailto:" + CONTENT.contact_email); }
+    if (CONTENT.contact_phone) { set("#cPhoneLink", CONTENT.contact_phone); sh("#cPhoneLink", "tel:" + CONTENT.contact_phone.replace(/\s+/g, "")); sh("#topPhone", "tel:" + CONTENT.contact_phone.replace(/\s+/g, "")); }
+    if (CONTENT.contact_whatsapp) { const w = "https://wa.me/" + CONTENT.contact_whatsapp; sh("#waBtn", w); sh("#waFooterLink", w); const pr = w + "?text=" + encodeURIComponent("Hello, I would like to request prayer."); sh("#navPrayer", pr); sh("#prayerBtn", pr); }
+    sh("#topFb", CONTENT.social_facebook); sh("#topTw", CONTENT.social_twitter); sh("#topYt", CONTENT.social_youtube); sh("#topIg", CONTENT.social_instagram);
+    const fsoc = $$("footer .social-icon");
+    [CONTENT.social_facebook, CONTENT.social_instagram, CONTENT.social_youtube, CONTENT.social_twitter].forEach((u, i) => { if (fsoc[i] && u) fsoc[i].href = u; });
     // Editable images
     const setImg = (sel, val) => { const el = $(sel); if (el && val) el.src = val; };
     setImg("#aboutImg", CONTENT.about_image);
