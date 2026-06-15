@@ -305,30 +305,36 @@
     ["testimony_3_image", "Testimony 3 photo"],
   ];
   async function loadImages() {
-    const form = $("#imagesForm");
-    if (!form) return;
+    const wrap = $("#imagesList");
+    if (!wrap) return;
     const { data } = await db.from("site_content").select("key, value");
     const map = {};
     if (data) data.forEach((r) => { map[r.key] = r.value; });
-    form.innerHTML = IMAGE_SLOTS.map(([k, label]) => `
-      <div class="bg-white rounded-xl border p-4 flex items-center gap-4">
-        <img src="${esc(map[k] || "assets/img/logo.svg")}" onerror="this.onerror=null;this.src='assets/img/logo.svg'" class="h-16 w-16 rounded-lg object-cover bg-slate-100 flex-none" alt="" />
-        <div class="flex-1 min-w-0">
-          <label class="form-label">${label}</label>
-          <div class="flex gap-2">
-            <input class="form-input flex-1" name="${k}" type="text" value="${esc(map[k] || "")}" placeholder="Image URL or upload →" />
-            <label class="flex-none cursor-pointer bg-navy hover:bg-navy-dark text-white text-sm font-600 px-3 rounded-lg flex items-center transition">Upload<input type="file" accept="image/*" class="hidden" data-upload-for="${k}" /></label>
-          </div>
+    wrap.innerHTML = IMAGE_SLOTS.map(([k, label]) => `
+      <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+        <img src="${esc(map[k] || "assets/img/logo.svg")}" onerror="this.onerror=null;this.src='assets/img/logo.svg'" class="w-full h-40 object-cover bg-slate-100" alt="" />
+        <div class="p-3 flex items-center justify-between gap-2">
+          <span class="font-600 text-navy text-sm truncate">${label}</span>
+          <button class="text-sm font-600 text-navy hover:text-gold-dark flex-none" data-edit-img="${k}">Edit</button>
         </div>
-      </div>`).join("") + `<button type="submit" class="btn-navy w-full justify-center py-3">Save images</button>`;
-    wireUploads(form);
-    form.onsubmit = async (e) => {
+      </div>`).join("");
+    $$("[data-edit-img]", wrap).forEach((b) => b.addEventListener("click", () => {
+      const slot = IMAGE_SLOTS.find((s) => s[0] === b.dataset.editImg);
+      editImageSlot(slot[0], slot[1], map[slot[0]] || "");
+    }));
+  }
+  function editImageSlot(key, label, value) {
+    editTitle.textContent = "Edit: " + label;
+    editForm.innerHTML = imageField(label, "value", value) + `<button type="submit" class="btn-navy w-full justify-center py-3">Save</button>`;
+    wireUploads(editForm);
+    editForm.onsubmit = async (e) => {
       e.preventDefault();
-      const rows = IMAGE_SLOTS.map(([k]) => ({ key: k, value: form.querySelector(`[name="${k}"]`).value }));
-      const { error } = await db.from("site_content").upsert(rows, { onConflict: "key" });
+      const val = editForm.querySelector('[name="value"]').value;
+      const { error } = await db.from("site_content").upsert([{ key, value: val }], { onConflict: "key" });
       if (error) return toast("Error: " + error.message);
-      toast("Images saved — refresh the site to see them.");
+      closeEdit(); toast("Saved — refresh the site."); loadImages();
     };
+    openEdit();
   }
 
   /* ---------- SITE CONTENT (headings / subtexts) ---------- */
@@ -342,26 +348,36 @@
     ["messages_title", "Messages & Videos — heading", "text"],
   ];
   async function loadContent() {
-    const form = $("#contentForm");
-    if (!form) return;
+    const wrap = $("#contentList");
+    if (!wrap) return;
     const { data, error } = await db.from("site_content").select("key, value");
     const map = {};
     if (!error && data) data.forEach((r) => { map[r.key] = r.value; });
-    form.innerHTML = CONTENT_FIELDS.map(([k, label, type]) =>
-      type === "textarea"
-        ? `<div><label class="form-label">${label}</label><textarea class="form-input" name="${k}" rows="2">${esc(map[k] || "")}</textarea></div>`
-        : type === "image"
-          ? imageField(label, k, map[k] || "")
-          : `<div><label class="form-label">${label}</label><input class="form-input" name="${k}" type="text" value="${esc(map[k] || "")}" /></div>`
-    ).join("") + `<button type="submit" class="btn-navy w-full justify-center py-3">Save content</button>`;
-    wireUploads(form);
-    form.onsubmit = async (e) => {
+    wrap.innerHTML = CONTENT_FIELDS.map(([k, label]) => `
+      <div class="bg-white rounded-xl shadow-sm border p-4 flex items-center justify-between gap-4">
+        <div class="min-w-0">
+          <p class="text-[11px] font-700 uppercase tracking-wide text-gold-dark">${label}</p>
+          <p class="text-navy mt-0.5 truncate">${esc(map[k] || "(using default)")}</p>
+        </div>
+        <button class="text-sm font-600 text-navy hover:text-gold-dark flex-none" data-edit-content="${k}">Edit</button>
+      </div>`).join("");
+    $$("[data-edit-content]", wrap).forEach((b) => b.addEventListener("click", () => {
+      const f = CONTENT_FIELDS.find((s) => s[0] === b.dataset.editContent);
+      editContentField(f[0], f[1], f[2], map[f[0]] || "");
+    }));
+  }
+  function editContentField(key, label, type, value) {
+    editTitle.textContent = "Edit: " + label;
+    editForm.innerHTML = (type === "textarea" ? textarea(label, "value", value) : field(label, "value", value))
+      + `<button type="submit" class="btn-navy w-full justify-center py-3">Save</button>`;
+    editForm.onsubmit = async (e) => {
       e.preventDefault();
-      const rows = CONTENT_FIELDS.map(([k]) => ({ key: k, value: form.querySelector(`[name="${k}"]`).value }));
-      const { error: err } = await db.from("site_content").upsert(rows, { onConflict: "key" });
-      if (err) return toast("Error: " + err.message);
-      toast("Content saved — refresh the site to see it.");
+      const val = editForm.querySelector('[name="value"]').value;
+      const { error } = await db.from("site_content").upsert([{ key, value: val }], { onConflict: "key" });
+      if (error) return toast("Error: " + error.message);
+      closeEdit(); toast("Saved — refresh the site."); loadContent();
     };
+    openEdit();
   }
 
   /* ---------- PARTNERS (read-only) ---------- */
