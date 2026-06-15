@@ -304,15 +304,27 @@
     ["testimony_2_image", "Testimony 2 photo"],
     ["testimony_3_image", "Testimony 3 photo"],
   ];
+  // The image currently shown on the site when site_content has no override
+  // (so the admin previews the REAL current image, not a placeholder).
+  const IMAGE_DEFAULTS = {
+    prophet_image: CFG.prophetPhoto || "",
+    about_image: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1000&q=80",
+    live_poster: CFG.livePoster || "",
+    popup_image: CFG.popupImage || "",
+    testimony_1_image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=150&q=80",
+    testimony_2_image: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&w=150&q=80",
+    testimony_3_image: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=150&q=80",
+  };
   async function loadImages() {
     const wrap = $("#imagesList");
     if (!wrap) return;
     const { data } = await db.from("site_content").select("key, value");
     const map = {};
     if (data) data.forEach((r) => { map[r.key] = r.value; });
+    const eff = (k) => map[k] || IMAGE_DEFAULTS[k] || "";   // effective current image
     wrap.innerHTML = IMAGE_SLOTS.map(([k, label]) => `
       <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <img src="${esc(map[k] || "assets/img/logo.svg")}" onerror="this.onerror=null;this.src='assets/img/logo.svg'" class="w-full h-40 object-cover bg-slate-100" alt="" />
+        <img src="${esc(eff(k) || "assets/img/logo.svg")}" onerror="this.onerror=null;this.src='assets/img/logo.svg'" class="w-full h-40 object-cover bg-slate-100" alt="" />
         <div class="p-3 flex items-center justify-between gap-2">
           <span class="font-600 text-navy text-sm truncate">${label}</span>
           <button class="text-sm font-600 text-navy hover:text-gold-dark flex-none" data-edit-img="${k}">Edit</button>
@@ -320,7 +332,7 @@
       </div>`).join("");
     $$("[data-edit-img]", wrap).forEach((b) => b.addEventListener("click", () => {
       const slot = IMAGE_SLOTS.find((s) => s[0] === b.dataset.editImg);
-      editImageSlot(slot[0], slot[1], map[slot[0]] || "");
+      editImageSlot(slot[0], slot[1], eff(slot[0]));
     }));
   }
   function editImageSlot(key, label, value) {
@@ -347,23 +359,34 @@
     ["ondemand_subtext", "On-Demand — subtext", "textarea"],
     ["messages_title", "Messages & Videos — heading", "text"],
   ];
+  // What the site shows by default (so the admin displays the real current text).
+  const CONTENT_DEFAULTS = {
+    live_title: "Live Service & Broadcasts",
+    live_blurb: "Join our services and broadcasts live from anywhere in the world.",
+    featured_title: "Featured Broadcast",
+    featured_blurb: "",
+    ondemand_title: "Watch Anytime, Anywhere",
+    ondemand_subtext: "Tap any broadcast to watch it right here — services, crusades, worship and the Word.",
+    messages_title: "Messages & Videos",
+  };
   async function loadContent() {
     const wrap = $("#contentList");
     if (!wrap) return;
     const { data, error } = await db.from("site_content").select("key, value");
     const map = {};
     if (!error && data) data.forEach((r) => { map[r.key] = r.value; });
+    const eff = (k) => (map[k] != null && map[k] !== "") ? map[k] : (CONTENT_DEFAULTS[k] || "");
     wrap.innerHTML = CONTENT_FIELDS.map(([k, label]) => `
       <div class="bg-white rounded-xl shadow-sm border p-4 flex items-center justify-between gap-4">
         <div class="min-w-0">
           <p class="text-[11px] font-700 uppercase tracking-wide text-gold-dark">${label}</p>
-          <p class="text-navy mt-0.5 truncate">${esc(map[k] || "(using default)")}</p>
+          <p class="text-navy mt-0.5 truncate">${esc(eff(k) || "(empty)")}</p>
         </div>
         <button class="text-sm font-600 text-navy hover:text-gold-dark flex-none" data-edit-content="${k}">Edit</button>
       </div>`).join("");
     $$("[data-edit-content]", wrap).forEach((b) => b.addEventListener("click", () => {
       const f = CONTENT_FIELDS.find((s) => s[0] === b.dataset.editContent);
-      editContentField(f[0], f[1], f[2], map[f[0]] || "");
+      editContentField(f[0], f[1], f[2], eff(f[0]));
     }));
   }
   function editContentField(key, label, type, value) {
