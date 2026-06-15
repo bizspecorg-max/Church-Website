@@ -86,6 +86,18 @@
       return out;
     },
 
+    /* ---- Testimonies ---- */
+    async getTestimonials() {
+      if (!client) return [];
+      const { data, error } = await client
+        .from("testimonials")
+        .select("*")
+        .eq("published", true)
+        .order("sort_order", { ascending: true });
+      if (error || !data) return [];
+      return data.map((r) => ({ quote: r.quote, name: r.name, location: r.location, photo: r.photo_url }));
+    },
+
     /* ---- Hero slider images ---- */
     async getHeroSlides() {
       if (!client) return [];

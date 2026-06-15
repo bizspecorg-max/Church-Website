@@ -115,6 +115,13 @@ window.MINISTRY_CONFIG = {
   supabaseUrl:     "https://pozpdwaoeauntfpyjhtk.supabase.co",
   supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvenBkd2FvZWF1bnRmcHlqaHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNzkxODMsImV4cCI6MjA5Njg1NTE4M30.1oFrYU0i92V_yQm3pQWkeh2L-IEMpztip97fr08Jod4",
 
+  /* ---------- Testimonies (fallback; managed in the admin) ---------- */
+  testimonials: [
+    { quote: "After years of waiting, God blessed my family with a child following the prophetic prayer. I am forever grateful to this ministry.", name: "Grace A.", location: "Lagos, Nigeria", photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=150&q=80" },
+    { quote: "I was at the lowest point of my life when I joined a service online. The Word restored my hope and I found a new job within weeks.", name: "Daniel O.", location: "Abuja, Nigeria", photo: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&w=150&q=80" },
+    { quote: "The medical outreach saved my mother's life. This ministry truly cares for people beyond the pulpit. God bless Prophet Emmanuel.", name: "Mary E.", location: "Accra, Ghana", photo: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=150&q=80" },
+  ],
+
   /* ---------- Contact details ----------
      These also feed the footer and WhatsApp button.
      Use full international format (no +, no spaces) for whatsapp. */

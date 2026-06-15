@@ -63,7 +63,7 @@
     $("#tab-" + tab.dataset.tab).classList.remove("hidden");
   }));
 
-  const loadAll = () => { loadVideos(); loadHero(); loadImages(); loadContent(); loadPartners(); loadMessages(); loadDonations(); };
+  const loadAll = () => { loadVideos(); loadHero(); loadImages(); loadContent(); loadTestimonials(); loadPartners(); loadMessages(); loadDonations(); };
 
   /* ---------- Edit modal ---------- */
   const editModal = $("#editModal"), editForm = $("#editForm"), editTitle = $("#editTitle");
@@ -300,9 +300,6 @@
     ["about_image", "About section image"],
     ["live_poster", "Watch Live poster"],
     ["popup_image", "Welcome popup image"],
-    ["testimony_1_image", "Testimony 1 photo"],
-    ["testimony_2_image", "Testimony 2 photo"],
-    ["testimony_3_image", "Testimony 3 photo"],
   ];
   // The image currently shown on the site when site_content has no override
   // (so the admin previews the REAL current image, not a placeholder).
@@ -311,9 +308,6 @@
     about_image: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1000&q=80",
     live_poster: CFG.livePoster || "",
     popup_image: CFG.popupImage || "",
-    testimony_1_image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=150&q=80",
-    testimony_2_image: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&w=150&q=80",
-    testimony_3_image: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=150&q=80",
   };
   async function loadImages() {
     const wrap = $("#imagesList");
@@ -358,6 +352,15 @@
     ["ondemand_title", "On-Demand — heading", "text"],
     ["ondemand_subtext", "On-Demand — subtext", "textarea"],
     ["messages_title", "Messages & Videos — heading", "text"],
+    ["prophet_name", "Prophet — name", "text"],
+    ["prophet_title", "Prophet — title line", "text"],
+    ["prophet_bio", "Prophet — biography", "textarea"],
+    ["calling_title", "Prophet — Calling heading", "text"],
+    ["calling_text", "Prophet — Calling text", "textarea"],
+    ["journey_title", "Prophet — Journey heading", "text"],
+    ["journey_text", "Prophet — Journey text", "textarea"],
+    ["impact_title", "Prophet — Impact heading", "text"],
+    ["impact_text", "Prophet — Impact text", "textarea"],
   ];
   // What the site shows by default (so the admin displays the real current text).
   const CONTENT_DEFAULTS = {
@@ -368,6 +371,15 @@
     ondemand_title: "Watch Anytime, Anywhere",
     ondemand_subtext: "Tap any broadcast to watch it right here — services, crusades, worship and the Word.",
     messages_title: "Messages & Videos",
+    prophet_name: "Prophet AA Emmanuel",
+    prophet_title: "Founder · Teacher · Servant of God",
+    prophet_bio: "Prophet AA Emmanuel is a passionate minister of the gospel whose life is devoted to seeing men and women encounter the transforming power of Jesus Christ. Known for a prophetic and teaching grace, he ministers with clarity, compassion, and an unwavering commitment to truth.",
+    calling_title: "The Calling",
+    calling_text: "Answered the call to ministry in his early twenties after a profound encounter with God, devoting his life to prayer and the study of the Word.",
+    journey_title: "The Journey",
+    journey_text: "From a small fellowship to a thriving ministry, he has hosted crusades and conferences that have gathered thousands seeking restoration.",
+    impact_title: "The Impact",
+    impact_text: "Today his message reaches across 30+ nations through live gatherings, media, and humanitarian outreach to the vulnerable.",
   };
   async function loadContent() {
     const wrap = $("#contentList");
@@ -402,6 +414,57 @@
     };
     openEdit();
   }
+
+  /* ---------- TESTIMONIES ---------- */
+  let testimonialsCache = [];
+  async function loadTestimonials() {
+    const wrap = $("#testimonialsList");
+    if (!wrap) return;
+    const { data, error } = await db.from("testimonials").select("*").order("sort_order", { ascending: true });
+    if (error) { wrap.innerHTML = `<p class="text-red-500 text-sm">${esc(error.message)}</p>`; return; }
+    if (!data.length) { wrap.innerHTML = `<p class="text-slate-500 text-sm">No testimonies yet — click “Add testimony”.</p>`; return; }
+    testimonialsCache = data;
+    wrap.innerHTML = data.map((t) => `
+      <div class="bg-white rounded-xl shadow-sm border p-4">
+        <p class="text-sm text-gray-600 line-clamp-3">“${esc(t.quote || "")}”</p>
+        <div class="mt-3 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <img src="${esc(t.photo_url || "assets/img/logo.svg")}" onerror="this.onerror=null;this.src='assets/img/logo.svg'" class="h-9 w-9 rounded-full object-cover bg-slate-100" alt="" />
+            <div class="min-w-0"><p class="font-600 text-navy text-sm truncate">${esc(t.name || "")}</p><p class="text-xs text-slate-400 truncate">${esc(t.location || "")}</p></div>
+          </div>
+          <div class="flex-none flex gap-2">
+            <button class="text-sm font-600 text-navy hover:text-gold-dark" data-edit-tst="${t.id}">Edit</button>
+            <button class="text-sm font-600 text-red-500" data-del-tst="${t.id}">Delete</button>
+          </div>
+        </div>
+      </div>`).join("");
+    $$("[data-edit-tst]", wrap).forEach((b) => b.addEventListener("click", () => { const t = testimonialsCache.find((x) => String(x.id) === b.dataset.editTst); if (t) editTestimonial(t); }));
+    $$("[data-del-tst]", wrap).forEach((b) => b.addEventListener("click", () => delRow("testimonials", b.dataset.delTst, loadTestimonials)));
+  }
+  function editTestimonial(t) {
+    t = t || { published: true, sort_order: 0 };
+    editTitle.textContent = t.id ? "Edit testimony" : "Add testimony";
+    editForm.innerHTML =
+      textarea("Testimony (quote)", "quote", t.quote || "") +
+      field("Name", "name", t.name || "") +
+      field("Location", "location", t.location || "") +
+      imageField("Photo", "photo_url", t.photo_url || "") +
+      field("Sort order", "sort_order", t.sort_order ?? 0, "number") +
+      checkbox("Published", "published", t.published !== false) +
+      `<button type="submit" class="btn-navy w-full justify-center py-3">Save</button>`;
+    wireUploads(editForm);
+    editForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const d = formData(editForm);
+      d.sort_order = parseInt(d.sort_order, 10) || 0;
+      const q = t.id ? db.from("testimonials").update(d).eq("id", t.id) : db.from("testimonials").insert([d]);
+      const { error } = await q;
+      if (error) return toast("Error: " + error.message);
+      closeEdit(); toast("Saved."); loadTestimonials();
+    };
+    openEdit();
+  }
+  $("#addTestimonial")?.addEventListener("click", () => editTestimonial(null));
 
   /* ---------- PARTNERS (read-only) ---------- */
   async function loadPartners() {

@@ -654,6 +654,15 @@
     ondemand_title: "Watch Anytime, Anywhere",
     ondemand_subtext: "Tap any broadcast to watch it right here — services, crusades, worship and the Word.",
     messages_title: "Messages & Videos",
+    prophet_name: "Prophet AA Emmanuel",
+    prophet_title: "Founder · Teacher · Servant of God",
+    prophet_bio: "Prophet AA Emmanuel is a passionate minister of the gospel whose life is devoted to seeing men and women encounter the transforming power of Jesus Christ. Known for a prophetic and teaching grace, he ministers with clarity, compassion, and an unwavering commitment to truth.",
+    calling_title: "The Calling",
+    calling_text: "Answered the call to ministry in his early twenties after a profound encounter with God, devoting his life to prayer and the study of the Word.",
+    journey_title: "The Journey",
+    journey_text: "From a small fellowship to a thriving ministry, he has hosted crusades and conferences that have gathered thousands seeking restoration.",
+    impact_title: "The Impact",
+    impact_text: "Today his message reaches across 30+ nations through live gatherings, media, and humanitarian outreach to the vulnerable.",
   };
   const applyContent = () => {
     const g = (k) => (CONTENT[k] != null && CONTENT[k] !== "") ? CONTENT[k] : CONTENT_DEFAULTS[k];
@@ -665,15 +674,44 @@
     set("#ondemandTitle", g("ondemand_title"));
     set("#ondemandSub", g("ondemand_subtext"));
     set("#messagesTitle", g("messages_title"));
+    // Prophet section text
+    set("#prophetName", g("prophet_name"));
+    set("#prophetTitle", g("prophet_title"));
+    set("#prophetBio", g("prophet_bio"));
+    set("#callingTitle", g("calling_title"));
+    set("#callingText", g("calling_text"));
+    set("#journeyTitle", g("journey_title"));
+    set("#journeyText", g("journey_text"));
+    set("#impactTitle", g("impact_title"));
+    set("#impactText", g("impact_text"));
     // Editable images
     const setImg = (sel, val) => { const el = $(sel); if (el && val) el.src = val; };
     setImg("#aboutImg", CONTENT.about_image);
     if (CONTENT.prophet_image) { setImg("#prophetHeroImg", CONTENT.prophet_image); setImg("#prophetImg", CONTENT.prophet_image); }
     setImg("#welcomeImage", CONTENT.popup_image);
-    setImg("#testimonyImg1", CONTENT.testimony_1_image);
-    setImg("#testimonyImg2", CONTENT.testimony_2_image);
-    setImg("#testimonyImg3", CONTENT.testimony_3_image);
   };
+
+  /* ---------- Testimonies (from Supabase, else config) ---------- */
+  const renderTestimonials = (list) => {
+    const wrap = $("#testimonyGrid");
+    if (!wrap) return;
+    const items = Array.isArray(list) ? list : [];
+    wrap.innerHTML = items.map((t) => `
+      <figure class="testimony-card reveal visible">
+        <p class="text-gold text-4xl font-serif leading-none">“</p>
+        <blockquote class="text-gray-600 -mt-3">${(t.quote || "").replace(/</g, "&lt;")}</blockquote>
+        <figcaption class="mt-5 flex items-center gap-3">
+          <img src="${t.photo || "assets/img/testimony-1.svg"}" onerror="this.onerror=null;this.src='assets/img/testimony-1.svg'" alt="${(t.name || "").replace(/"/g, "&quot;")}" class="h-12 w-12 rounded-full object-cover" loading="lazy" />
+          <div><p class="font-600 text-navy">${(t.name || "").replace(/</g, "&lt;")}</p><p class="text-xs text-gray-500">${(t.location || "").replace(/</g, "&lt;")}</p></div>
+        </figcaption>
+      </figure>`).join("");
+  };
+  renderTestimonials(CFG.testimonials || []);
+  (async () => {
+    if (window.MinistryDB && MinistryDB.enabled && MinistryDB.getTestimonials) {
+      try { const rows = await MinistryDB.getTestimonials(); if (rows && rows.length) renderTestimonials(rows); } catch (_) {}
+    }
+  })();
   applyContent();
   (async () => {
     if (window.MinistryDB && MinistryDB.enabled && MinistryDB.getContent) {
