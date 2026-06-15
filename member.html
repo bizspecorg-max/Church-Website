@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>My Account · Dinab TV</title>
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: {
+      colors: { navy: { DEFAULT: '#0b1f4d', light: '#16306e', dark: '#081634' }, gold: { DEFAULT: '#c9a227', light: '#e6c45a', dark: '#a8851a' } },
+      fontFamily: { serif: ['"Cormorant Garamond"', 'serif'], sans: ['Inter', 'sans-serif'] },
+    } } };
+  </script>
+  <link rel="stylesheet" href="assets/css/custom.css?v=20260615e" />
+</head>
+<body class="font-sans bg-slate-100 text-navy-dark min-h-screen">
+
+  <!-- ============ LOGIN / SIGN UP ============ -->
+  <div id="loginView" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div class="bg-gradient-to-r from-navy to-navy-light p-6 text-white text-center">
+        <img src="assets/img/logo.svg" alt="logo" class="h-14 w-14 mx-auto" />
+        <h1 id="authTitle" class="font-serif text-2xl font-700 mt-3">Member Sign In</h1>
+        <p class="text-sm text-blue-100/80">Access your partnership &amp; giving</p>
+      </div>
+      <form id="authForm" class="p-6 space-y-4" novalidate>
+        <div id="nameRow" class="hidden">
+          <label for="name" class="form-label">Full Name</label>
+          <input id="name" type="text" autocomplete="name" class="form-input" placeholder="John Doe" />
+        </div>
+        <div>
+          <label for="email" class="form-label">Email</label>
+          <input id="email" type="email" required autocomplete="email" class="form-input" placeholder="you@email.com" />
+        </div>
+        <div>
+          <label for="password" class="form-label">Password</label>
+          <input id="password" type="password" required autocomplete="current-password" minlength="6" class="form-input" placeholder="••••••••" />
+        </div>
+        <button type="submit" id="authSubmit" class="btn-navy w-full justify-center py-3">Sign In</button>
+        <p class="text-sm text-center text-gray-500">
+          <span id="toggleText">New here?</span>
+          <button type="button" id="toggleBtn" class="text-gold-dark font-600 hover:underline">Create account</button>
+        </p>
+        <p id="authStatus" class="text-sm text-center hidden"></p>
+        <p id="configWarn" class="text-xs text-center text-red-500 hidden">Supabase isn't configured in assets/js/config.js.</p>
+        <a href="index.html" class="block text-center text-xs text-slate-400 hover:text-navy">← Back to site</a>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ MEMBER DASHBOARD ============ -->
+  <div id="dashView" class="hidden min-h-screen">
+    <header class="bg-navy-dark text-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <img src="assets/img/logo.svg" alt="logo" class="h-9 w-9" />
+          <span class="font-serif font-700">DINAB TV · My Account</span>
+        </div>
+        <div class="flex items-center gap-4 text-sm">
+          <a href="index.html" class="text-blue-100/80 hover:text-gold-light">View site ↗</a>
+          <span id="whoami" class="hidden sm:inline text-blue-100/70"></span>
+          <button id="signOut" class="bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-full">Sign out</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <div>
+        <h2 class="font-serif text-3xl font-700 text-navy">Welcome, <span id="memberName">Partner</span> 👋</h2>
+        <p class="text-slate-500">Thank you for partnering with the ministry.</p>
+      </div>
+
+      <!-- Partnership status -->
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="bg-white rounded-xl shadow-sm border p-5"><p class="text-xs uppercase tracking-wide text-slate-400">Monthly Partnership</p><p id="pAmount" class="font-serif text-2xl font-700 text-navy mt-1">—</p></div>
+        <div class="bg-white rounded-xl shadow-sm border p-5"><p class="text-xs uppercase tracking-wide text-slate-400">Status</p><p id="pStatus" class="font-600 text-navy mt-1">—</p></div>
+        <div class="bg-white rounded-xl shadow-sm border p-5"><p class="text-xs uppercase tracking-wide text-slate-400">Partner Since</p><p id="pSince" class="font-600 text-navy mt-1">—</p></div>
+      </div>
+
+      <!-- Renew -->
+      <div class="bg-white rounded-2xl shadow-sm border p-6">
+        <h3 class="font-serif text-xl font-700 text-navy">Renew / Continue Partnership</h3>
+        <p class="text-sm text-slate-500 mt-1">Sow your partnership seed for this month.</p>
+        <form id="renewForm" class="mt-4 flex flex-wrap items-end gap-3">
+          <div>
+            <label for="renewAmount" class="form-label">Amount (₦)</label>
+            <input id="renewAmount" type="number" min="100" step="100" class="form-input w-44" placeholder="10000" />
+          </div>
+          <button type="submit" class="btn-gold">Give / Renew</button>
+          <a id="waContact" href="#" target="_blank" rel="noopener" class="btn-navy">Message the Ministry</a>
+        </form>
+      </div>
+
+      <!-- Giving history -->
+      <div class="bg-white rounded-2xl shadow-sm border p-6">
+        <div class="flex items-center justify-between">
+          <h3 class="font-serif text-xl font-700 text-navy">My Giving</h3>
+          <span class="text-sm text-slate-500">Total: <span id="givingTotal" class="font-700 text-navy">₦0</span></span>
+        </div>
+        <div class="overflow-x-auto mt-3">
+          <table class="w-full text-sm">
+            <thead class="text-left text-slate-400"><tr><th class="p-2">Date</th><th class="p-2">Type</th><th class="p-2">Amount</th><th class="p-2">Status</th></tr></thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
+
+  <script src="assets/js/config.js?v=20260615e"></script>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/member.js?v=20260615e"></script>
+</body>
+</html>

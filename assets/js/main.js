@@ -883,20 +883,8 @@
     };
 
     // Open triggers
-    const openOrInfo = () => {
-      if (!db || !db.enabled) {
-        open();
-        setStatus("Login isn't active yet — add your Supabase keys in config.js.", false);
-        return;
-      }
-      if (currentUser) {
-        // Logged in → offer sign out
-        db.signOut().then(() => { updateNav(null); showToast("Signed out."); });
-        return;
-      }
-      render();
-      open();
-    };
+    // Login goes to the dedicated member portal (sign in + partnership dashboard).
+    const openOrInfo = () => { window.location.href = "member.html"; };
     $("#loginBtn")?.addEventListener("click", openOrInfo);
     $("#loginBtnMobile")?.addEventListener("click", openOrInfo);
     $$("[data-close-auth]").forEach((el) => el.addEventListener("click", close));
