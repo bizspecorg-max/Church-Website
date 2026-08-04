@@ -59,7 +59,7 @@
   <!-- Loads the Paystack inline checkout library. Add your public key in assets/js/main.js -->
   <script src="https://js.paystack.co/v1/inline.js"></script>
 
-  <link rel="stylesheet" href="assets/css/custom.css?v=20260615e" />
+  <link rel="stylesheet" href="assets/css/custom.css?v=20260804e" />
 </head>
 
 <body class="font-sans text-navy-dark bg-white antialiased">
@@ -522,6 +522,12 @@
           <h3 class="font-serif text-2xl font-700 text-navy">Make a Donation</h3>
           <p class="text-sm text-gray-500 mt-1">Choose an amount or enter your own.</p>
 
+          <!-- Payment method: card (Paystack) or direct bank transfer -->
+          <div class="pay-tabs mt-5 hidden" id="payTabs">
+            <button type="button" class="pay-tab active" data-method="card">Card / Online</button>
+            <button type="button" class="pay-tab" data-method="bank">Bank Transfer</button>
+          </div>
+
           <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3" id="amountGrid">
             <button type="button" class="amount-card" data-amount="5000">₦5,000</button>
             <button type="button" class="amount-card" data-amount="10000">₦10,000</button>
@@ -550,13 +556,15 @@
               <label for="donorAmount" class="form-label">Amount (₦)</label>
               <input id="donorAmount" name="amount" type="number" min="100" step="100" required inputmode="numeric" class="form-input" placeholder="Enter amount" />
             </div>
+            <!-- Bank account details (shown when "Bank Transfer" is selected) -->
+            <div id="bankPanel" class="hidden"></div>
             <button type="submit" class="btn-gold w-full justify-center text-base py-3.5">
               <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-              Donate Securely
+              <span id="donateBtnLabel">Donate Securely</span>
             </button>
             <p class="text-xs text-gray-400 text-center flex items-center justify-center gap-1">
               <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-              Secured by Paystack · 100% goes to the ministry
+              <span id="donateSecure">Secured by Paystack · 100% goes to the ministry</span>
             </p>
           </form>
         </div>
@@ -748,6 +756,10 @@
         </div>
 
         <form id="giveForm" class="p-6 space-y-4" novalidate>
+          <div class="pay-tabs hidden" id="givePayTabs">
+            <button type="button" class="pay-tab active" data-method="card">Card / Online</button>
+            <button type="button" class="pay-tab" data-method="bank">Bank Transfer</button>
+          </div>
           <div class="grid grid-cols-3 gap-2" id="giveAmounts">
             <button type="button" class="amount-card" data-amount="5000">₦5,000</button>
             <button type="button" class="amount-card" data-amount="10000">₦10,000</button>
@@ -774,9 +786,10 @@
             <label for="giveAmount" class="form-label">Amount (₦)</label>
             <input id="giveAmount" type="number" min="100" step="100" required inputmode="numeric" class="form-input" placeholder="Enter amount" />
           </div>
+          <div id="giveBankPanel" class="hidden"></div>
           <button type="submit" id="giveSubmit" class="btn-gold w-full justify-center py-3.5 text-base">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-            Donate Securely
+            <span id="giveBtnLabel">Donate Securely</span>
           </button>
           <p class="text-[11px] text-gray-400 text-center flex items-center justify-center gap-1">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -929,10 +942,10 @@
   <!-- Toast -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
 
-  <script src="assets/js/config.js?v=20260615e"></script>
+  <script src="assets/js/config.js?v=20260804e"></script>
   <!-- Supabase client library (powers optional login + data storage) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/supabase.js?v=20260615e"></script>
-  <script src="assets/js/main.js?v=20260615e"></script>
+  <script src="assets/js/supabase.js?v=20260804e"></script>
+  <script src="assets/js/main.js?v=20260804e"></script>
 </body>
 </html>

@@ -12,6 +12,18 @@ window.MINISTRY_CONFIG = {
   paystackPublicKey: "",            // e.g. "pk_live_xxxxxxxxxxxxxxxx"
   currency: "NGN",
 
+  /* ---------- Bank transfer (SECOND giving option) ----------
+     Paystack is untouched and stays the default. This simply adds
+     a "Bank Transfer" choice so a giver can either pay by card OR
+     send a direct transfer. Set showBank:false to hide the option. */
+  showBank: true,
+  bankAccount: {
+    name:   "CORINTHIANS INTERNATIONAL CHURCH",
+    number: "1028872901",
+    bank:   "United Bank for Africa (UBA)",
+    note:   "After sending your transfer, fill in your details below and tap the button so we can confirm it and send your receipt.",
+  },
+
   /* ---------- Where form submissions are emailed ----------
      Both the Contact form AND the Donation form send their
      details to this address.
