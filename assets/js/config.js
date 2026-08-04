@@ -21,7 +21,7 @@ window.MINISTRY_CONFIG = {
     name:   "CORINTHIANS INTERNATIONAL CHURCH",
     number: "1028872901",
     bank:   "United Bank for Africa (UBA)",
-    note:   "After sending your transfer, fill in your details below and tap the button so we can confirm it and send your receipt.",
+    note:   "After your transfer, fill the form below so we can confirm it and send your receipt.",
   },
 
   /* ---------- Where form submissions are emailed ----------
