@@ -296,7 +296,8 @@
   /* ---------- SITE CONTENT (headings / subtexts / poster) ---------- */
   /* ---------- IMAGES (every editable site image) ---------- */
   const IMAGE_SLOTS = [
-    ["logo_image", "Site logo (header, footer & tab icon)"],
+    ["logo_image", "Site logo (header & footer)"],
+    ["favicon_image", "Browser tab icon (favicon) — square works best"],
     ["prophet_image", "Prophet / Pastor photo"],
     ["about_image", "About section image"],
     ["live_poster", "Watch Live poster"],
@@ -306,6 +307,7 @@
   // (so the admin previews the REAL current image, not a placeholder).
   const IMAGE_DEFAULTS = {
     logo_image: "assets/img/dinab-mark.png",
+    favicon_image: "assets/img/dinab-mark.png",
     prophet_image: CFG.prophetPhoto || "",
     about_image: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1000&q=80",
     live_poster: CFG.livePoster || "",
