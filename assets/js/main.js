@@ -816,7 +816,13 @@
     setImg("#aboutImg", CONTENT.about_image);
     if (CONTENT.prophet_image) { setImg("#prophetHeroImg", CONTENT.prophet_image); setImg("#prophetImg", CONTENT.prophet_image); }
     setImg("#welcomeImage", CONTENT.popup_image);
-    setImg("#siteLogo", CONTENT.logo_image);
+    // Logo — one admin setting drives the header, the footer and the tab icon
+    if (CONTENT.logo_image) {
+      setImg("#siteLogo", CONTENT.logo_image);
+      setImg("#footerLogo", CONTENT.logo_image);
+      const fav = $("#siteFavicon");
+      if (fav) { fav.href = CONTENT.logo_image; fav.removeAttribute("type"); }
+    }
     // Hero copy + mini stats
     set("#heroTitle", CONTENT.hero_title);
     set("#heroSubtext", CONTENT.hero_subtext);

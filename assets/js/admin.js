@@ -296,7 +296,7 @@
   /* ---------- SITE CONTENT (headings / subtexts / poster) ---------- */
   /* ---------- IMAGES (every editable site image) ---------- */
   const IMAGE_SLOTS = [
-    ["logo_image", "Site logo (header)"],
+    ["logo_image", "Site logo (header, footer & tab icon)"],
     ["prophet_image", "Prophet / Pastor photo"],
     ["about_image", "About section image"],
     ["live_poster", "Watch Live poster"],
