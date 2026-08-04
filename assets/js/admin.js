@@ -296,6 +296,7 @@
   /* ---------- SITE CONTENT (headings / subtexts / poster) ---------- */
   /* ---------- IMAGES (every editable site image) ---------- */
   const IMAGE_SLOTS = [
+    ["logo_image", "Site logo (header)"],
     ["prophet_image", "Prophet / Pastor photo"],
     ["about_image", "About section image"],
     ["live_poster", "Watch Live poster"],
@@ -304,6 +305,7 @@
   // The image currently shown on the site when site_content has no override
   // (so the admin previews the REAL current image, not a placeholder).
   const IMAGE_DEFAULTS = {
+    logo_image: "assets/img/dinab-mark.png",
     prophet_image: CFG.prophetPhoto || "",
     about_image: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1000&q=80",
     live_poster: CFG.livePoster || "",
@@ -318,7 +320,7 @@
     const eff = (k) => map[k] || IMAGE_DEFAULTS[k] || "";   // effective current image
     wrap.innerHTML = IMAGE_SLOTS.map(([k, label]) => `
       <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <img src="${esc(eff(k) || "assets/img/logo.svg")}" onerror="this.onerror=null;this.src='assets/img/logo.svg'" class="w-full h-40 object-cover bg-slate-100" alt="" />
+        <img src="${esc(eff(k) || "assets/img/dinab-mark.png")}" onerror="this.onerror=null;this.src='assets/img/dinab-mark.png'" class="w-full h-40 object-contain bg-slate-100 p-2" alt="" />
         <div class="p-3 flex items-center justify-between gap-2">
           <span class="font-600 text-navy text-sm truncate">${label}</span>
           <button class="text-sm font-600 text-navy hover:text-gold-dark flex-none" data-edit-img="${k}">Edit</button>
@@ -381,6 +383,25 @@
     ["social_twitter", "Social — X / Twitter URL", "text"],
     ["social_youtube", "Social — YouTube URL", "text"],
     ["social_instagram", "Social — Instagram URL", "text"],
+    ["hero_title", "Hero — main headline", "textarea"],
+    ["hero_subtext", "Hero — subheadline", "textarea"],
+    ["hero_stat1_value", "Hero — stat 1 number (e.g. 120K+)", "text"],
+    ["hero_stat1_label", "Hero — stat 1 label", "text"],
+    ["hero_stat2_value", "Hero — stat 2 number", "text"],
+    ["hero_stat2_label", "Hero — stat 2 label", "text"],
+    ["hero_stat3_value", "Hero — stat 3 number (e.g. 5)", "text"],
+    ["hero_stat3_label", "Hero — stat 3 label", "text"],
+    ["give_heading", "Giving — heading", "text"],
+    ["give_intro", "Giving — intro paragraph", "textarea"],
+    ["testimony_heading", "Testimonies — heading", "text"],
+    ["testimony_intro", "Testimonies — intro paragraph", "textarea"],
+    ["contact_heading", "Contact — heading", "text"],
+    ["contact_intro", "Contact — intro paragraph", "textarea"],
+    ["bank_name", "Giving — bank account name", "text"],
+    ["bank_number", "Giving — bank account number", "text"],
+    ["bank_bank", "Giving — bank name", "text"],
+    ["bank_paypal", "Giving — PayPal email (blank hides it)", "text"],
+    ["bank_note", "Giving — transfer instruction note", "textarea"],
   ];
   // What the site shows by default (so the admin displays the real current text).
   const CONTENT_DEFAULTS = {
@@ -401,7 +422,7 @@
     impact_title: "The Impact",
     impact_text: "Today his message reaches across 30+ nations through live gatherings, media, and humanitarian outreach to the vulnerable.",
     about_title: "A House of Faith, Purpose & Power",
-    about_text: "Prophet AA Emmanuel Ministries is a Christ-centered, Spirit-led ministry committed to restoring hope, healing the broken-hearted, and raising believers who live out their God-given purpose. For over a decade we have carried the gospel across cities and nations through crusades, prophetic conferences, and compassionate outreach.",
+    about_text: "Prophet AA Emmanuel Ministries is a Christ-centered, Spirit-led ministry committed to restoring hope, healing the broken-hearted, and raising believers who live out their God-given purpose. For over five years we have carried the gospel across cities and nations through crusades, prophetic conferences, and compassionate outreach.",
     impact_heading: "Lives Touched, Nations Reached",
     impact_intro: "By God's grace, the ministry continues to make a measurable difference across communities and continents.",
     stat1_value: "125,000+", stat1_label: "Souls Reached",
@@ -416,6 +437,22 @@
     social_twitter: (CFG.socials && CFG.socials.twitter) || "",
     social_youtube: (CFG.socials && CFG.socials.youtube) || "",
     social_instagram: (CFG.socials && CFG.socials.instagram) || "",
+    hero_title: "Transforming Lives Through Prayer, Prophecy, and God's Word",
+    hero_subtext: "Raising people of faith, purpose, and impact through the power of Jesus Christ.",
+    hero_stat1_value: "120K+", hero_stat1_label: "Souls Reached",
+    hero_stat2_value: "32",    hero_stat2_label: "Nations",
+    hero_stat3_value: "5",     hero_stat3_label: "Years of Ministry",
+    give_heading: "Sow Into Lives That Will Never Be the Same",
+    give_intro: "Your generous partnership fuels crusades, outreaches, and the spread of the gospel to the nations. Every seed counts — give cheerfully and become part of the story.",
+    testimony_heading: "Changed Lives, Grateful Hearts",
+    testimony_intro: "Real stories from people who encountered God through this ministry.",
+    contact_heading: "We'd Love to Hear From You",
+    contact_intro: "Whether you need prayer, have a question, or want to partner — reach out and our team will respond.",
+    bank_name:   (CFG.bankAccount && CFG.bankAccount.name)   || "",
+    bank_number: (CFG.bankAccount && CFG.bankAccount.number) || "",
+    bank_bank:   (CFG.bankAccount && CFG.bankAccount.bank)   || "",
+    bank_paypal: (CFG.bankAccount && CFG.bankAccount.paypal) || "",
+    bank_note:   (CFG.bankAccount && CFG.bankAccount.note)   || "",
   };
   async function loadContent() {
     const wrap = $("#contentList");
@@ -465,7 +502,7 @@
         <p class="text-sm text-gray-600 line-clamp-3">“${esc(t.quote || "")}”</p>
         <div class="mt-3 flex items-center justify-between gap-2">
           <div class="flex items-center gap-2 min-w-0">
-            <img src="${esc(t.photo_url || "assets/img/logo.svg")}" onerror="this.onerror=null;this.src='assets/img/logo.svg'" class="h-9 w-9 rounded-full object-cover bg-slate-100" alt="" />
+            <img src="${esc(t.photo_url || "assets/img/dinab-mark.png")}" onerror="this.onerror=null;this.src='assets/img/dinab-mark.png'" class="h-9 w-9 rounded-full object-cover bg-slate-100" alt="" />
             <div class="min-w-0"><p class="font-600 text-navy text-sm truncate">${esc(t.name || "")}</p><p class="text-xs text-slate-400 truncate">${esc(t.location || "")}</p></div>
           </div>
           <div class="flex-none flex gap-2">

@@ -393,24 +393,36 @@
      Details are edited in config.js → bankAccount.
      --------------------------------------------------------- */
   const BANK      = CFG.bankAccount || {};
+  let   bankOverrides = {};   // filled from the admin (site_content) when set
   const SHOW_BANK = CFG.showBank !== false && !!BANK.number;
 
-  const bankPanelHTML = () => `
+  const bankPanelHTML = () => {
+    const B = { ...(CFG.bankAccount || {}), ...bankOverrides };
+    return `
     <div class="bank-card">
       <p class="bank-card__head">Transfer to:</p>
       <dl class="bank-card__rows">
-        <div><dt>Account Name</dt><dd>${BANK.name || ""}</dd></div>
+        <div><dt>Account Name</dt><dd>${B.name || ""}</dd></div>
         <div>
           <dt>Account Number</dt>
           <dd class="bank-card__acct">
-            <span data-acct>${BANK.number || ""}</span>
-            <button type="button" class="bank-copy" data-copy="${BANK.number || ""}">Copy</button>
+            <span data-acct>${B.number || ""}</span>
+            <button type="button" class="bank-copy" data-copy="${B.number || ""}">Copy</button>
           </dd>
         </div>
-        <div><dt>Bank</dt><dd>${BANK.bank || ""}</dd></div>
+        <div><dt>Bank</dt><dd>${B.bank || ""}</dd></div>
+        ${B.paypal ? `
+        <div class="bank-card__paypal">
+          <dt>Or pay with PayPal</dt>
+          <dd class="bank-card__acct">
+            <span class="bank-card__mail">${B.paypal}</span>
+            <button type="button" class="bank-copy" data-copy="${B.paypal}">Copy</button>
+          </dd>
+        </div>` : ""}
       </dl>
-      ${BANK.note ? `<p class="bank-card__note">${BANK.note}</p>` : ""}
+      ${B.note ? `<p class="bank-card__note">${B.note}</p>` : ""}
     </div>`;
+  };
 
   // Copy-to-clipboard for the account number (works on http + https).
   document.addEventListener("click", (e) => {
@@ -745,7 +757,7 @@
     impact_title: "The Impact",
     impact_text: "Today his message reaches across 30+ nations through live gatherings, media, and humanitarian outreach to the vulnerable.",
     about_title: "A House of Faith, Purpose & Power",
-    about_text: "Prophet AA Emmanuel Ministries is a Christ-centered, Spirit-led ministry committed to restoring hope, healing the broken-hearted, and raising believers who live out their God-given purpose. For over a decade we have carried the gospel across cities and nations through crusades, prophetic conferences, and compassionate outreach.",
+    about_text: "Prophet AA Emmanuel Ministries is a Christ-centered, Spirit-led ministry committed to restoring hope, healing the broken-hearted, and raising believers who live out their God-given purpose. For over five years we have carried the gospel across cities and nations through crusades, prophetic conferences, and compassionate outreach.",
     impact_heading: "Lives Touched, Nations Reached",
     impact_intro: "By God's grace, the ministry continues to make a measurable difference across communities and continents.",
   };
@@ -804,6 +816,33 @@
     setImg("#aboutImg", CONTENT.about_image);
     if (CONTENT.prophet_image) { setImg("#prophetHeroImg", CONTENT.prophet_image); setImg("#prophetImg", CONTENT.prophet_image); }
     setImg("#welcomeImage", CONTENT.popup_image);
+    setImg("#siteLogo", CONTENT.logo_image);
+    // Hero copy + mini stats
+    set("#heroTitle", CONTENT.hero_title);
+    set("#heroSubtext", CONTENT.hero_subtext);
+    set("#heroStat1Val", CONTENT.hero_stat1_value); set("#heroStat1Lab", CONTENT.hero_stat1_label);
+    set("#heroStat2Val", CONTENT.hero_stat2_value); set("#heroStat2Lab", CONTENT.hero_stat2_label);
+    set("#heroStat3Val", CONTENT.hero_stat3_value); set("#heroStat3Lab", CONTENT.hero_stat3_label);
+    // Section headings that previously had no admin control
+    set("#giveHeading", CONTENT.give_heading);
+    set("#giveIntro", CONTENT.give_intro);
+    set("#testimonyHeading", CONTENT.testimony_heading);
+    set("#testimonyIntro", CONTENT.testimony_intro);
+    set("#contactHeading", CONTENT.contact_heading);
+    set("#contactIntro", CONTENT.contact_intro);
+    // Bank / PayPal details — re-render the panels if the admin changed them
+    const bo = {};
+    if (CONTENT.bank_name)   bo.name   = CONTENT.bank_name;
+    if (CONTENT.bank_number) bo.number = CONTENT.bank_number;
+    if (CONTENT.bank_bank)   bo.bank   = CONTENT.bank_bank;
+    if (CONTENT.bank_paypal != null) bo.paypal = CONTENT.bank_paypal;
+    if (CONTENT.bank_note)   bo.note   = CONTENT.bank_note;
+    if (Object.keys(bo).length) {
+      bankOverrides = bo;
+      ["#bankPanel", "#giveBankPanel"].forEach((sel) => {
+        const p = $(sel); if (p) p.innerHTML = bankPanelHTML();
+      });
+    }
   };
 
   /* ---------- Testimonies (from Supabase, else config) ---------- */

@@ -383,3 +383,16 @@ section[id] { scroll-margin-top: 5.5rem; }   /* offset for the fixed header */
   line-height: 1.45;
   color: #7c8798;
 }
+
+/* PayPal line inside the transfer card */
+.bank-card__paypal {
+  margin-top: .55rem;
+  padding-top: .5rem;
+  border-top: 1px dashed rgba(201,162,39,.4);
+}
+.bank-card__mail {
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--navy, #0b1f4d);
+  word-break: break-all;
+}
