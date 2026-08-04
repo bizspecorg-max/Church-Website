@@ -21,6 +21,7 @@ window.MINISTRY_CONFIG = {
     name:   "CORINTHIANS INTERNATIONAL CHURCH",
     number: "1028872901",
     bank:   "United Bank for Africa (UBA)",
+    paypal: "Prophetaaemmanuel@gmail.com",   // leave "" to hide the PayPal line
     note:   "After your transfer, fill the form below so we can confirm it and send your receipt.",
   },
 

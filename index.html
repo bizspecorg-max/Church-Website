@@ -24,7 +24,7 @@
   <meta name="twitter:description" content="Watch live, request prayer, and partner with Prophet AA Emmanuel." />
   <meta name="twitter:image" content="https://res.cloudinary.com/dbewrzeuj/image/upload/v1781423907/iCBGa_1_pyy7xi.jpg" />
 
-  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg" />
+  <link rel="icon" type="image/png" href="assets/img/dinab-mark.png" />
 
   <!-- ============ FONTS ============ -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -59,7 +59,7 @@
   <!-- Loads the Paystack inline checkout library. Add your public key in assets/js/main.js -->
   <script src="https://js.paystack.co/v1/inline.js"></script>
 
-  <link rel="stylesheet" href="assets/css/custom.css?v=20260804be" />
+  <link rel="stylesheet" href="assets/css/custom.css?v=20260804d" />
 </head>
 
 <body class="font-sans text-navy-dark bg-white antialiased">
@@ -109,7 +109,7 @@
         <div class="flex items-center justify-between h-16 lg:h-[4.5rem]">
           <!-- Logo -->
           <a href="#hero" class="flex items-center gap-3 group">
-            <img src="assets/img/logo.svg" alt="Prophet AA Emmanuel Ministries logo" class="h-10 w-10 lg:h-12 lg:w-12" width="48" height="48" />
+            <img id="siteLogo" src="assets/img/dinab-mark.png" alt="Prophet AA Emmanuel Ministries logo" class="h-10 w-10 lg:h-12 lg:w-12" width="48" height="48" />
             <span class="leading-tight">
               <span class="block font-serif text-lg lg:text-xl font-700 nav-text tracking-wide">DINAB<span class="text-gold-light"> TV</span></span>
               <span class="block text-[10px] lg:text-xs tracking-[0.15em] uppercase nav-subtext">Distance Is Not A Barrier TV</span>
@@ -222,10 +222,10 @@
           <span class="inline-flex items-center gap-2 text-gold-light text-sm font-500 tracking-[0.25em] uppercase mb-5">
             <span class="h-px w-8 bg-gold"></span> Welcome Home
           </span>
-          <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-700 leading-[1.1]">
+          <h1 id="heroTitle" class="font-serif text-4xl sm:text-5xl lg:text-6xl font-700 leading-[1.1]">
             Transforming Lives Through Prayer, Prophecy, and <span class="text-gold-light">God's Word</span>
           </h1>
-          <p class="mt-6 text-lg text-blue-100/90 leading-relaxed">
+          <p id="heroSubtext" class="mt-6 text-lg text-blue-100/90 leading-relaxed">
             Raising people of faith, purpose, and impact through the power of Jesus Christ.
           </p>
           <div class="mt-9 flex flex-wrap gap-4">
@@ -236,11 +236,11 @@
             </a>
           </div>
           <div class="mt-10 flex items-center gap-6 text-sm text-blue-100/80">
-            <div><span class="block text-2xl font-700 text-white">120K+</span>Souls Reached</div>
+            <div><span class="block text-2xl font-700 text-white" id="heroStat1Val">120K+</span><span id="heroStat1Lab">Souls Reached</span></div>
             <div class="h-10 w-px bg-white/20"></div>
-            <div><span class="block text-2xl font-700 text-white">32</span>Nations</div>
+            <div><span class="block text-2xl font-700 text-white" id="heroStat2Val">32</span><span id="heroStat2Lab">Nations</span></div>
             <div class="h-10 w-px bg-white/20"></div>
-            <div><span class="block text-2xl font-700 text-white">18</span>Years of Ministry</div>
+            <div><span class="block text-2xl font-700 text-white" id="heroStat3Val">5</span><span id="heroStat3Lab">Years of Ministry</span></div>
           </div>
         </div>
 
@@ -311,7 +311,7 @@
           <p id="aboutText" class="mt-5 text-gray-600 leading-relaxed">
             Prophet AA Emmanuel Ministries is a Christ-centered, Spirit-led ministry committed to
             restoring hope, healing the broken-hearted, and raising believers who live out their God-given
-            purpose. For over a decade we have carried the gospel across cities and nations through
+            purpose. For over five years we have carried the gospel across cities and nations through
             crusades, prophetic conferences, and compassionate outreach.
           </p>
 
@@ -509,8 +509,8 @@
     <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-2xl mx-auto reveal">
         <span class="section-eyebrow text-gold-light">Partnership &amp; Giving</span>
-        <h2 class="section-title text-white">Sow Into Lives That Will Never Be the Same</h2>
-        <p class="mt-4 text-blue-100/85">Your generous partnership fuels crusades, outreaches, and the spread of the gospel to the nations. Every seed counts — give cheerfully and become part of the story.</p>
+        <h2 id="giveHeading" class="section-title text-white">Sow Into Lives That Will Never Be the Same</h2>
+        <p id="giveIntro" class="mt-4 text-blue-100/85">Your generous partnership fuels crusades, outreaches, and the spread of the gospel to the nations. Every seed counts — give cheerfully and become part of the story.</p>
       </div>
 
       <!-- Monthly partnership tiers (rendered from MINISTRY_CONFIG.partnership) -->
@@ -603,8 +603,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-2xl mx-auto reveal">
         <span class="section-eyebrow">Testimonies</span>
-        <h2 class="section-title">Changed Lives, Grateful Hearts</h2>
-        <p class="mt-4 text-gray-600">Real stories from people who encountered God through this ministry.</p>
+        <h2 id="testimonyHeading" class="section-title">Changed Lives, Grateful Hearts</h2>
+        <p id="testimonyIntro" class="mt-4 text-gray-600">Real stories from people who encountered God through this ministry.</p>
       </div>
 
       <!-- Cards generated from the Supabase `testimonials` table (fallback: config). -->
@@ -620,8 +620,8 @@
       <div class="grid lg:grid-cols-2 gap-12">
         <div class="reveal">
           <span class="section-eyebrow">Get In Touch</span>
-          <h2 class="section-title">We'd Love to Hear From You</h2>
-          <p class="mt-4 text-gray-600">Whether you need prayer, have a question, or want to partner — reach out and our team will respond.</p>
+          <h2 id="contactHeading" class="section-title">We'd Love to Hear From You</h2>
+          <p id="contactIntro" class="mt-4 text-gray-600">Whether you need prayer, have a question, or want to partner — reach out and our team will respond.</p>
 
           <ul class="mt-8 space-y-5">
             <li class="contact-row">
@@ -689,7 +689,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
       <div>
         <div class="flex items-center gap-3">
-          <img src="assets/img/logo.svg" alt="Ministry logo" class="h-11 w-11" width="44" height="44" />
+          <img src="assets/img/dinab-mark.png" alt="Ministry logo" class="h-11 w-11" width="44" height="44" />
           <span class="font-serif text-lg font-700 text-white">DINAB TV<br/><span class="text-sm text-blue-100/70">Distance Is Not A Barrier TV</span></span>
         </div>
         <p class="mt-4 text-sm leading-relaxed">Transforming lives through prayer, prophecy, and God's Word across the nations.</p>
@@ -943,10 +943,10 @@
   <!-- Toast -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
 
-  <script src="assets/js/config.js?v=20260804be"></script>
+  <script src="assets/js/config.js?v=20260804d"></script>
   <!-- Supabase client library (powers optional login + data storage) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/supabase.js?v=20260804be"></script>
-  <script src="assets/js/main.js?v=20260804be"></script>
+  <script src="assets/js/supabase.js?v=20260804d"></script>
+  <script src="assets/js/main.js?v=20260804d"></script>
 </body>
 </html>
