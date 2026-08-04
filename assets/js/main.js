@@ -328,13 +328,14 @@
   const giveAmt   = $("#giveAmount");
 
   // Email the donor's details + save to Supabase (captured before payment).
-  const captureLead = (d) => {
+  const captureLead = (d, opts = {}) => {
     const payload = {
       Name: d.name, Email: d.email, Phone: d.phone,
       Amount: fmt(d.amount), amountValue: d.amount,
-      Status: "Details submitted (pre-payment)",
+      Status: opts.status || "Details submitted (pre-payment)",
+      Method: opts.method || "Card / Paystack",
     };
-    sendLead("New Donation — " + fmt(d.amount), payload);
+    sendLead((opts.subject || "New Donation") + " — " + fmt(d.amount), payload);
     if (window.MinistryDB && MinistryDB.enabled) MinistryDB.saveDonation(payload);
   };
 
@@ -353,6 +354,18 @@
 
   // Run the payment (lead capture → Paystack, or demo toast).
   const processPayment = (d, formEl) => {
+    // --- Bank transfer branch (Paystack path below is unchanged) ---
+    if (formEl && formEl.dataset.method === "bank") {
+      captureLead(d, {
+        subject: "New Bank Transfer",
+        status:  "Bank transfer — awaiting confirmation",
+        method:  "Bank transfer (" + (BANK.bank || "") + ")",
+      });
+      closeGive();
+      showToast("🙏 Thank you! We've logged your transfer of " + fmt(d.amount) + ". You'll get a receipt once it's confirmed.");
+      formEl.reset();
+      return;
+    }
     captureLead(d);
     if (!PAYSTACK_PUBLIC_KEY) {
       closeGive();
@@ -370,6 +383,72 @@
       callback: (r) => { closeGive(); showToast("🎉 Thank you! Payment reference: " + r.reference); formEl && formEl.reset(); },
       onClose: () => showToast("Payment window closed. You can try again anytime."),
     }).openIframe();
+  };
+
+  /* ---------------------------------------------------------
+     BANK TRANSFER — an ADDITIONAL giving option.
+     Paystack remains the default and is not modified. Selecting
+     "Bank Transfer" reveals the account details and switches the
+     submit button to log the transfer for confirmation.
+     Details are edited in config.js → bankAccount.
+     --------------------------------------------------------- */
+  const BANK      = CFG.bankAccount || {};
+  const SHOW_BANK = CFG.showBank !== false && !!BANK.number;
+
+  const bankPanelHTML = () => `
+    <div class="bank-card">
+      <p class="bank-card__head">Transfer to:</p>
+      <dl class="bank-card__rows">
+        <div><dt>Account Name</dt><dd>${BANK.name || ""}</dd></div>
+        <div>
+          <dt>Account Number</dt>
+          <dd class="bank-card__acct">
+            <span data-acct>${BANK.number || ""}</span>
+            <button type="button" class="bank-copy" data-copy="${BANK.number || ""}">Copy</button>
+          </dd>
+        </div>
+        <div><dt>Bank</dt><dd>${BANK.bank || ""}</dd></div>
+      </dl>
+      ${BANK.note ? `<p class="bank-card__note">${BANK.note}</p>` : ""}
+    </div>`;
+
+  // Copy-to-clipboard for the account number (works on http + https).
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-copy]");
+    if (!btn) return;
+    const text = btn.dataset.copy;
+    const done = () => { const o = btn.textContent; btn.textContent = "Copied ✓"; setTimeout(() => (btn.textContent = o), 1600); };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => done());
+    } else {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (_) {}
+      document.body.removeChild(ta); done();
+    }
+  });
+
+  // Wire one form's method toggle. Defaults to card, so nothing changes
+  // for anyone who ignores the new option.
+  const wirePayMethod = (tabs, panel, formEl, labelEl, secureEl) => {
+    if (!tabs || !panel || !formEl) return;
+    if (!SHOW_BANK) return;                 // option hidden → card only, as before
+    tabs.classList.remove("hidden");
+    panel.innerHTML = bankPanelHTML();
+    formEl.dataset.method = "card";
+    $$(".pay-tab", tabs).forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const m = tab.dataset.method;
+        $$(".pay-tab", tabs).forEach((t) => t.classList.toggle("active", t === tab));
+        formEl.dataset.method = m;
+        panel.classList.toggle("hidden", m !== "bank");
+        if (labelEl)  labelEl.textContent  = m === "bank" ? "I've Sent My Transfer" : "Donate Securely";
+        if (secureEl) secureEl.textContent = m === "bank"
+          ? "Direct transfer · 100% goes to the ministry"
+          : "Secured by Paystack · 100% goes to the ministry";
+      });
+    });
   };
 
   // Validate a set of inputs, then pay.
@@ -404,6 +483,7 @@
   // Give modal wiring
   if (giveModal) {
     wireAmountChips($("#giveAmounts"), giveAmt);
+    wirePayMethod($("#givePayTabs"), $("#giveBankPanel"), giveForm, $("#giveBtnLabel"), $("#giveSecure"));
     $$("[data-close-give]").forEach((el) => el.addEventListener("click", closeGive));
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && giveModal.classList.contains("open")) closeGive(); });
     giveForm.addEventListener("submit", (e) => {
@@ -427,6 +507,7 @@
   const donationForm = $("#donationForm");
   if (donationForm) {
     wireAmountChips($("#amountGrid"), $("#donorAmount"));
+    wirePayMethod($("#payTabs"), $("#bankPanel"), donationForm, $("#donateBtnLabel"), $("#donateSecure"));
     donationForm.addEventListener("submit", (e) => {
       e.preventDefault();
       collectAndPay($("#donorName"), $("#donorEmail"), $("#donorPhone"), $("#donorAmount"), donationForm);

@@ -294,3 +294,91 @@ section[id] { scroll-margin-top: 5.5rem; }   /* offset for the fixed header */
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* =========================================================
+   GIVING — payment method tabs + bank transfer card
+   (additive: Paystack styling untouched)
+   ========================================================= */
+.pay-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .25rem;
+  padding: .25rem;
+  background: #f1f5f9;
+  border-radius: .75rem;
+}
+.pay-tab {
+  padding: .6rem .5rem;
+  border-radius: .55rem;
+  font-size: .875rem;
+  font-weight: 600;
+  color: #64748b;
+  background: transparent;
+  transition: all .18s ease;
+}
+.pay-tab:hover { color: var(--navy, #0b1f4d); }
+.pay-tab.active {
+  background: #fff;
+  color: var(--navy, #0b1f4d);
+  box-shadow: 0 1px 3px rgba(11,31,77,.14);
+}
+
+.bank-card {
+  border: 1px solid rgba(201,162,39,.35);
+  background: linear-gradient(135deg, #fffdf5 0%, #fff9e9 100%);
+  border-radius: .9rem;
+  padding: 1rem 1.1rem;
+}
+.bank-card__head {
+  font-size: .7rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--gold-dark, #a8871f);
+  margin-bottom: .6rem;
+}
+.bank-card__rows > div + div { margin-top: .6rem; }
+.bank-card__rows dt {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #94a3b8;
+  font-weight: 600;
+}
+.bank-card__rows dd {
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--navy, #0b1f4d);
+  margin-top: .1rem;
+  word-break: break-word;
+}
+.bank-card__acct {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  flex-wrap: wrap;
+}
+.bank-card__acct > span[data-acct] {
+  font-size: 1.25rem;
+  letter-spacing: .06em;
+  font-variant-numeric: tabular-nums;
+}
+.bank-copy {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: .3rem .65rem;
+  border-radius: 999px;
+  color: var(--navy, #0b1f4d);
+  background: rgba(201,162,39,.22);
+  transition: background .18s ease;
+  white-space: nowrap;
+}
+.bank-copy:hover { background: rgba(201,162,39,.4); }
+.bank-card__note {
+  margin-top: .8rem;
+  font-size: .74rem;
+  line-height: 1.5;
+  color: #64748b;
+}
