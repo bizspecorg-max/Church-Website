@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
   <title>My Account · Dinab TV</title>
-  <link rel="icon" type="image/png" href="assets/img/dinab-mark.png" />
+  <link id="brandFavicon" rel="icon" type="image/png" href="assets/img/dinab-mark.png" />
+  <link id="brandAppleIcon" rel="apple-touch-icon" href="assets/img/dinab-mark.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,7 +16,7 @@
       fontFamily: { serif: ['"Cormorant Garamond"', 'serif'], sans: ['Inter', 'sans-serif'] },
     } } };
   </script>
-  <link rel="stylesheet" href="assets/css/custom.css?v=20260808a" />
+  <link rel="stylesheet" href="assets/css/custom.css?v=20260808b" />
 </head>
 <body class="font-sans bg-slate-100 text-navy-dark min-h-screen">
 
@@ -23,7 +24,7 @@
   <div id="loginView" class="min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl overflow-hidden">
       <div class="bg-gradient-to-r from-navy to-navy-light p-6 text-white text-center">
-        <img src="assets/img/dinab-mark.png" alt="logo" class="h-14 w-14 mx-auto" />
+        <img id="brandLogoLogin" src="assets/img/dinab-mark.png" alt="logo" class="h-14 w-14 mx-auto" />
         <h1 id="authTitle" class="font-serif text-2xl font-700 mt-3">Member Sign In</h1>
         <p class="text-sm text-blue-100/80">Access your partnership &amp; giving</p>
       </div>
@@ -57,7 +58,7 @@
     <header class="bg-navy-dark text-white">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img src="assets/img/dinab-mark.png" alt="logo" class="h-9 w-9" />
+          <img id="brandLogoHeader" src="assets/img/dinab-mark.png" alt="logo" class="h-9 w-9" />
           <span class="font-serif font-700">DINAB TV · My Account</span>
         </div>
         <div class="flex items-center gap-4 text-sm">
@@ -113,9 +114,9 @@
 
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
 
-  <script src="assets/js/config.js?v=20260808a"></script>
+  <script src="assets/js/config.js?v=20260808b"></script>
   <script src="https://js.paystack.co/v1/inline.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/member.js?v=20260808a"></script>
+  <script src="assets/js/member.js?v=20260808b"></script>
 </body>
 </html>

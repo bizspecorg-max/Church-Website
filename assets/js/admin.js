@@ -29,6 +29,29 @@
 
   if (!ready) { $("#configWarn").classList.remove("hidden"); }
 
+  /* ---------- Branding (logo + favicon follow the admin settings) ---------- */
+  (async () => {
+    if (!db) return;                       // config missing — keep the built-in mark
+    try {
+      const { data, error } = await db.from("site_content")
+        .select("key, value").in("key", ["logo_image", "favicon_image"]);
+      if (error || !data) return;
+      const map = {};
+      data.forEach((r) => { if (r.value) map[r.key] = r.value; });
+      const setSrc = (sel, v) => { const el = $(sel); if (el && v) el.src = v; };
+      setSrc("#brandLogoLogin", map.logo_image);
+      setSrc("#brandLogoHeader", map.logo_image);
+      const fav = map.favicon_image || map.logo_image;
+      if (fav) {
+        const f = $("#brandFavicon");
+        if (f) { f.href = fav; f.removeAttribute("type"); }
+        const a = $("#brandAppleIcon");
+        if (a) a.href = fav;
+      }
+    } catch (_) {}                          // never block the page on branding
+  })();
+
+
   $("#loginForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!db) return;
