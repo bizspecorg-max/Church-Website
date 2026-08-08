@@ -816,7 +816,30 @@
     setImg("#aboutImg", CONTENT.about_image);
     if (CONTENT.prophet_image) { setImg("#prophetHeroImg", CONTENT.prophet_image); setImg("#prophetImg", CONTENT.prophet_image); }
     setImg("#welcomeImage", CONTENT.popup_image);
-    setImg("#siteLogo", CONTENT.logo_image);
+    // Logo — drives the header and footer marks
+    if (CONTENT.logo_image) {
+      setImg("#siteLogo", CONTENT.logo_image);
+      setImg("#footerLogo", CONTENT.logo_image);
+    }
+    // Favicon — its own setting, falling back to the logo when unset
+    const favSrc = CONTENT.favicon_image || CONTENT.logo_image;
+    if (favSrc) {
+      let fav = $("#siteFavicon");
+      if (!fav) {
+        fav = document.createElement("link");
+        fav.id = "siteFavicon"; fav.rel = "icon";
+        document.head.appendChild(fav);
+      }
+      fav.href = favSrc;
+      fav.removeAttribute("type");     // let the browser sniff png/ico/svg
+      let apple = $("#siteAppleIcon");
+      if (!apple) {
+        apple = document.createElement("link");
+        apple.id = "siteAppleIcon"; apple.rel = "apple-touch-icon";
+        document.head.appendChild(apple);
+      }
+      apple.href = favSrc;
+    }
     // Hero copy + mini stats
     set("#heroTitle", CONTENT.hero_title);
     set("#heroSubtext", CONTENT.hero_subtext);
