@@ -740,6 +740,8 @@
 
   /* ---------- Editable section content (headings, subtexts, poster) ---------- */
   const CONTENT_DEFAULTS = {
+    about_badge_title: "Est. 2008",
+    about_badge_text: "Serving God and humanity with excellence.",
     live_title: "Live Service & Broadcasts",
     live_blurb: "Join our services and broadcasts live from anywhere in the world.",
     featured_title: "Featured Broadcast",
@@ -784,6 +786,9 @@
     // About section
     set("#aboutTitle", g("about_title"));
     set("#aboutText", g("about_text"));
+    // "Est. 2008" badge sitting over the About image
+    set("#aboutBadgeTitle", g("about_badge_title"));
+    set("#aboutBadgeText", g("about_badge_text"));
     // Impact section heading/intro
     set("#impactHeading", g("impact_heading"));
     set("#impactIntro", g("impact_intro"));
