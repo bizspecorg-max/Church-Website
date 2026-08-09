@@ -142,6 +142,6 @@ window.MINISTRY_CONFIG = {
     address:  "12 Grace Avenue, Victoria Island, Lagos, Nigeria",
     email:    "hello@aaemmanuelministries.org",
     phone:    "+234 800 000 0000",
-    whatsapp: "2348000000000",
+    whatsapp: "2347061220312",
   },
 };

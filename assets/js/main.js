@@ -202,6 +202,10 @@
 
   /* ---------- Contact details from config ---------- */
   const c = CFG.contact || {};
+  // Admin setting wins over config.js. Strips +, spaces and dashes so the
+  // number works whether it was typed as 2347061220312 or +234 706 122 0312.
+  const waDigits = (v) => String(v || "").replace(/\D/g, "");
+  const waNumber = () => waDigits((CONTENT && CONTENT.contact_whatsapp) || c.whatsapp);
   const setText = (sel, val) => { const el = $(sel); if (el && val) el.textContent = val; };
   const setHref = (sel, val) => { const el = $(sel); if (el && val) el.href = val; };
   setText("#cAddress", c.address);
@@ -606,7 +610,7 @@
       current = d;
       $("#partnerName").textContent = d.name.split(" ")[0] || "Partner";
       $("#partnerAmtText").textContent = d.amount.toLocaleString("en-US");
-      const wa = CFG.contact && CFG.contact.whatsapp ? CFG.contact.whatsapp : "";
+      const wa = waNumber();
       const msg = `Hello, I am ${d.name}. I just registered as a partner (₦${d.amount.toLocaleString()}/month). I would love direct contact with the ministry.`;
       $("#partnerWhatsapp").href = wa ? `https://wa.me/${wa}?text=${encodeURIComponent(msg)}` : (CFG.youtubeChannel || "#");
       form.classList.add("hidden");
@@ -812,7 +816,7 @@
     if (CONTENT.contact_address) { set("#cAddress", CONTENT.contact_address); set("#topAddress", CONTENT.contact_address); }
     if (CONTENT.contact_email) { set("#cEmailLink", CONTENT.contact_email); sh("#cEmailLink", "mailto:" + CONTENT.contact_email); set("#topEmailText", CONTENT.contact_email); sh("#topEmail", "mailto:" + CONTENT.contact_email); }
     if (CONTENT.contact_phone) { set("#cPhoneLink", CONTENT.contact_phone); sh("#cPhoneLink", "tel:" + CONTENT.contact_phone.replace(/\s+/g, "")); sh("#topPhone", "tel:" + CONTENT.contact_phone.replace(/\s+/g, "")); }
-    if (CONTENT.contact_whatsapp) { const w = "https://wa.me/" + CONTENT.contact_whatsapp; sh("#waBtn", w); sh("#waFooterLink", w); const pr = w + "?text=" + encodeURIComponent("Hello, I would like to request prayer."); sh("#navPrayer", pr); sh("#prayerBtn", pr); }
+    if (CONTENT.contact_whatsapp) { const w = "https://wa.me/" + waDigits(CONTENT.contact_whatsapp); sh("#waBtn", w); sh("#waFooterLink", w); const pr = w + "?text=" + encodeURIComponent("Hello, I would like to request prayer."); sh("#navPrayer", pr); sh("#prayerBtn", pr); }
     sh("#topFb", CONTENT.social_facebook); sh("#topTw", CONTENT.social_twitter); sh("#topYt", CONTENT.social_youtube); sh("#topIg", CONTENT.social_instagram);
     const fsoc = $$("footer .social-icon");
     [CONTENT.social_facebook, CONTENT.social_instagram, CONTENT.social_youtube, CONTENT.social_twitter].forEach((u, i) => { if (fsoc[i] && u) fsoc[i].href = u; });

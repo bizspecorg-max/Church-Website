@@ -19,15 +19,18 @@
 
   if (!ready) { $("#configWarn").classList.remove("hidden"); }
 
+  const SETTINGS = {};   // admin-set values, filled in below
+
   /* ---------- Branding (logo + favicon follow the admin settings) ---------- */
   (async () => {
     if (!db) return;                       // config missing — keep the built-in mark
     try {
       const { data, error } = await db.from("site_content")
-        .select("key, value").in("key", ["logo_image", "favicon_image"]);
+        .select("key, value").in("key", ["logo_image", "favicon_image", "contact_whatsapp"]);
       if (error || !data) return;
       const map = {};
       data.forEach((r) => { if (r.value) map[r.key] = r.value; });
+      if (map.contact_whatsapp) SETTINGS.contact_whatsapp = map.contact_whatsapp;
       const setSrc = (sel, v) => { const el = $(sel); if (el && v) el.src = v; };
       setSrc("#brandLogoLogin", map.logo_image);
       setSrc("#brandLogoHeader", map.logo_image);
@@ -118,7 +121,7 @@
       ? hist.map((h) => `<tr class="border-t"><td class="p-2 text-slate-400 whitespace-nowrap">${new Date(h.date).toLocaleDateString()}</td><td class="p-2">${h.type}</td><td class="p-2 font-600">${fmt(h.amount)}</td><td class="p-2 text-slate-500">${esc(h.st || "")}</td></tr>`).join("")
       : `<tr><td colspan="4" class="p-3 text-slate-500 text-sm">No giving recorded yet.</td></tr>`;
 
-    const wa = (CFG.contact && CFG.contact.whatsapp) || "";
+    const wa = String(SETTINGS.contact_whatsapp || (CFG.contact && CFG.contact.whatsapp) || "").replace(/\D/g, "");
     const waBtn = $("#waContact");
     if (wa) waBtn.href = "https://wa.me/" + wa + "?text=" + encodeURIComponent("Hello, I'm a partner (" + user.email + "). I'd like to connect with the ministry.");
     else waBtn.classList.add("hidden");

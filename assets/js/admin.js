@@ -405,7 +405,7 @@
     ["contact_address", "Contact — address", "text"],
     ["contact_phone", "Contact — phone number", "text"],
     ["contact_email", "Contact — email", "text"],
-    ["contact_whatsapp", "Contact — WhatsApp number (digits only, e.g. 2348000000000)", "text"],
+    ["contact_whatsapp", "Contact — WhatsApp number (international format, e.g. 2347061220312)", "text"],
     ["social_facebook", "Social — Facebook URL", "text"],
     ["social_twitter", "Social — X / Twitter URL", "text"],
     ["social_youtube", "Social — YouTube URL", "text"],
