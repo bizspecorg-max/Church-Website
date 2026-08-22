@@ -427,6 +427,8 @@
     ["bank_name", "Giving — bank account name", "text"],
     ["bank_number", "Giving — bank account number", "text"],
     ["bank_bank", "Giving — bank name", "text"],
+    ["bank_momo", "Giving — MoMo Money (MTN) number (blank hides it)", "text"],
+    ["bank_opay", "Giving — Opay number (blank hides it)", "text"],
     ["bank_paypal", "Giving — PayPal email (blank hides it)", "text"],
     ["bank_note", "Giving — transfer instruction note", "textarea"],
   ];
@@ -480,6 +482,8 @@
     bank_name:   (CFG.bankAccount && CFG.bankAccount.name)   || "",
     bank_number: (CFG.bankAccount && CFG.bankAccount.number) || "",
     bank_bank:   (CFG.bankAccount && CFG.bankAccount.bank)   || "",
+    bank_momo:   (CFG.bankAccount && CFG.bankAccount.momo)   || "",
+    bank_opay:   (CFG.bankAccount && CFG.bankAccount.opay)   || "",
     bank_paypal: (CFG.bankAccount && CFG.bankAccount.paypal) || "",
     bank_note:   (CFG.bankAccount && CFG.bankAccount.note)   || "",
   };

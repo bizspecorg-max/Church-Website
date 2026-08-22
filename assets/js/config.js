@@ -8,21 +8,28 @@ window.MINISTRY_CONFIG = {
 
   /* ---------- Payments (Paystack) ----------
      Paste your public key to accept real donations.
-     Leave "" to stay in safe demo mode. */
+     Leave "" to stay in safe demo mode.
+     paystackReady: set to true ONLY once you've pasted a real key
+     above. While false, the Card/Online option is hidden site-wide
+     and givers are pointed to Bank Transfer instead — see the
+     PAYSTACK block inside processPayment() in main.js, which is
+     commented out until this flips to true. */
   paystackPublicKey: "",            // e.g. "pk_live_xxxxxxxxxxxxxxxx"
+  paystackReady: false,             // ⚠️ flip to true once the key above is live
   currency: "NGN",
 
-  /* ---------- Bank transfer (SECOND giving option) ----------
-     Paystack is untouched and stays the default. This simply adds
-     a "Bank Transfer" choice so a giver can either pay by card OR
-     send a direct transfer. Set showBank:false to hide the option. */
+  /* ---------- Bank transfer (current giving option while Paystack
+     is not yet live) ----------
+     Set showBank:false to hide the option. */
   showBank: true,
   bankAccount: {
-    name:   "CORINTHIANS INTERNATIONAL CHURCH",
+    name:   "Musa Adamu, Omoaka",
     number: "1028872901",
     bank:   "United Bank for Africa (UBA)",
+    momo:   "7061220312",                    // MTN MoMo — leave "" to hide
+    opay:   "7061220312",                    // Opay — leave "" to hide
     paypal: "Prophetaaemmanuel@gmail.com",   // leave "" to hide the PayPal line
-    note:   "After your transfer, fill the form below so we can confirm it and send your receipt.",
+    note:   "Online card payment isn't available yet — please use one of the accounts above. After your transfer, fill the form below so we can confirm it and send your receipt.",
   },
 
   /* ---------- Where form submissions are emailed ----------
