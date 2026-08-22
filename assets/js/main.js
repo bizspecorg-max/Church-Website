@@ -447,6 +447,7 @@
             <span data-acct>${B.opay}</span>
             <button type="button" class="bank-copy" data-copy="${B.opay}">Copy</button>
           </dd>
+          ${B.opayName ? `<dd class="bank-card__subname">${B.opayName}</dd>` : ""}
         </div>` : ""}
         ${B.paypal ? `
         <div class="bank-card__paypal">
@@ -963,6 +964,7 @@
     if (CONTENT.bank_bank)   bo.bank   = CONTENT.bank_bank;
     if (CONTENT.bank_momo != null)   bo.momo   = CONTENT.bank_momo;
     if (CONTENT.bank_opay != null)   bo.opay   = CONTENT.bank_opay;
+    if (CONTENT.bank_opay_name != null) bo.opayName = CONTENT.bank_opay_name;
     if (CONTENT.bank_paypal != null) bo.paypal = CONTENT.bank_paypal;
     if (CONTENT.bank_note)   bo.note   = CONTENT.bank_note;
     if (Object.keys(bo).length) {

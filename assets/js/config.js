@@ -23,11 +23,12 @@ window.MINISTRY_CONFIG = {
      Set showBank:false to hide the option. */
   showBank: true,
   bankAccount: {
-    name:   "Musa Adamu, Omoaka",
+    name:   "CORINTHIANS INTERNATIONAL CHURCH",
     number: "1028872901",
     bank:   "United Bank for Africa (UBA)",
     momo:   "7061220312",                    // MTN MoMo — leave "" to hide
-    opay:   "7061220312",                    // Opay — leave "" to hide
+    opay:      "7061220312",                 // Opay — leave "" to hide
+    opayName:  "Musa Adamu, Omoaka",         // Opay is registered under this personal name, not the church
     paypal: "Prophetaaemmanuel@gmail.com",   // leave "" to hide the PayPal line
     note:   "Online card payment isn't available yet — please use one of the accounts above. After your transfer, fill the form below so we can confirm it and send your receipt.",
   },
