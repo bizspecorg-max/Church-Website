@@ -13,6 +13,8 @@
   ---------------------------------------------------------- */
   const CFG = window.MINISTRY_CONFIG || {};
   const PAYSTACK_PUBLIC_KEY = CFG.paystackPublicKey || "";
+  // Card/Online stays hidden and disabled until this is true — see config.js.
+  const PAYSTACK_READY = CFG.paystackReady === true && !!PAYSTACK_PUBLIC_KEY;
   const CURRENCY            = CFG.currency || "NGN";
   const NOTIFY_EMAIL        = CFG.notifyEmail || "koredebusuyi.career@gmail.com";
   const FORM_ENDPOINT       = CFG.formEndpoint || "";
@@ -371,9 +373,24 @@
       return;
     }
     captureLead(d);
-    if (!PAYSTACK_PUBLIC_KEY) {
+    if (!PAYSTACK_READY) {
+      // --- PAYSTACK (disabled — no live key yet) --------------------------
+      // Flip `paystackReady: true` in config.js once the real key is in,
+      // then uncomment this block to restore Card/Online payment.
+      //
+      // if (typeof PaystackPop === "undefined") { showToast("Payment library failed to load. Check your connection."); return; }
+      // PaystackPop.setup({
+      //   key: PAYSTACK_PUBLIC_KEY, email: d.email, amount: d.amount * 100, currency: CURRENCY,
+      //   metadata: { custom_fields: [
+      //     { display_name: "Full Name", variable_name: "full_name", value: d.name },
+      //     { display_name: "Phone", variable_name: "phone", value: d.phone },
+      //   ] },
+      //   callback: (r) => { closeGive(); showToast("🎉 Thank you! Payment reference: " + r.reference); formEl && formEl.reset(); },
+      //   onClose: () => showToast("Payment window closed. You can try again anytime."),
+      // }).openIframe();
+      // ---------------------------------------------------------------------
       closeGive();
-      showToast("✅ Demo: " + fmt(d.amount) + " captured. Add a Paystack key in config.js to go live.");
+      showToast("Online card payment isn't available yet — please use one of the Bank Transfer accounts to give. 🙏");
       formEl && formEl.reset();
       return;
     }
@@ -415,6 +432,22 @@
           </dd>
         </div>
         <div><dt>Bank</dt><dd>${B.bank || ""}</dd></div>
+        ${B.momo ? `
+        <div>
+          <dt>MoMo Money (MTN)</dt>
+          <dd class="bank-card__acct">
+            <span data-acct>${B.momo}</span>
+            <button type="button" class="bank-copy" data-copy="${B.momo}">Copy</button>
+          </dd>
+        </div>` : ""}
+        ${B.opay ? `
+        <div>
+          <dt>Opay</dt>
+          <dd class="bank-card__acct">
+            <span data-acct>${B.opay}</span>
+            <button type="button" class="bank-copy" data-copy="${B.opay}">Copy</button>
+          </dd>
+        </div>` : ""}
         ${B.paypal ? `
         <div class="bank-card__paypal">
           <dt>Or pay with PayPal</dt>
@@ -445,13 +478,36 @@
     }
   });
 
-  // Wire one form's method toggle. Defaults to card, so nothing changes
-  // for anyone who ignores the new option.
+  // Wire one form's method toggle.
+  // While Paystack isn't ready, Bank Transfer is shown first/active and
+  // Card/Online stays visible but inert — tapping it just explains that
+  // it's not live yet, it doesn't switch the form. Once config.js →
+  // paystackReady is true, both tabs work normally again and Card/Online
+  // goes back to being the default.
   const wirePayMethod = (tabs, panel, formEl, labelEl, secureEl) => {
     if (!tabs || !panel || !formEl) return;
     if (!SHOW_BANK) return;                 // option hidden → card only, as before
     tabs.classList.remove("hidden");
     panel.innerHTML = bankPanelHTML();
+
+    if (!PAYSTACK_READY) {
+      formEl.dataset.method = "bank";
+      panel.classList.remove("hidden");
+      $$(".pay-tab", tabs).forEach((tab) => tab.classList.toggle("active", tab.dataset.method === "bank"));
+      if (labelEl)  labelEl.textContent  = "I've Sent My Transfer";
+      if (secureEl) secureEl.textContent = "Direct transfer · 100% goes to the ministry";
+      $$(".pay-tab", tabs).forEach((tab) => {
+        tab.addEventListener("click", () => {
+          if (tab.dataset.method === "card") {
+            showToast("Online card payment isn't ready yet — please use Bank Transfer below for now. 🙏");
+            return; // stays on bank, nothing switches
+          }
+          // clicking Bank Transfer again — no-op, it's already the active/only working option
+        });
+      });
+      return;
+    }
+
     formEl.dataset.method = "card";
     $$(".pay-tab", tabs).forEach((tab) => {
       tab.addEventListener("click", () => {
@@ -541,6 +597,15 @@
     const amtEl = $("#pAmount");
     let current = null;
 
+    // Show the bank transfer accounts right on the registration form while
+    // Card/Online isn't ready — so a partner sees where to send their
+    // transfer before they even submit their details.
+    const partnerBankPanel = $("#partnerBankPanel");
+    if (partnerBankPanel && !PAYSTACK_READY && SHOW_BANK) {
+      partnerBankPanel.innerHTML = bankPanelHTML();
+      partnerBankPanel.classList.remove("hidden");
+    }
+
     const open = (amount) => {
       modal.classList.remove("hidden");
       document.body.style.overflow = "hidden";
@@ -568,9 +633,24 @@
     }));
 
     const charge = (d, onSuccess) => {
-      if (!PAYSTACK_PUBLIC_KEY) {
-        showToast("✅ Demo: " + fmt(d.amount) + " partnership captured. Add a Paystack key to go live.");
-        onSuccess && onSuccess({ reference: "DEMO" });
+      if (!PAYSTACK_READY) {
+        // --- PAYSTACK (disabled — no live key yet) --------------------------
+        // Flip `paystackReady: true` in config.js once the real key is in,
+        // then uncomment this block to restore Card/Online partnership giving.
+        //
+        // if (typeof PaystackPop === "undefined") { showToast("Payment library failed to load."); return; }
+        // PaystackPop.setup({
+        //   key: PAYSTACK_PUBLIC_KEY, email: d.email, amount: d.amount * 100, currency: CURRENCY,
+        //   metadata: { custom_fields: [
+        //     { display_name: "Full Name", variable_name: "full_name", value: d.name },
+        //     { display_name: "Phone", variable_name: "phone", value: d.phone },
+        //     { display_name: "Type", variable_name: "type", value: "Partnership" },
+        //   ] },
+        //   callback: (r) => onSuccess && onSuccess(r),
+        //   onClose: () => showToast("Payment window closed. You can try again anytime."),
+        // }).openIframe();
+        // ---------------------------------------------------------------------
+        showToast("Online card payment isn't available yet — please use one of the Bank Transfer accounts to partner with us. 🙏");
         return;
       }
       if (typeof PaystackPop === "undefined") { showToast("Payment library failed to load."); return; }
@@ -610,6 +690,10 @@
       current = d;
       $("#partnerName").textContent = d.name.split(" ")[0] || "Partner";
       $("#partnerAmtText").textContent = d.amount.toLocaleString("en-US");
+      if (!PAYSTACK_READY) {
+        $("#partnerPayLabel").textContent  = "I've Sent My";
+        $("#partnerPaySuffix").textContent = " Transfer";
+      }
       const wa = waNumber();
       const msg = `Hello, I am ${d.name}. I just registered as a partner (₦${d.amount.toLocaleString()}/month). I would love direct contact with the ministry.`;
       $("#partnerWhatsapp").href = wa ? `https://wa.me/${wa}?text=${encodeURIComponent(msg)}` : (CFG.youtubeChannel || "#");
@@ -620,6 +704,16 @@
 
     $("#partnerPay").addEventListener("click", () => {
       if (!current) return;
+      if (!PAYSTACK_READY) {
+        // Bank-only for now — this just confirms the transfer they were
+        // shown on the form, it doesn't attempt Paystack.
+        if (window.MinistryDB && MinistryDB.enabled) {
+          try { MinistryDB.savePartner({ Name: current.name, Email: current.email, Phone: current.phone, Country: current.country, amountValue: current.amount, Status: "Bank transfer — awaiting confirmation" }); } catch (_) {}
+        }
+        showToast("🙏 Thank you! We've logged your transfer. You'll get a confirmation once it's received.");
+        close();
+        return;
+      }
       charge(current, (r) => {
         if (window.MinistryDB && MinistryDB.enabled) {
           try { MinistryDB.savePartner({ Name: current.name, Email: current.email, Phone: current.phone, Country: current.country, amountValue: current.amount, Status: "paid:" + ((r && r.reference) || "") }); } catch (_) {}
@@ -867,6 +961,8 @@
     if (CONTENT.bank_name)   bo.name   = CONTENT.bank_name;
     if (CONTENT.bank_number) bo.number = CONTENT.bank_number;
     if (CONTENT.bank_bank)   bo.bank   = CONTENT.bank_bank;
+    if (CONTENT.bank_momo != null)   bo.momo   = CONTENT.bank_momo;
+    if (CONTENT.bank_opay != null)   bo.opay   = CONTENT.bank_opay;
     if (CONTENT.bank_paypal != null) bo.paypal = CONTENT.bank_paypal;
     if (CONTENT.bank_note)   bo.note   = CONTENT.bank_note;
     if (Object.keys(bo).length) {
