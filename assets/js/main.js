@@ -354,7 +354,13 @@
       giveAmt.value = amount;
       $$("#giveAmounts .amount-card").forEach((c) => c.classList.toggle("active", c.dataset.amount === String(amount)));
     }
-    setTimeout(() => $("#giveName")?.focus(), 60);
+    const panelEl = $("#givePanel");
+    if (panelEl) panelEl.scrollTop = 0;
+    // While Paystack isn't ready, leave the bank details visible at the
+    // top instead of auto-focusing the Name field below them — mobile
+    // browsers scroll a focused input into view, which would push the
+    // account details off-screen right as the modal opens.
+    if (PAYSTACK_READY) setTimeout(() => $("#giveName")?.focus(), 60);
   };
   window.__openGive = openGive; // used by tiers / welcome popup
 
@@ -616,7 +622,13 @@
         amtEl.value = amount;
         $$("#partnerAmounts .amount-card").forEach((c) => c.classList.toggle("active", c.dataset.amount === String(amount)));
       }
-      setTimeout(() => $("#pName")?.focus(), 60);
+      const panelEl = $("#partnerPanel");
+      if (panelEl) panelEl.scrollTop = 0;
+      // Same reasoning as the give modal: don't steal scroll/focus down to
+      // the Name field while the bank details are the first thing to see.
+      if (PAYSTACK_READY || !partnerBankPanel || partnerBankPanel.classList.contains("hidden")) {
+        setTimeout(() => $("#pName")?.focus(), 60);
+      }
     };
     const close = () => { modal.classList.add("hidden"); document.body.style.overflow = ""; };
     window.__openPartner = open;
