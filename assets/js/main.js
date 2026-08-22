@@ -527,9 +527,9 @@
   const collectAndPay = (nameEl, emailEl, phoneEl, amtEl, formEl) => {
     const ok = [nameEl, emailEl, phoneEl, amtEl].map(validateField).every(Boolean);
     const amount = parseInt(amtEl.value, 10) || 0;
-    if (!ok || amount < 100) {
-      if (amount < 100) amtEl.classList.add("invalid");
-      showToast("Please complete all fields with a valid amount (min ₦100).");
+    if (!ok || amount < 25000) {
+      if (amount < 25000) amtEl.classList.add("invalid");
+      showToast("Please complete all fields with a valid amount (min ₦25,000).");
       return;
     }
     processPayment({ name: nameEl.value.trim(), email: emailEl.value.trim(), phone: phoneEl.value.trim(), amount }, formEl);
