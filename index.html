@@ -883,11 +883,11 @@
           <!-- Bank transfer details — shown while Card/Online isn't ready yet -->
           <div id="partnerBankPanel" class="hidden"></div>
           <div class="grid grid-cols-3 gap-2" id="partnerAmounts">
-            <button type="button" class="amount-card" data-amount="5000">₦5,000</button>
-            <button type="button" class="amount-card" data-amount="10000">₦10,000</button>
             <button type="button" class="amount-card" data-amount="25000">₦25,000</button>
             <button type="button" class="amount-card" data-amount="50000">₦50,000</button>
             <button type="button" class="amount-card" data-amount="100000">₦100,000</button>
+            <button type="button" class="amount-card" data-amount="150000">₦150,000</button>
+            <button type="button" class="amount-card" data-amount="200000">₦200,000</button>
             <button type="button" class="amount-card" data-amount="custom">Custom</button>
           </div>
           <div class="grid sm:grid-cols-2 gap-3">
@@ -899,7 +899,7 @@
             <div><label for="pPhone" class="form-label">Phone / WhatsApp</label><input id="pPhone" type="tel" required autocomplete="tel" class="form-input" placeholder="+234 800 000 0000" /></div>
           </div>
           <div class="grid sm:grid-cols-2 gap-3">
-            <div><label for="pAmount" class="form-label">Monthly Partnership (₦)</label><input id="pAmount" type="number" min="100" step="100" required inputmode="numeric" class="form-input" placeholder="Amount" /></div>
+            <div><label for="pAmount" class="form-label">Monthly Partnership (₦)</label><input id="pAmount" type="number" min="25000" step="1000" required inputmode="numeric" class="form-input" placeholder="Minimum ₦25,000" /></div>
             <div><label for="pPassword" class="form-label">Create Password</label><input id="pPassword" type="password" required minlength="6" autocomplete="new-password" class="form-input" placeholder="••••••••" /></div>
           </div>
           <button type="submit" id="partnerSubmit" class="btn-gold w-full justify-center py-3.5 text-base">Register as Partner</button>

@@ -120,9 +120,9 @@ window.MINISTRY_CONFIG = {
   /* ---------- Partnership tiers (monthly giving) ----------
      Shown as cards in the Partnership section. Edit freely. */
   partnership: [
-    { name: "Friend Partner",   amount: 5000,  perks: "Monthly newsletter & prayer covering" },
-    { name: "Kingdom Partner",  amount: 10000, perks: "Everything in Friend + partner-only messages", featured: true },
-    { name: "Covenant Partner", amount: 25000, perks: "Everything in Kingdom + quarterly impact report" },
+    { name: "Friend Partner",   amount: 25000,  perks: "Monthly newsletter & prayer covering" },
+    { name: "Kingdom Partner",  amount: 50000, perks: "Everything in Friend + partner-only messages", featured: true },
+    { name: "Covenant Partner", amount: 100000, perks: "Everything in Kingdom + quarterly impact report" },
   ],
 
   /* ---------- Supabase backend (optional) ----------

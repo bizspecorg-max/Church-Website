@@ -672,9 +672,9 @@
       const fields = [$("#pName"), $("#pEmail"), $("#pPhone"), $("#pAmount"), $("#pPassword")];
       const ok = fields.map(validateField).every(Boolean);
       const amount = parseInt(amtEl.value, 10) || 0;
-      if (!ok || amount < 100) {
-        if (amount < 100) amtEl.classList.add("invalid");
-        showToast("Please complete all fields (partnership min ₦100).");
+      if (!ok || amount < 25000) {
+        if (amount < 25000) amtEl.classList.add("invalid");
+        showToast("Please complete all fields (partnership min ₦25,000).");
         return;
       }
       const d = {
