@@ -354,7 +354,13 @@
       giveAmt.value = amount;
       $$("#giveAmounts .amount-card").forEach((c) => c.classList.toggle("active", c.dataset.amount === String(amount)));
     }
-    setTimeout(() => $("#giveName")?.focus(), 60);
+    const panelEl = $("#givePanel");
+    if (panelEl) panelEl.scrollTop = 0;
+    // While Paystack isn't ready, leave the bank details visible at the
+    // top instead of auto-focusing the Name field below them — mobile
+    // browsers scroll a focused input into view, which would push the
+    // account details off-screen right as the modal opens.
+    if (PAYSTACK_READY) setTimeout(() => $("#giveName")?.focus(), 60);
   };
   window.__openGive = openGive; // used by tiers / welcome popup
 
@@ -447,6 +453,7 @@
             <span data-acct>${B.opay}</span>
             <button type="button" class="bank-copy" data-copy="${B.opay}">Copy</button>
           </dd>
+          ${B.opayName ? `<dd class="bank-card__subname">${B.opayName}</dd>` : ""}
         </div>` : ""}
         ${B.paypal ? `
         <div class="bank-card__paypal">
@@ -615,7 +622,13 @@
         amtEl.value = amount;
         $$("#partnerAmounts .amount-card").forEach((c) => c.classList.toggle("active", c.dataset.amount === String(amount)));
       }
-      setTimeout(() => $("#pName")?.focus(), 60);
+      const panelEl = $("#partnerPanel");
+      if (panelEl) panelEl.scrollTop = 0;
+      // Same reasoning as the give modal: don't steal scroll/focus down to
+      // the Name field while the bank details are the first thing to see.
+      if (PAYSTACK_READY || !partnerBankPanel || partnerBankPanel.classList.contains("hidden")) {
+        setTimeout(() => $("#pName")?.focus(), 60);
+      }
     };
     const close = () => { modal.classList.add("hidden"); document.body.style.overflow = ""; };
     window.__openPartner = open;
@@ -671,9 +684,9 @@
       const fields = [$("#pName"), $("#pEmail"), $("#pPhone"), $("#pAmount"), $("#pPassword")];
       const ok = fields.map(validateField).every(Boolean);
       const amount = parseInt(amtEl.value, 10) || 0;
-      if (!ok || amount < 100) {
-        if (amount < 100) amtEl.classList.add("invalid");
-        showToast("Please complete all fields (partnership min ₦100).");
+      if (!ok || amount < 25000) {
+        if (amount < 25000) amtEl.classList.add("invalid");
+        showToast("Please complete all fields (partnership min ₦25,000).");
         return;
       }
       const d = {
@@ -963,6 +976,7 @@
     if (CONTENT.bank_bank)   bo.bank   = CONTENT.bank_bank;
     if (CONTENT.bank_momo != null)   bo.momo   = CONTENT.bank_momo;
     if (CONTENT.bank_opay != null)   bo.opay   = CONTENT.bank_opay;
+    if (CONTENT.bank_opay_name != null) bo.opayName = CONTENT.bank_opay_name;
     if (CONTENT.bank_paypal != null) bo.paypal = CONTENT.bank_paypal;
     if (CONTENT.bank_note)   bo.note   = CONTENT.bank_note;
     if (Object.keys(bo).length) {

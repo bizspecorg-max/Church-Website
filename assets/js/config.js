@@ -23,11 +23,12 @@ window.MINISTRY_CONFIG = {
      Set showBank:false to hide the option. */
   showBank: true,
   bankAccount: {
-    name:   "Musa Adamu, Omoaka",
+    name:   "CORINTHIANS INTERNATIONAL CHURCH",
     number: "1028872901",
     bank:   "United Bank for Africa (UBA)",
     momo:   "7061220312",                    // MTN MoMo — leave "" to hide
-    opay:   "7061220312",                    // Opay — leave "" to hide
+    opay:      "7061220312",                 // Opay — leave "" to hide
+    opayName:  "Musa Adamu, Omoaka",         // Opay is registered under this personal name, not the church
     paypal: "Prophetaaemmanuel@gmail.com",   // leave "" to hide the PayPal line
     note:   "Online card payment isn't available yet — please use one of the accounts above. After your transfer, fill the form below so we can confirm it and send your receipt.",
   },
@@ -119,9 +120,9 @@ window.MINISTRY_CONFIG = {
   /* ---------- Partnership tiers (monthly giving) ----------
      Shown as cards in the Partnership section. Edit freely. */
   partnership: [
-    { name: "Friend Partner",   amount: 5000,  perks: "Monthly newsletter & prayer covering" },
-    { name: "Kingdom Partner",  amount: 10000, perks: "Everything in Friend + partner-only messages", featured: true },
-    { name: "Covenant Partner", amount: 25000, perks: "Everything in Kingdom + quarterly impact report" },
+    { name: "Friend Partner",   amount: 25000,  perks: "Monthly newsletter & prayer covering" },
+    { name: "Kingdom Partner",  amount: 50000, perks: "Everything in Friend + partner-only messages", featured: true },
+    { name: "Covenant Partner", amount: 100000, perks: "Everything in Kingdom + quarterly impact report" },
   ],
 
   /* ---------- Supabase backend (optional) ----------

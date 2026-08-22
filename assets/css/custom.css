@@ -377,6 +377,12 @@ section[id] { scroll-margin-top: 5.5rem; }   /* offset for the fixed header */
   white-space: nowrap;
 }
 .bank-copy:hover { background: rgba(201,162,39,.4); }
+.bank-card__subname {
+  font-size: .68rem;
+  font-weight: 600;
+  color: #8b95a5;
+  margin-top: .1rem;
+}
 .bank-card__note {
   margin-top: .55rem;
   font-size: .66rem;
