@@ -10,7 +10,61 @@
   const ready = !!(CFG.supabaseUrl && CFG.supabaseAnonKey && lib && lib.createClient);
   const db = ready ? lib.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey) : null;
   const PAYSTACK = CFG.paystackPublicKey || "";
+  const PAYSTACK_READY = CFG.paystackReady === true && !!PAYSTACK;
   const CURRENCY = CFG.currency || "NGN";
+  const bankPanelHTML = () => {
+    const B = SETTINGS.bank || {};
+    return `
+    <div class="bank-card">
+      <p class="bank-card__head">Transfer to:</p>
+      <dl class="bank-card__rows">
+        <div><dt>Account Name</dt><dd>${B.name || ""}</dd></div>
+        <div>
+          <dt>Account Number</dt>
+          <dd class="bank-card__acct">
+            <span data-acct>${B.number || ""}</span>
+            <button type="button" class="bank-copy" data-copy="${B.number || ""}">Copy</button>
+          </dd>
+        </div>
+        <div><dt>Bank</dt><dd>${B.bank || ""}</dd></div>
+        ${B.momo ? `
+        <div>
+          <dt>MoMo Money (MTN)</dt>
+          <dd class="bank-card__acct">
+            <span data-acct>${B.momo}</span>
+            <button type="button" class="bank-copy" data-copy="${B.momo}">Copy</button>
+          </dd>
+        </div>` : ""}
+        ${B.opay ? `
+        <div>
+          <dt>Opay</dt>
+          <dd class="bank-card__acct">
+            <span data-acct>${B.opay}</span>
+            <button type="button" class="bank-copy" data-copy="${B.opay}">Copy</button>
+          </dd>
+          ${B.opayName ? `<dd class="bank-card__subname">${B.opayName}</dd>` : ""}
+        </div>` : ""}
+        ${B.paypal ? `
+        <div class="bank-card__paypal">
+          <dt>Or pay with PayPal</dt>
+          <dd class="bank-card__acct">
+            <span class="bank-card__mail">${B.paypal}</span>
+            <button type="button" class="bank-copy" data-copy="${B.paypal}">Copy</button>
+          </dd>
+        </div>` : ""}
+      </dl>
+      ${B.note ? `<p class="bank-card__note">${B.note}</p>` : ""}
+    </div>`;
+  };
+  // Copy-to-clipboard for account numbers, delegated so it works on
+  // panels rendered after this listener is attached.
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-copy]");
+    if (!btn) return;
+    const text = btn.dataset.copy;
+    const done = () => { const o = btn.textContent; btn.textContent = "Copied ✓"; setTimeout(() => (btn.textContent = o), 1600); };
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(done).catch(() => done());
+  });
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
   const fmt = (n) => "₦" + Number(n || 0).toLocaleString("en-US");
   let toastT;
@@ -19,18 +73,29 @@
 
   if (!ready) { $("#configWarn").classList.remove("hidden"); }
 
-  const SETTINGS = {};   // admin-set values, filled in below
+  const SETTINGS = { bank: { ...(CFG.bankAccount || {}) } };   // admin-set values, filled in below
 
   /* ---------- Branding (logo + favicon follow the admin settings) ---------- */
   (async () => {
     if (!db) return;                       // config missing — keep the built-in mark
     try {
       const { data, error } = await db.from("site_content")
-        .select("key, value").in("key", ["logo_image", "favicon_image", "contact_whatsapp"]);
+        .select("key, value").in("key", [
+          "logo_image", "favicon_image", "contact_whatsapp",
+          "bank_name", "bank_number", "bank_bank", "bank_momo", "bank_opay", "bank_opay_name", "bank_paypal", "bank_note",
+        ]);
       if (error || !data) return;
       const map = {};
-      data.forEach((r) => { if (r.value) map[r.key] = r.value; });
+      data.forEach((r) => { if (r.value != null && r.value !== "") map[r.key] = r.value; });
       if (map.contact_whatsapp) SETTINGS.contact_whatsapp = map.contact_whatsapp;
+      if (map.bank_name)   SETTINGS.bank.name   = map.bank_name;
+      if (map.bank_number) SETTINGS.bank.number = map.bank_number;
+      if (map.bank_bank)   SETTINGS.bank.bank   = map.bank_bank;
+      if (map.bank_momo)   SETTINGS.bank.momo   = map.bank_momo;
+      if (map.bank_opay)   SETTINGS.bank.opay   = map.bank_opay;
+      if (map.bank_opay_name) SETTINGS.bank.opayName = map.bank_opay_name;
+      if (map.bank_paypal) SETTINGS.bank.paypal = map.bank_paypal;
+      if (map.bank_note)   SETTINGS.bank.note   = map.bank_note;
       const setSrc = (sel, v) => { const el = $(sel); if (el && v) el.src = v; };
       setSrc("#brandLogoLogin", map.logo_image);
       setSrc("#brandLogoHeader", map.logo_image);
@@ -136,24 +201,50 @@
   }
 
   /* ---- renew / give ---- */
+  const renewBlock = $("#renewBankBlock");
+  const record = (st, amount) => db.from("partners").insert([{ name: $("#memberName").textContent, email: currentUser.email, amount, status: st }]).then(() => loadDashboard(currentUser));
+  let pendingRenewAmount = 0;
+
   $("#renewForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const amount = parseInt($("#renewAmount").value, 10) || 0;
     if (amount < 100) { toast("Enter an amount (min ₦100)."); return; }
-    const name = $("#memberName").textContent;
-    const record = (st) => db.from("partners").insert([{ name, email: currentUser.email, amount, status: st }]).then(() => loadDashboard(currentUser));
-    if (!PAYSTACK) {
-      record("renewal (demo)");
-      toast("✅ Demo: " + fmt(amount) + " renewal recorded. Add a Paystack key to charge for real.");
+
+    if (!PAYSTACK_READY) {
+      // Card/Online isn't live yet — show where to send the transfer,
+      // same as new-partner registration, instead of faking a payment.
+      pendingRenewAmount = amount;
+      $("#renewBankPanel").innerHTML = bankPanelHTML();
+      $("#renewAmtText").textContent = fmt(amount);
+      renewBlock.classList.remove("hidden");
+      $("#renewForm").classList.add("hidden");
+      renewBlock.scrollIntoView({ behavior: "smooth", block: "nearest" });
       return;
     }
     if (typeof PaystackPop === "undefined") { toast("Payment library failed to load."); return; }
     PaystackPop.setup({
       key: PAYSTACK, email: currentUser.email, amount: amount * 100, currency: CURRENCY,
       metadata: { custom_fields: [{ display_name: "Type", variable_name: "type", value: "Partnership renewal" }] },
-      callback: (r) => { record("renewal:" + r.reference); toast("🎉 Thank you, partner! Ref: " + r.reference); },
+      callback: (r) => { record("renewal:" + r.reference, amount); toast("🎉 Thank you, partner! Ref: " + r.reference); },
       onClose: () => toast("Payment window closed."),
     }).openIframe();
+  });
+
+  $("#renewConfirmBtn").addEventListener("click", async () => {
+    const btn = $("#renewConfirmBtn");
+    const originalHTML = btn.innerHTML;
+    btn.disabled = true; btn.textContent = "Recording…";
+    await record("Bank transfer — awaiting confirmation", pendingRenewAmount);
+    btn.disabled = false; btn.innerHTML = originalHTML;
+    renewBlock.classList.add("hidden");
+    $("#renewForm").classList.remove("hidden");
+    $("#renewAmount").value = "";
+    toast("🙏 Thank you! We'll confirm your transfer and update your status shortly.");
+  });
+
+  $("#renewCancelBtn").addEventListener("click", () => {
+    renewBlock.classList.add("hidden");
+    $("#renewForm").classList.remove("hidden");
   });
 
   // resume existing session

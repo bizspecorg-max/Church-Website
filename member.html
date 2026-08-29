@@ -16,7 +16,7 @@
       fontFamily: { serif: ['"Cormorant Garamond"', 'serif'], sans: ['Inter', 'sans-serif'] },
     } } };
   </script>
-  <link rel="stylesheet" href="assets/css/custom.css?v=20260829b" />
+  <link rel="stylesheet" href="assets/css/custom.css?v=20260829c" />
 </head>
 <body class="font-sans bg-slate-100 text-navy-dark min-h-screen">
 
@@ -94,9 +94,18 @@
             <label for="renewAmount" class="form-label">Amount (₦)</label>
             <input id="renewAmount" type="number" min="100" step="100" class="form-input w-44" placeholder="10000" />
           </div>
-          <button type="submit" class="btn-gold">Give / Renew</button>
+          <button type="submit" id="renewSubmit" class="btn-gold">Give / Renew</button>
           <a id="waContact" href="#" target="_blank" rel="noopener" class="btn-navy">Message the Ministry</a>
         </form>
+
+        <div id="renewBankBlock" class="hidden mt-4">
+          <details class="text-left rounded-xl border border-gray-200 open:bg-gray-50" open>
+            <summary class="cursor-pointer p-3 font-600 text-navy text-sm select-none">View account details to transfer to</summary>
+            <div id="renewBankPanel" class="px-3 pb-3"></div>
+          </details>
+          <button id="renewConfirmBtn" type="button" class="btn-gold w-full justify-center py-3 mt-3">I've Sent My <span id="renewAmtText">₦0</span> Transfer</button>
+          <button id="renewCancelBtn" type="button" class="w-full text-center text-sm text-gray-500 mt-2 hover:text-navy">Cancel</button>
+        </div>
       </div>
 
       <!-- Giving history -->
@@ -117,9 +126,9 @@
 
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden bg-navy text-white px-5 py-3 rounded-full shadow-xl text-sm"></div>
 
-  <script src="assets/js/config.js?v=20260829b"></script>
+  <script src="assets/js/config.js?v=20260829c"></script>
   <script src="https://js.paystack.co/v1/inline.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/member.js?v=20260829b"></script>
+  <script src="assets/js/member.js?v=20260829c"></script>
 </body>
 </html>
