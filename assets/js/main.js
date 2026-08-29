@@ -704,6 +704,12 @@
       $("#partnerName").textContent = d.name.split(" ")[0] || "Partner";
       $("#partnerAmtText").textContent = d.amount.toLocaleString("en-US");
       const amt2 = $("#partnerAmtText2"); if (amt2) amt2.textContent = d.amount.toLocaleString("en-US");
+      const successBank = $("#partnerSuccessBank");
+      if (successBank) {
+        successBank.innerHTML = bankPanelHTML();
+        const details = successBank.closest("details");
+        if (details) details.open = true;
+      }
       if (!PAYSTACK_READY) {
         $("#partnerPayLabel").textContent  = "I've Sent My";
         $("#partnerPaySuffix").textContent = " Transfer";
