@@ -126,6 +126,13 @@
       const { error } = await client.auth.signOut();
       return { ok: !error, error };
     },
+    async resetPassword(email) {
+      if (!client) return noop();
+      const { error } = await client.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/member.html",
+      });
+      return { ok: !error, error };
+    },
     async getUser() {
       if (!client) return null;
       const { data } = await client.auth.getUser();

@@ -63,6 +63,14 @@
   $("#toggleBtn").addEventListener("click", () => { mode = mode === "in" ? "up" : "in"; render(); });
   render();
 
+  $("#forgotBtn").addEventListener("click", async () => {
+    const email = $("#email").value.trim();
+    if (!email) { status("Enter your email above first, then tap Forgot password.", false); return; }
+    if (!db) { status("Login isn't configured yet.", false); return; }
+    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + "/member.html" });
+    status(error ? error.message : "Reset link sent — check your email.", !error);
+  });
+
   $("#authForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!db) { status("Login isn't configured yet.", false); return; }
@@ -150,4 +158,31 @@
 
   // resume existing session
   if (db) db.auth.getUser().then(({ data }) => { if (data && data.user) showDash(data.user); });
+
+  /* ---------- Show/hide toggle for password fields ---------- */
+  (function passwordToggles() {
+    const EYE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+    const EYE_OFF = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a17.7 17.7 0 0 1-3.06 4.06M6.1 6.1C3.2 7.9 1 12 1 12a17.7 17.7 0 0 0 4.06 4.06M1 1l22 22M14.12 14.12a3 3 0 1 1-4.24-4.24"/></svg>';
+    document.querySelectorAll('input[type="password"]').forEach((input) => {
+      if (input.dataset.pwToggled) return;
+      input.dataset.pwToggled = "1";
+      const wrap = document.createElement("span");
+      wrap.style.cssText = "position:relative;display:block;";
+      input.parentNode.insertBefore(wrap, input);
+      wrap.appendChild(input);
+      input.style.paddingRight = "2.75rem";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.setAttribute("aria-label", "Show password");
+      btn.style.cssText = "position:absolute;right:.6rem;top:50%;transform:translateY(-50%);background:none;border:0;padding:.25rem;color:#94a3b8;cursor:pointer;line-height:0;";
+      btn.innerHTML = EYE;
+      wrap.appendChild(btn);
+      btn.addEventListener("click", () => {
+        const show = input.type === "password";
+        input.type = show ? "text" : "password";
+        btn.innerHTML = show ? EYE_OFF : EYE;
+        btn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+      });
+    });
+  })();
 })();
